@@ -21,7 +21,7 @@ module.exports = (wbol) => {
 							if (option.granted())
 								options += `<li class="wbolMenuOption"><a onclick="wbol.emit('content', '/${option.slug()}')">${option.name()}</a></li>`;
 							break;
-						case option.ref instanceof wbol.Area:
+						case option.ref instanceof wbol.Chapter:
 							option.ref.children.forEach(suboption => {
 								if (!(suboption instanceof wbol.Content) && suboption instanceof wbol.Page && suboption.granted())
 									options += `<li class="wbolMenuOption"><a onclick="wbol.emit('content', '/${suboption.slug()}')">${suboption.name()}</a></li>`;
@@ -33,10 +33,10 @@ module.exports = (wbol) => {
 			});
 		}
 		add(child, name) {
-			if (!(child instanceof wbol.Copycat) && child instanceof wbol.wbolCore) {
-				var copycat = new wbol.Copycat(child);
-				copycat.parent = this;
-				this.children.push(copycat);
+			if (!(child instanceof wbol.Reference) && child instanceof wbol.wbolCore) {
+				var reference = new wbol.Reference(child);
+				reference.parent = this;
+				this.children.push(reference);
 			}
 			return this;
 		}

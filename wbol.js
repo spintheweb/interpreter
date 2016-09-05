@@ -18,10 +18,9 @@ NOTES
 4. Regarding multilingual objects, there is no need to consider language preferences if there is only a language available
 5. Socket namespace ide?
 6. Session management?
-7. Create sitemap, based on the webbase structure, for search engine
 */
 module.exports = (wbol => {
-	wbol.webbase = {}; // NOTE: Single webbase setup, convert to []?
+	wbol.webbase = {};
 	
 	// WBOL elements
 	wbol.wbolCore = class wbolCore {
@@ -31,12 +30,14 @@ module.exports = (wbol => {
 			this.children = [];
 			this._name = {}; // lang: string
 			this.rbac = {}; // role: wbolAC
+			this.lastmod = (new Date()).toISOString();
 			
 			this.name(name || this.constructor.name); // NOTE: siblings may have identical names, however, the router will select the first
 		}
 		name(value) {
 			if (typeof value === 'undefined') return util.localize(wbol.lang(), this._name);
 			this._name[wbol.lang()] = value;
+			this.lastmod = (new Date()).toISOString();
 			return this;
 		}
 
@@ -45,6 +46,7 @@ module.exports = (wbol => {
 			if (wbol.webbase.roles[role]) {
 				if (this.rbac[role] && !ac) delete this.rbac[role];
 				else this.rbac[role] = ac;
+				this.lastmod = (new Date()).toISOString();
 			}
 			return this;
 		}
@@ -52,7 +54,7 @@ module.exports = (wbol => {
 		// Return the highest access control associated to the given roles
 		granted() {
 			var roles = wbol.webbase.users[wbol.user()].roles;
-			if (this instanceof wbol.Page && wbol.webbase.app.mainpage() === this) return wbol.wbolAC.read; // Main app page always visible
+			if (this instanceof wbol.Page && wbol.webbase.document.mainpage() === this) return wbol.wbolAC.read; // Main web page always visible
 			var ac = null;
 			for (let i = 0; i < roles.length; ++i) {
 				let role = roles[i];
@@ -70,18 +72,19 @@ module.exports = (wbol => {
 		// Add child to element, note, we are adding a child not moving it
 		add(child) {
 			if (child && this.children.indexOf(child) === -1) {
-				if (child.parent) child = new wbol.Copycat(child);
+				if (child.parent) child = new wbol.Reference(child);
 				child.parent = this;
 				this.children.push(child);
+				this.lastmod = (new Date()).toISOString();
 			}
 			return this;
 		}
 		
-		// Deep copy element, note, the app is not clonable, use export instead
+		// Deep copy element, note, the web is not clonable, use export instead
 		clone() {
 			let obj;
-			if (this instanceof wbol.Area) {
-				obj = new wbol.Area();
+			if (this instanceof wbol.Chapter) {
+				obj = new wbol.Chapter();
 			} else if (this instanceof wbol.Page) {
 				obj = new wbol.Page();
 			} else if (this instanceof wbol.Content) {
@@ -114,19 +117,13 @@ module.exports = (wbol => {
 			return this.name().replace(/\s+/g, '-').toLowerCase(); // TODO: retain only [a-z0-9-]
 			
 			function _slug(element) {
-				if (element instanceof wbol.App)
+				if (element instanceof wbol.Document)
 					return '';
 				return _slug(element.parent) + '/' + element.name().replace(/\s+/g, '-').toLowerCase();
 			}
 		}
-		
-		export() {
-			var fragment = `<wbol:content id="${this.id}"></wbol:content>\n`;
-			return fragment;
-		}
-		import() {}
 	};
-	wbol.Area = class Area extends wbol.wbolCore {
+	wbol.Chapter = class Chapter extends wbol.wbolCore {
 		constructor(name) {
 			super(name);
 			this._mainpage = null;
@@ -145,9 +142,27 @@ module.exports = (wbol => {
 			return this;
 		}
 	};
-	wbol.App = class App extends wbol.Area {};
+	wbol.Document = class Document extends wbol.Chapter {
+		constructor(name) {
+			super(name);
+			this._protocol = 'http';
+		}
+		protocol(value) {
+			if (typeof value === 'undefined') return this._protocol;
+			if (value.search(/^https?$/i) !== -1)
+				this._protocol = value.toLowerCase();
+			this.lastmod = (new Date()).toISOString();
+			return this;
+		}
+		name(value) {
+			if (typeof value === 'undefined') return this._name;
+			this._name = value;
+			this.lastmod = (new Date()).toISOString();
+			return this;
+		}
+	};
 	wbol.Page = class Page extends wbol.wbolCore {
-		constructor(name, template) {
+		constructor(name, template) { // TODO: How is the page template handled? Reloading a page breaks the socket connection! Can the connection be reestablished?
 			super(name);
 			this._contentType = 'text/html';
 			this._template = template || 'index.html';
@@ -155,39 +170,28 @@ module.exports = (wbol => {
 		contentType(value) {
 			if (typeof value === 'undefined') return this._contentType;
 			this._contentType = value;
+			this.lastmod = (new Date()).toISOString();
 			return this;
 		}
 		template(value) {
 			if (typeof value === 'undefined') return this._template;
 			this._template = value;
+			this.lastmod = (new Date()).toISOString();
 			return this;
 		}
 
 		render(req, res) {
 			fs.readFile(`${wbol.webbase.settings.static}/${this.template()}`, (err, data) => {
-				// if (this._contentType.startsWith('text'))
-				// 	// TODO: Replace data variables ${variable}
-				// 	data = data.toString().replace(/\${\s*(\$?[_a-zA-Z0-9]+)\s*}/gm, (match, p1) => {
-				// 		return { lang: wbol.lang(), name: this.name() }[p1] || '';
-				// 	});
-
 				if (typeof res === 'object' && res.constructor.name === 'ServerResponse') {
 					if (err) {
-						res.statusCode = 302; // Not found
+						res.writeHead(302); // Not found
 					} else {
-						res.statusCode = 200; // OK
-						res.setHeader('Content-Type', this.contentType());
+						res.writeHead(200, { 'Content-Type': this.contentType() }); // OK
 						res.write(data);
 					}
 					res.end();
 				} else
 					res.emit('page', { url: this.slug(), contentType: this.contentType(), body: data.toString() });
-			});
-		}
-		export() {
-			return super.export(() => {
-				var fragment = `<wbol:page id="${this.id}" contentType="${this.contentType()}"></wbol:page>\n`;
-				return fragment;
 			});
 		}
 	};
@@ -202,22 +206,26 @@ module.exports = (wbol => {
 			this._params = null;
 			this.data = [];
 			this._template = {};
+			
 			this.template(template); // NOTE: string or function
-			this.manage = null; // Client side code for managing content
+			this.manage = null; // Client side code that manages content
 		}
 		cssClass(value) {
 			if (typeof value === 'undefined') return this._cssClass;
-			this._cssClass = value;
+			this._cssClass = value.toString();
+			this.lastmod = (new Date()).toISOString();
 			return this;
 		}
 		section(value) {
 			if (typeof value === 'undefined') return this._section;
-			this._section = value;
+			this._section = value.toString();
+			this.lastmod = (new Date()).toISOString();
 			return this;
 		}
 		sequence(value) {
 			if (typeof value === 'undefined') return this._sequence;
 			this._sequence = isNaN(value) || value < 1 ? 1 : value;
+			this.lastmod = (new Date()).toISOString();
 			if (this.parent) // Order by section, sequence
 				this.parent.children.sort((a, b) => 
 					a._section + ('0000' + a._sequence.toFixed(2)).slice(-5) > b._section + ('0000' + b._sequence.toFixed(2)).slice(-5));
@@ -226,21 +234,25 @@ module.exports = (wbol => {
 		datasource(value) {
 			if (typeof value === 'undefined') return this._datasource;
 			this._datasource = value;
+			this.lastmod = (new Date()).toISOString();
 			return this;
 		}
 		query(value) {
 			if (typeof value === 'undefined') return this._query;
 			this._query = value;
+			this.lastmod = (new Date()).toISOString();
 			return this;
 		}
 		params(value) {
 			if (typeof value === 'undefined') return this._params;
 			this._params = value;
+			this.lastmod = (new Date()).toISOString();
 			return this;
 		}
 		template(value) {
 			if (typeof value === 'undefined') return util.localize(wbol.lang(), this._template);
 			this._template[wbol.lang()] = value;
+			this.lastmod = (new Date()).toISOString();
 			return this;
 		}
 		
@@ -265,7 +277,7 @@ module.exports = (wbol => {
 
 		renderRow(req, res) {}
 	};
-	wbol.Copycat = class Copycat extends wbol.Content {
+	wbol.Reference = class Reference extends wbol.Content {
 		constructor(related) {
 			super(related.name());
 			this._cssClass = related._cssClass;
@@ -275,7 +287,7 @@ module.exports = (wbol => {
 			if (this.granted())
 				return this.ref.render(req, res);
 		}
-	}; // A clone of a wbol.Content excluding its wbolCore
+	}; // A pointer to a wbol.Content
 	
 	// WBOL layout (templating) language
 	require('./layout')(wbol.Content);
@@ -337,9 +349,10 @@ module.exports = (wbol => {
 					roles: ['administrators']
 				}
 			}; // Predefined users
-			this.app = {};
+			this.document = {};
 
 			this.settings = {};
+			
 			this.sockets = {};
 			this.socket = { 
 				lang: wbol.webbase.lang, 
@@ -351,23 +364,23 @@ module.exports = (wbol => {
 			wbol.user = () => wbol.webbase.socket.user || 'guest';
 		}
 		
+		// Bootstrap, load webbase in memory and open duplexed websocket channel
 		listen(server) {
-			// HTTP request handler
 			server.addListener('request', (req, res) => {
 				// Load webbase
 				var hostname = url.parse(req.url).hostname || 'domain.com';
-				if (!(wbol.webbase.app instanceof wbol.App) || wbol.webbase.app.name() !== hostname) { // NOTE: mmultiple app?
+				if (!(wbol.webbase.document instanceof wbol.Document) || wbol.webbase.document.name() !== hostname) {
 					try {
 						fs.statSync(`${__dirname}/${hostname}/data/webbase.xml`);
 						wbol.webbase.import();
 					} catch (ex) {
-						console.log(`Create app ${hostname}...`);
+						console.log(`Create webbase for ${hostname}...`);
 						
 						wbol.webbase.lang = (util.acceptLanguage(req.headers['accept-language'] + ',en;q=0.1'))[0];
-						wbol.webbase.app = require('./app')(wbol, hostname);
+						wbol.webbase.document = require('./webbase')(wbol, hostname);
 						wbol.webbase.settings.static = `${__dirname}/${hostname}`;
 						
-						// TODO: Create app directory by copying the default domain.com to ${wbol.webbase.settings.static}
+						// TODO: Create directory by copying the default domain.com to ${wbol.webbase.settings.static}
 //						fs.mkdirSync(`${wbol.webbase.settings.static}/data`);
 //						wbol.webbase.export(`${wbol.webbase.settings.static}/data/webbase.xml`);
 					}
@@ -405,46 +418,48 @@ module.exports = (wbol => {
 					wbol.webbase.socket = socket;
 					socket.url = URL;
 
-					// Server restarted
-					if (this.app.constructor.name === 'Object') {
+					// Server restarted, emit page reload
+					if (this.document.constructor.name === 'Object') {
 						socket.emit('reload', { url: URL });
 						return;
 					}
 
 					var element = this.route(URL.pathname), emitted = [];
 					if (element instanceof wbol.Page) {
-						socket.emit('page', { lang: wbol.lang(), name: element.name() });
+						socket.emit('page', { id: element.id, lang: wbol.lang(), name: element.name() });
 						for (var content of element.children)
 							_emit(content, true);
 							
 						_recurse(element.parent); // Walk up the webbase and show "shared" contents, shared contents are children of areas and are shared by the underlying pages.
 						
-						socket.emit('cleanup', { emitted: emitted });
+						socket.emit('wrapup', { emitted: emitted });
 					} else if (element instanceof wbol.Content)
 						_emit(element, false);
 
-					// TODO: Render syblings if requested, syblings are contents in the same section and with the same integer sequence
+					// TODO: Render syblings if requested, syblings are contents in the same section and with the same integer sequence (see rendering paradigm)
 					function _emit(content, syblings) {
-						// Avoid re-emitting the content if a content with the same section and integer sequence has already been emitted
+						// Avoid re-emitting the content if a content with the same section and integer sequence has already been emitted in the current request
 						if (emitted.indexOf(content.section() + Math.floor(content.sequence())) !== -1)
 							return false;
 						
+						// Render content
 						var fragment = content.render(null, socket);
-						if (fragment !== '') 
+						if (fragment !== '') {
 							emitted.push(content.section().toString() + Math.floor(content.sequence()));
 						
-						socket.emit(content instanceof wbol.Script ? 'script' : 'content', {
-							id: content.id,
-							section: content.section(),
-							sequence: content.sequence(),
-							cssClass: content.cssClass(),
-							body: fragment
-						});
-						if (fragment && typeof content.manage === 'function') {
-							socket.emit('script', {
-								id: `manage${content.constructor.name}`,
-								body: `(${content.manage.toString()})('${content.id}');`
+							socket.emit(content instanceof wbol.Script ? 'script' : 'content', {
+								id: content.id,
+								section: content.section(),
+								sequence: content.sequence(),
+								cssClass: content.cssClass(),
+								body: fragment
 							});
+							if (typeof content.manage === 'function') {
+								socket.emit('script', {
+									id: `manage${content.constructor.name}`,
+									body: `(${content.manage.toString()})('${content.id}');`
+								});
+							}
 						}
 						return fragment !== '';
 					}
@@ -461,7 +476,7 @@ module.exports = (wbol => {
 
 		// Determine the requested webbase element given the url
 		route(pathname) {
-			if (!pathname || pathname === '/') return this.app.mainpage();
+			if (!pathname || pathname === '/') return this.document.mainpage();
 			var levels = pathname.split('/');
 			var _route = (element, level) => {
 				for (let child of element.children)
@@ -469,28 +484,63 @@ module.exports = (wbol => {
 						if (++level !== levels.length) return _route(child, level);
 						return child;
 					}
-				return levels[level] === '' ? null : element.mainpage() || this.app.mainpage();
+				return levels[level] === '' ? null : element.mainpage() || this.document.mainpage();
 			};
-			return _route(this.app, 1);
+			return _route(this.document, 1);
 		}
 		render(req, res) {
 			if (req.method === 'GET') {
 				var path = url.parse(req.url).pathname;
+				
+				if (path === '/sitemap.xml') {
+					res.writeHead(200, { 'Content-Type': 'text/xml' }); // OK
+					res.end(this.sitemap().toString());
+					return;
+				}
+
 				fs.readFile(`${this.settings.static}${path}`, (err, data) => {
-					if (err) {
+					if (err) { // If the request is not a file than it must be a webbase element, if not return the mainpage
 						var element = this.route(path);
 						if (element && element.granted())
 							element.render(req, res);
 					} else {
 						res.writeHead(200);
-						res.write(data);
-						res.end();
+						res.end(data);
 					}
 				});
+			} else {
+				res.writeHead(405); // Method Not Allowed
+				res.end();
 			}
 		}
 
-		export (pathname) {}
+		// Build a site map (see sitemaps.org) that includes the urls of the visible pages in the webbase.document 
+		sitemap() {
+			var fragment = '';
+			_url(wbol.webbase.document);
+			return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${fragment}</urlset>`;
+
+			function _url (element) {
+				if (element instanceof wbol.Chapter && element.children.length > 0)
+					element.children.forEach(child => _url(child));
+				else if (element instanceof wbol.Page && !(element instanceof wbol.Content) && element.granted())
+					fragment += `<url><loc>${wbol.webbase.document.protocol()}://${wbol.webbase.document.name()}${element.slug(true)}</loc><lastmod>${element.lastmod}</lastmod><priority>0.5</priority></url>\n`;
+			}
+		}
+		
+		// XML persistancy
+		export () {
+			var fragment = '';
+			_url(wbol.webbase.document);
+			return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${fragment}</urlset>`;
+
+			function _url (element) {
+				if (element instanceof wbol.Chapter && element.children.length > 0)
+					element.children.forEach(child => _url(child));
+				else if (element instanceof wbol.Page && !(element instanceof wbol.Content) && element.granted())
+					fragment += `<url><loc>${wbol.webbase.document.protocol()}//${wbol.webbase.document.name()}${element.slug(true)}</loc><lastmod>${element.lastmod}</lastmod><priority>0.5</priority></url>\n`;
+			}
+		}
 		import (pathname) {}
 	}
 	return new Webbase();

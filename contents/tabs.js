@@ -42,10 +42,10 @@ module.exports = (wbol) => {
 			});
 		}
 		add(child, name) {
-			if (!(child instanceof wbol.Copycat) && child instanceof wbol.Content) {
-				var copycat = new wbol.Copycat(child);
-				copycat.parent = this;
-				this.children.push(copycat);
+			if (!(child instanceof wbol.Reference) && child instanceof wbol.Content) {
+				var reference = new wbol.Reference(child);
+				reference.parent = this;
+				this.children.push(reference);
 			}
 			return this;
 		}

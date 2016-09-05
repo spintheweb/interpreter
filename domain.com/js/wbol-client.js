@@ -26,6 +26,7 @@ var wbol;
         });
 
         wbol.on('page', function(page) {
+            document.querySelector('html').setAttribute('id', page.id);
             document.querySelector('html').setAttribute('lang', page.lang);
             document.querySelector('title').innerHTML = page.name;
         });
@@ -38,8 +39,7 @@ var wbol;
             if (section && content.body) {
                 article = document.createElement('article');
                 article.setAttribute('id', content.id);
-                if (content.cssClass) 
-                    article.setAttribute('class', content.cssClass);
+                if (content.cssClass) article.setAttribute('class', content.cssClass);
                 article.setAttribute('data-seq', content.sequence);
                 article.setAttribute('data-ref', content.section.toString() + Math.floor(content.sequence).toString());
                 article.innerHTML = content.body;
@@ -57,7 +57,7 @@ var wbol;
             script.text = content.body;
             document.body.appendChild(script);
         });
-        wbol.on('cleanup', function(data) {
+        wbol.on('wrapup', function(data) {
             var articles = document.querySelectorAll('article[data-ref]');
             for (var i = 0; i < articles.length; ++i) {
                 if (data.emitted.indexOf(articles[i].getAttribute('data-ref')) === -1)

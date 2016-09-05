@@ -1,29 +1,29 @@
 /*!
- * app
+ * webbase
  * Copyright(c) 2016 Giancarlo Trevisan
  * MIT Licensed
  */
 'use strict';
 
-// Creates default app programmatically
+// Creates default webbase programmatically
 module.exports = (wbol, name) => {
-	var app = {}, area, page, mainmenu;
+	var web = {}, area, page, mainmenu;
 
-	app = new wbol.App(name);
-	app.add(mainmenu = new wbol.Menu('Main menù')
+	web = new wbol.Document(name);
+	web.add(mainmenu = new wbol.Menu('Main menù')
 		.grant('guests', wbol.wbolAC.read)
 		.section('header')); // Shared content
-	app.add(new wbol.Text('Copyright', '<span>(c) 2016 Giancarlo Trevisan</span><span style="float:right">Spin the Web&trade;</span>')
+	web.add(new wbol.Text('Copyright', '<span>(c) 2016 Giancarlo Trevisan</span><span style="float:right">Spin the Web&trade;</span>')
 		.grant('guests', wbol.wbolAC.read)
 		.section('footer')
 		.cssClass('wbolText')); // Shared content
-	app.add(new wbol.Breadcrumbs()
+	web.add(new wbol.Breadcrumbs()
 			.grant('guests', wbol.wbolAC.read)
 			.sequence(1).section('main'));
-	area = new wbol.Area('Private');
-	app.add(area);
+	area = new wbol.Chapter('Private');
+	web.add(area);
 	page = new wbol.Page('Home');
-	app.mainpage(page);
+	web.mainpage(page);
 	page.add(new wbol.Form('Login', () => {
 			l('User');
 			e(null, 'user');
@@ -41,11 +41,11 @@ module.exports = (wbol, name) => {
 				.grant('guests', wbol.wbolAC.none))
 			.add(new wbol.Keypad('Keypad', '123\n456\n789\n*0#'))
 			);
-	app.add(page)
+	web.add(page)
 		.add(new wbol.Page('About us'))
 		.add(new wbol.Page('Products').grant('guests', wbol.wbolAC.read)
 			.add(new wbol.Tree('Webbase', 'webbase')
-				.section('main').sequence(2))
+				.section('sidebar').sequence(2))
 			.add(new wbol.Text('Override shared', 'This content overrides the shared footer')
 				.section('footer').sequence(1)))
 		.add(new wbol.Page('Profile')
@@ -55,8 +55,8 @@ module.exports = (wbol, name) => {
 			.add(new wbol.Script('Code', 'alert("Welcome from SpinTheWeb!");'))
 		);
 	mainmenu.add(new wbol.Text('Option', '<img src="/media/logo-bw_64x64.png" alt="Logo SpinTheWeb">'));
-	mainmenu.add(app);
+	mainmenu.add(web);
 //	mainmenu.add(new wbol.Calendar());
 	
-	return app;
+	return web;
 };

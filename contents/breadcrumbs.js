@@ -12,7 +12,7 @@ module.exports = (wbol) => {
 				var path = [], slug = '', parent = this.parent;
 				
 				// Shared content, parent refers to the session pathname
-				if (parent instanceof wbol.Area)
+				if (parent instanceof wbol.Chapter)
 					parent = wbol.webbase.route(res.url.pathname);
 				
 				// Walk up to top element

@@ -17,7 +17,7 @@ module.exports = (wbol) => {
 			return super.render(req, res, () => {
 				var fragment = '<ul class="wbolBody">';
 				if (this.template() === 'webbase') {
-					_render(wbol.webbase.app);
+					_render(wbol.webbase.document);
 				} else {
 					this.data.forEach(function(row, i) {
 						// TODO: render template recursively

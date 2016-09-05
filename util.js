@@ -36,3 +36,9 @@ module.exports.localize = (langs, txts) => {
             return txts[langs[0]];
     }
 };
+
+// if (this._contentType.startsWith('text'))
+// 	// TODO: Replace data variables ${variable}
+// 	data = data.toString().replace(/\${\s*(\$?[_a-zA-Z0-9]+)\s*}/gm, (match, p1) => {
+// 		return { lang: wbol.lang(), name: this.name() }[p1] || '';
+// 	});
