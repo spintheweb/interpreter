@@ -6,12 +6,13 @@
 'use strict';
 
 // Generate a psudo id
+// TODO: what if simply an incrementer?
 module.exports.newId = () => {
     return new Date().getTime() + Math.random();
 };
 
 // Return langs RFC 3282 as a language array sorted by preference
-module.exports.acceptLanguage = (langs) => {
+module.exports.acceptLanguage = langs => {
     const pattern = /([a-z][a-z](-[a-z][a-z])?|\*)(;q=([01](\.[0-9]+)?))?/gi;
     var match, accept = '';
     while (match = pattern.exec(langs)) {
@@ -21,19 +22,19 @@ module.exports.acceptLanguage = (langs) => {
     return JSON.parse(accept + ']').sort((a, b) => a.q < b.q).map(a => a.l);
 };
 
-// Pick the preferred language translation
-module.exports.localize = (langs, txts) => {
+// Pick the preferred localized text, if pick is true return the picked locale
+module.exports.localize = (langs, txts, pick) => {
     var _langs = Object.keys(txts);
     switch (_langs.length) {
         case 0:
             return null;
         case 1:
-            return txts[_langs[0]];
+            return pick ? _langs[0] : txts[_langs[0]];
         default:
             for (let lang of langs)
                 if (txts[lang]) 
-                    return txts[lang];
-            return txts[langs[0]];
+                    return pick ? lang : txts[lang];
+            return pick ? langs[0] : txts[langs[0]];
     }
 };
 

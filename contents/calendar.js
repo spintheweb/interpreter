@@ -5,7 +5,7 @@
  */
 'use strict';
 
-module.exports = (wbol) => {
+module.exports = wbol => {
 	wbol.Calendar = class Calendar extends wbol.Content {
 		render(req, res) {
 			return super.render(req, res, () => {

@@ -5,8 +5,13 @@
  */
 'use strict';
 
-module.exports = (wbol) => {
+module.exports = wbol => {
 	wbol.Script = class Script extends wbol.Content {
+		constructor(name, template) {
+			super(name, template || '');
+			this._cssClass = 'clientside'; // clientside || serverside
+		}
+		
 		render(req, res) {
 			var fragment;
 			if (this.granted()) {

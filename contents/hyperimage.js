@@ -5,6 +5,6 @@
  */
 'use strict';
 
-module.exports = (wbol) => {
+module.exports = wbol => {
 	wbol.HyperImage = class HyperImage extends wbol.Content {};
 };

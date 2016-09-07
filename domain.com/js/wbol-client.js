@@ -27,8 +27,8 @@ var wbol;
 
         wbol.on('page', function(page) {
             document.querySelector('html').setAttribute('id', page.id);
-            document.querySelector('html').setAttribute('lang', page.lang);
             document.querySelector('title').innerHTML = page.name;
+            document.querySelector('title').setAttribute('lang', page.lang);
         });
         wbol.on('content', function(content) {
             var article = document.querySelector('article[data-ref=' + content.section.toString() + Math.floor(content.sequence).toString() + ']');

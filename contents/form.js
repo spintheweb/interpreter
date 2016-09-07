@@ -5,7 +5,7 @@
  */
 'use strict';
 
-module.exports = (wbol) => {
+module.exports = wbol => {
 	wbol.Form = class Form extends wbol.Content {
 		render(req, res) {
 			return super.render(req, res, () => {

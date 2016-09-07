@@ -5,7 +5,7 @@
  */
 'use strict';
 
-module.exports = (wbol) => {
+module.exports = wbol => {
 	wbol.Tree = class Tree extends wbol.Content {
 		constructor (name, template) {
 			super(name, template);
