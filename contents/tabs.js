@@ -1,14 +1,15 @@
 /*!
  * tabs
- * Copyright(c) 2016 Giancarlo Trevisan
+ * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
 'use strict';
 
-module.exports = wbol => {
+module.exports = (wbol) => {
 	wbol.Tabs = class Tabs extends wbol.Content {
 		constructor (name, template) {
 			super(name, template);
+			this._category = wbol.wbolContentCategory.ORGANIZATIONAL;
 			
 			// Code executed by the client in order to manage the content
 			this.manage = function (id) {

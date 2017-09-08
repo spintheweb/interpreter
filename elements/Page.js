@@ -1,6 +1,6 @@
 /*!
  * Page
- * Copyright(c) 2016 Giancarlo Trevisan
+ * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
 'use strict';
@@ -11,8 +11,8 @@ const url = require('url'),
 	xmldom = require('xmldom').DOMParser, // Persist webbase in XML
 	util = require('../util');
 
-module.exports = wbol => {
-	wbol.Page = class Page extends wbol.wbolCore {
+module.exports = (webspinner) => {
+	webspinner.Page = class Page extends webspinner.wbolCore {
 		constructor(name, template) { // TODO: How is the page template handled? Reloading a page breaks the socket connection! Can the connection be reestablished?
 			super(name);
 			this._contentType = 'text/html';
@@ -33,7 +33,7 @@ module.exports = wbol => {
 		}
 
 		render(req, res) {
-			fs.readFile(`${wbol.webbase.settings.static}/${this.template()}`, (err, data) => {
+			fs.readFile(`${webspinner.webbase.settings.static}/${this.template()}`, (err, data) => {
 				if (typeof res === 'object' && res.constructor.name === 'ServerResponse') {
 					if (err) {
 						res.writeHead(302); // Not found
@@ -46,17 +46,17 @@ module.exports = wbol => {
 					res.emit('page', { url: this.slug(), contentType: this.contentType(), body: data.toString() });
 			});
 		}
-		persist() {
+		write() {
 			var fragment = '';
 			
-			if (!(this instanceof wbol.Content))
+			if (!(this instanceof webspinner.Content))
 				fragment = `<page id="P${this.id}" guid="${this.guid}" lastmod="${this.lastmod}" template="${this._template}"`;
 
 			fragment += '>\n';
 
-			fragment += super.persist();
+			fragment += super.write();
 
-			if (!(this instanceof wbol.Content))
+			if (!(this instanceof webspinner.Content))
 				fragment += '</page>';
 			
 			return fragment;

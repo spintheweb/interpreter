@@ -1,6 +1,6 @@
 /*!
  * wbol-client.js
- * Copyright(c) 2016 Giancarlo Trevisan
+ * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
 

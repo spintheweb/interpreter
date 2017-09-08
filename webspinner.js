@@ -1,6 +1,6 @@
 /*!
- * wbol
- * Copyright(c) 2016 Giancarlo Trevisan
+ * webspinner
+ * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
 'use strict';
@@ -8,31 +8,33 @@
 const url = require('url'),
 	fs = require('fs'),
 	io = require('socket.io'),
+	crypto = require('crypto'),
 	xmldom = require('xmldom').DOMParser, // Persist webbase in XML
 	util = require('./util');
 
 /*
 NOTES
 1. Sockets allow JIT pushes, a page request pushes contents in a particular page
-2. Asynchronicity is necessary only during file and data retrival, all other wbol task are CPU dependent.
+2. Asynchronicity is necessary only during file and data retrival, all other webspinner task are CPU dependent.
 3. Individual contents may be rendered in parallel.
 4. Regarding multilingual objects, there is no need to consider language preferences if there is only a language available
 5. Socket namespace ide?
 6. Session management?
 */
-module.exports = (wbol => {
-	wbol.webbase = {};
+module.exports = ((webspinner) => {
+	webspinner.webbase = {};
 	
-	// WBOL elements
-	['wbolCore', 'Chapter', 'Document', 'Page', 'Content', 'Reference']
-		.forEach(element => { require(`./elements/${element}.js`)(wbol); });
+	// Require WBOL elements
+	['wbolCore', 'Chapter', 'Book', 'Page', 'Content', 'Reference']
+		.forEach(element => { require(`./elements/${element}.js`)(webspinner); });
 
-	// WBOL contents
+	// Require WBOL contents
+	webspinner.wbolContentCategory = { SENSORIAL: 1, NAVIGATIONAL: 2, ORGANIZATIONAL: 3, SPECIAL: 4 };
 	fs.readdirSync('./contents')
-		.forEach(content => { require(`./contents/${content}`)(wbol); });
+		.forEach(content => { require(`./contents/${content}`)(webspinner); });
 
-	// Roled Based Access Control permissions
-	wbol.wbolAC = {
+	// Enum WBOL Roled Based Access Control permissions
+	webspinner.wbolAC = {
 		none: 0,
 		read: 1,
 		write: 2,
@@ -43,7 +45,7 @@ module.exports = (wbol => {
 		constructor() {
 			this.guid = null;
 			this.id = util.newId();
-			this.key = 'Encryption key';
+			this.cipher = crypto.createCipher('aes192', 'Type a passphrase');
 			this.lang = 'en'; // Webbase default language
 			this.roles = {
 				administrators: {
@@ -64,8 +66,8 @@ module.exports = (wbol => {
 				webmasters: {
 					enabled: false
 				} // Add data
-	}; // Predefined roles
-			this.users = { // TODO: Hash user password
+			}; // Predefined roles
+			this.users = {
 				guest: {
 					name: 'Guest',
 					enabled: true,
@@ -73,68 +75,86 @@ module.exports = (wbol => {
 				},
 				administrator: {
 					name: 'Administrator',
-					password: 'password',
+					password: this.cipher.update('password', 'utf8', 'hex'),
 					enabled: true,
 					roles: ['administrators']
 				}
 			}; // Predefined users
 			this.datasources = {
-				webbase: wbol.webbase,
+				webbase: webspinner.webbase,
 				json: '',
 				xml: '',
 				csv: ''
 			}; // Predefined datasources
-			this.document = {};
+			this.book = {};
 
 			this.settings = {};
 			this.sockets = {};
 			this.socket = { 
-				lang: wbol.webbase.lang, 
+				lang: webspinner.webbase.lang, 
 				user: 'guest' 
 			};
 
-			wbol.webbase = this;
-			wbol.lang = top => {
-				if (top && wbol.webbase.socket.lang)
-					return wbol.webbase.socket.lang[0];
-				return wbol.webbase.socket.lang || wbol.webbase.lang;
+			webspinner.webbase = this;
+			webspinner.lang = (main) => {
+				if (main && webspinner.webbase.socket.lang)
+					return webspinner.webbase.socket.lang[0];
+				return webspinner.webbase.socket.lang || webspinner.webbase.lang;
 			};
-			wbol.user = () => {
-				return wbol.webbase.socket.user || 'guest';
+			webspinner.user = () => {
+				return webspinner.webbase.socket.user || 'guest';
 			};
 		}
-		role() {}
-		user() {}
+		// NOTE: Role management is allowed only to the administrators role
+		role(name, enabled) {
+			if (this.users[webspinner.user()].roles.indexOf('administrators') !== -1)
+				return -1;
+			if (!this.roles[name])
+				this.roles[name] = {};
+			this.roles[name].enabled = (enabled || name === 'administrators' || name === 'guests') ? true : false;
+			return 0;
+		}
+		// NOTE: The administrators role can change any password
+		user(name, password, newpassword, enabled) {
+			if (!this.users[name] && this.users[webspinner.user()].roles.indexOf('administrators') !== -1)
+				this.users[name] = {};
+			else if (this.users[name].password !== password && this.users[webspinner.user()].roles.indexOf('administrators') !== -1)
+				return -1;
+			else if (name === webspinner.user() && this.users[name].password !== password)
+				return -2;
+			this.users[name].password = newpassword;
+			return 0;
+		}
 		datasource() {}
 		
-		// Bootstrap, load webbase in memory and open duplexed websocket channel
+		// Bootstrap, load webbase in memory and open websocket channel
 		listen(server) {
 			server.addListener('request', (req, res) => {
 				// Load webbase
 				var hostname = url.parse(req.url).hostname || 'domain.com';
-				if (!(wbol.webbase.document instanceof wbol.Document) || wbol.webbase.document.name() !== hostname) {
+				if (!(webspinner.webbase.book instanceof webspinner.Book) || webspinner.webbase.book.name() !== hostname) {
 					try {
 						fs.statSync(`${__dirname}/${hostname}/data/webbase.xml`);
-						wbol.webbase.import();
+						webspinner.webbase.import();
 					} catch (ex) {
-						console.log(`Create webbase for ${hostname}...`);
+						console.log(`Load webbase for ${hostname}...`);
 						
-						wbol.webbase.lang = (util.acceptLanguage(req.headers['accept-language'] + ',en;q=0.1'))[0];
-						wbol.webbase.document = require('./webbase')(wbol, hostname);
-						wbol.webbase.settings.static = `${__dirname}/${hostname}`;
+						webspinner.webbase.lang = (util.acceptLanguage(req.headers['accept-language'] + ',en;q=0.1'))[0];
+						webspinner.webbase.book = require('./webbase')(webspinner, hostname);
+						webspinner.webbase.settings.static = `${__dirname}/${hostname}`;
 						
-						// TODO: Create directory by copying the default domain.com to ${wbol.webbase.settings.static}
-//						fs.mkdirSync(`${wbol.webbase.settings.static}/data`);
-//						wbol.webbase.export(`${wbol.webbase.settings.static}/data/webbase.xml`);
+						// TODO: Create directory by copying the default domain.com to ${webspinner.webbase.settings.static}
+//						fs.mkdirSync(`${webspinner.webbase.settings.static}/data`);
+//						webspinner.webbase.export(`${webspinner.webbase.settings.static}/data/webbase.xml`);
 					}
 				}
 				
-				wbol.webbase.render(req, res);
+				webspinner.webbase.render(req, res);
 			});
 			
 			var listener = io.listen(server);
 			listener.sockets.on('connection', socket => {
-				wbol.webbase.sockets[socket.id] = socket;
+				webspinner.webbase.sockets[socket.id] = socket;
 				
 				socket.user = 'guest';
 				socket.lang = util.acceptLanguage(socket.handshake.headers['accept-language']);
@@ -150,7 +170,7 @@ module.exports = (wbol => {
 					return false;
 				});
 				socket.on('disconnect', () => {
-					delete wbol.webbase.sockets[socket.id];
+					delete webspinner.webbase.sockets[socket.id];
 				});
 				
 				// Rendering
@@ -158,25 +178,25 @@ module.exports = (wbol => {
 					if (typeof URL !== 'object') 
 						URL = url.parse(URL);
 					
-					wbol.webbase.socket = socket;
+					webspinner.webbase.socket = socket;
 					socket.url = URL;
 
 					// Server restarted, emit page reload
-					if (this.document.constructor.name === 'Object') {
+					if (this.book.constructor.name === 'Object') {
 						socket.emit('reload', { url: URL });
 						return;
 					}
 
 					var element = this.route(URL.pathname), emitted = [];
-					if (element instanceof wbol.Page) {
-						socket.emit('page', { id: element.id, lang: wbol.lang(), name: element.name() });
+					if (element instanceof webspinner.Page) {
+						socket.emit('page', { id: element.id, lang: webspinner.lang(), name: element.name() });
 						for (var content of element.children)
 							_emit(content, true);
 							
 						_recurse(element.parent); // Walk up the webbase and show "shared" contents, shared contents are children of areas and are shared by the underlying pages.
 						
 						socket.emit('wrapup', { emitted: emitted });
-					} else if (element instanceof wbol.Content)
+					} else if (element instanceof webspinner.Content)
 						_emit(element, false);
 
 					// TODO: Render syblings if requested, syblings are contents in the same section and with the same integer sequence (see rendering paradigm)
@@ -190,7 +210,7 @@ module.exports = (wbol => {
 						if (fragment !== '') {
 							emitted.push(content.section().toString() + Math.floor(content.sequence()));
 						
-							socket.emit(content instanceof wbol.Script ? 'script' : 'content', {
+							socket.emit(content instanceof webspinner.Script ? 'script' : 'content', {
 								id: content.id,
 								section: content.section(),
 								sequence: content.sequence(),
@@ -208,7 +228,7 @@ module.exports = (wbol => {
 					}
 					function _recurse(element) {
 						for (var content of element.children)
-							if (content instanceof wbol.Content)
+							if (content instanceof webspinner.Content)
 								_emit(content, true);
 						if (element.parent)
 							_recurse(element.parent, true);
@@ -219,7 +239,7 @@ module.exports = (wbol => {
 
 		// Determine the requested webbase element given the url
 		route(pathname) {
-			if (!pathname || pathname === '/') return this.document.mainpage();
+			if (!pathname || pathname === '/') return this.book.mainpage();
 			var levels = pathname.split('/');
 			var _route = (element, level) => {
 				for (let child of element.children)
@@ -227,9 +247,9 @@ module.exports = (wbol => {
 						if (++level !== levels.length) return _route(child, level);
 						return child;
 					}
-				return levels[level] === '' ? null : element.mainpage() || this.document.mainpage();
+				return levels[level] === '' ? null : element.mainpage() || this.book.mainpage();
 			};
-			return _route(this.document, 1);
+			return _route(this.book, 1);
 		}
 		render(req, res) {
 			if (req.method === 'GET') {
@@ -240,9 +260,9 @@ module.exports = (wbol => {
 						res.writeHead(200, { 'Content-Type': 'text/xml' }); // OK
 						res.end(this.sitemap());
 						return;
-					case '/persist.xml':
+					case '/webbase.xml':
 						res.writeHead(200, { 'Content-Type': 'text/xml' }); // OK
-						res.end(this.persist());
+						res.end(this.write());
 						return;
 				}
 
@@ -262,27 +282,27 @@ module.exports = (wbol => {
 			}
 		}
 
-		// Build a site map (see sitemaps.org) that includes the urls of the visible pages in the webbase.document 
+		// Build a site map (see sitemaps.org) that includes the urls of the visible pages in the book 
 		sitemap() {
 			var fragment = '';
-			_url(wbol.webbase.document);
+			_url(webspinner.webbase.book);
 			return `<?xml version="1.0" encoding="utf-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${fragment}</urlset>`;
 
 			function _url(element) {
-				if (element instanceof wbol.Chapter && element.children.length > 0)
+				if (element instanceof webspinner.Chapter && element.children.length > 0)
 					element.children.forEach(child => _url(child));
-				else if (element instanceof wbol.Page && !(element instanceof wbol.Content) && element.granted())
-					fragment += `<url><loc>${wbol.webbase.document.protocol()}://${wbol.webbase.document.name()}${element.slug(true)}</loc><lastmod>${element.lastmod}</lastmod><priority>0.5</priority></url>\n`;
+				else if (element instanceof webspinner.Page && !(element instanceof webspinner.Content) && element.granted())
+					fragment += `<url><loc>${webspinner.webbase.book.protocol()}://${webspinner.webbase.book.name()}${element.slug(true)}</loc><lastmod>${element.lastmod}</lastmod><priority>0.5</priority></url>\n`;
 			}
 		}
 		
 		// XML persistancy
-		persist(element) {
+		write(element) {
 			var fragment;
 			
 			fragment = '<?xml version="1.0" encoding="utf-8"?>\n';
-			fragment += '<wbol version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://spintheweb.org" xsi:schemaLocation="https://spintheweb.org/schemas wbol.xsd">\n';
-			fragment += `<!--Spin the Web (TM) Webbase. Generated ${(new Date()).toISOString()}-->\n`;
+			fragment += '<webspinner version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://webspinner.org" xsi:schemaLocation="https://webspinner.org/schemas webspinner.xsd">\n';
+			fragment += `<!--Spin the Web (TM) webbase generated ${(new Date()).toISOString()}-->\n`;
 
     		fragment += `<webbase id="W${this.id}" language="${this.lang}" guid="${this.guid}" key="${this.key}">\n`;
     		
@@ -302,14 +322,15 @@ module.exports = (wbol => {
 				fragment += `<datasource name="${datasource}"><![CDATA[${this.datasources[datasource]}]]></datasource>\n`;
 			fragment += '</datasources>\n';
 
-			(element || wbol.webbase.document).children.forEach(child => fragment += child.persist());
+			(element || webspinner.webbase.book).children.forEach(child => fragment += child.write());
 			
 			fragment += '</webbase>\n';
-			fragment += '</wbol>';
+			fragment += '</webspinner>';
 			
 			return fragment;
 		}
-		import (pathname) {}
+		load(pathname) {}
 	}
+
 	return new Webbase();
 })({});

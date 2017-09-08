@@ -1,62 +1,58 @@
 /*!
  * webbase
- * Copyright(c) 2016 Giancarlo Trevisan
+ * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
 'use strict';
 
-// Creates default webbase programmatically
-module.exports = (wbol, name) => {
-	var web = {}, area, page, mainmenu;
+/// Create default webbase programmatically
+// Note: shared contents are contents children of Chapters
+module.exports = (webspinner, name) => {
+	var book, chapter, page, mainmenu;
 
-	web = new wbol.Document(name);
-	web.add(mainmenu = new wbol.Menu('Main menù')
-		.grant('guests', wbol.wbolAC.read)
+	book = new webspinner.Book(name);
+	book.add(mainmenu = new webspinner.Menu('Main menu')
+		.grant('guests', webspinner.wbolAC.read)
 		.section('header')); // Shared content
-	web.add(new wbol.Text('Copyright', '<span>(c) 2016 Giancarlo Trevisan</span><span style="float:right">Spin the Web&trade;</span>')
-		.grant('guests', wbol.wbolAC.read)
+	book.add(new webspinner.Text('Copyright', '<span>&copy; 2017 Giancarlo Trevisan</span><span style="float:right">Spin the Web&trade;</span>')
+		.grant('guests', webspinner.wbolAC.read)
 		.section('footer')
 		.cssClass('wbolText')); // Shared content
-	web.add(new wbol.Breadcrumbs()
-			.grant('guests', wbol.wbolAC.read)
+	book.add(new webspinner.Breadcrumbs()
+			.grant('guests', webspinner.wbolAC.read)
 			.sequence(1).section('main'));
-	area = new wbol.Chapter('Private');
-	web.add(area);
-	page = new wbol.Page('Home');
-	web.mainpage(page);
-	page.add(new wbol.Form('Login', () => {
-			l('User');
-			e(null, 'user');
-			b(null);
-		}).sequence(2).section('main'))
-		.add(new wbol.Keypad()
-			.sequence(3).section('main')) // Alphabet keys
-		// .add(new wbol.Breadcrumbs()
+	chapter = new webspinner.Chapter('Private');
+	book.add(chapter);
+	page = new webspinner.Page('Home');
+	book.mainpage(page);
+	page.add(new webspinner.Form('A("http://www.domain.com").p().p("param1", "uno&s").p("#prot").f(); nl(); t("pippo", {style: "color: red"}); nl(); t("pluto", {style: "color: green"}); e();').sequence(2).section('main'))
+		.add(new webspinner.Keypad().sequence(3).section('main')) // Alphabet keys
+		// .add(new webspinner.Breadcrumbs()
 		// 	.sequence(1).section('main'))
-		.add(new wbol.Tabs('Tabs')
+		.add(new webspinner.Tabs('Tabs')
 			.sequence(5).section('main')
-			.add(new wbol.Chart('Pie'))
-			.add(new wbol.Calendar('Calendar'))
-			.add(new wbol.Text('Tab 2', 'This is Tab 2')
-				.grant('guests', wbol.wbolAC.none))
-			.add(new wbol.Keypad('Keypad', '123\n456\n789\n*0#'))
+			.add(new webspinner.Chart('Pie'))
+			.add(new webspinner.Calendar('Calendar'))
+			.add(new webspinner.Text('Tab 2', 'This is Tab 2')
+				.grant('guests', webspinner.wbolAC.none))
+			.add(new webspinner.Keypad('Keypad', '123\n456\n789\n*0#'))
 			);
-	web.add(page)
-		.add(new wbol.Page('About us'))
-		.add(new wbol.Page('Products').grant('guests', wbol.wbolAC.read)
-			.add(new wbol.Tree('Webbase', 'webbase')
+	book.add(page)
+		.add(new webspinner.Page('About us'))
+		.add(new webspinner.Page('Products').grant('guests', webspinner.wbolAC.read)
+			.add(new webspinner.Tree('Webbase', 'webbase')
 				.section('sidebar').sequence(2))
-			.add(new wbol.Text('Override shared', 'This content overrides the shared footer')
+			.add(new webspinner.Text('Override shared', 'This content overrides the shared footer')
 				.section('footer').sequence(1)))
-		.add(new wbol.Page('Profile')
-			.grant('guests', wbol.wbolAC.none))
-		.add(new wbol.Page('Contact us')
-			.grant('guests', wbol.wbolAC.read)
-			.add(new wbol.Script('Code', 'alert("Welcome from SpinTheWeb!");'))
+		.add(new webspinner.Page('Profile')
+			.grant('guests', webspinner.wbolAC.none))
+		.add(new webspinner.Page('Contact us')
+			.grant('guests', webspinner.wbolAC.read)
+			.add(new webspinner.Script('Code', 'alert("Welcome from webspinner!");'))
 		);
-	mainmenu.add(new wbol.Text('Option', '<img src="/media/logo-bw_64x64.png" alt="Logo SpinTheWeb">'));
-	mainmenu.add(web);
-//	mainmenu.add(new wbol.Calendar());
+	mainmenu.add(new webspinner.Text('Option', '<img src="/media/logo-bw_64x64.png" alt="Logo webspinner">'));
+	mainmenu.add(book);
+//	mainmenu.add(new webspinner.Calendar());
 	
-	return web;
+	return book;
 };

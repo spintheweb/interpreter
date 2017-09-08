@@ -1,11 +1,11 @@
 /*!
  * calendar
- * Copyright(c) 2016 Giancarlo Trevisan
+ * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
 'use strict';
 
-module.exports = wbol => {
+module.exports = (wbol) => {
 	wbol.Calendar = class Calendar extends wbol.Content {
 		render(req, res) {
 			return super.render(req, res, () => {

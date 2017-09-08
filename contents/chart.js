@@ -1,12 +1,12 @@
 /*!
  * chart
- * Copyright(c) 2016 Giancarlo Trevisan
+ * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
 'use strict';
 const xmldom = require('xmldom').DOMParser;
 
-module.exports = wbol => {
+module.exports = (wbol) => {
 	wbol.Chart = class Chart extends wbol.Content {
 	    render(req, res) {
 	        var document;

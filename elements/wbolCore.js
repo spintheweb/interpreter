@@ -1,6 +1,6 @@
 /*!
  * wbolCore
- * Copyright(c) 2016 Giancarlo Trevisan
+ * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
 'use strict';
@@ -8,11 +8,11 @@
 const url = require('url'),
 	fs = require('fs'),
 	io = require('socket.io'),
-	xmldom = require('xmldom').DOMParser, // Persist webbase in XML
+	xmldom = require('xmldom').DOMParser, // Used to read webbase.xml
 	util = require('../util');
 
-module.exports = wbol => {
-    wbol.wbolCore = class wbolCore {
+module.exports = (webspinner) => {
+    webspinner.wbolCore = class wbolCore {
 		constructor(name) {
 			this.guid = null;
 			this.id = util.newId();
@@ -25,15 +25,15 @@ module.exports = wbol => {
 			this.name(name || this.constructor.name); // NOTE: siblings may have identical names, however, the router will select the first
 		}
 		name(value) {
-			if (typeof value === 'undefined') return util.localize(wbol.lang(), this._name);
-			this._name[wbol.lang()] = value;
+			if (typeof value === 'undefined') return util.localize(webspinner.lang(), this._name);
+			this._name[webspinner.lang()] = value;
 			this.lastmod = (new Date()).toISOString();
 			return this;
 		}
 
 		// Grant a role an access control, if no access control is specified remove the role from the RBAC list.
 		grant(role, ac) {
-			if (wbol.webbase.roles[role]) {
+			if (webspinner.webbase.roles[role]) {
 				if (this.rbac[role] && !ac) delete this.rbac[role];
 				else this.rbac[role] = ac;
 				this.lastmod = (new Date()).toISOString();
@@ -43,26 +43,26 @@ module.exports = wbol => {
 		
 		// Return the highest access control associated to the given roles
 		granted() {
-			var roles = wbol.webbase.users[wbol.user()].roles;
-			if (this instanceof wbol.Page && wbol.webbase.document.mainpage() === this) return wbol.wbolAC.read; // Main web page always visible
+			var roles = webspinner.webbase.users[webspinner.user()].roles;
+			if (this instanceof webspinner.Page && webspinner.webbase.book.mainpage() === this) return webspinner.wbolAC.read; // Main web page always visible
 			var ac = null;
 			for (let i = 0; i < roles.length; ++i) {
 				let role = roles[i];
-				if (this.rbac[role] === wbol.wbolAC.execute) return wbol.wbolAC.execute;
+				if (this.rbac[role] === webspinner.wbolAC.execute) return webspinner.wbolAC.execute;
 				ac = Math.max(ac, this.rbac[role]);
 			}
 			if (isNaN(ac) || ac === null)
 				if (this.parent) 
 					ac = this.parent.granted();
-				else if (this instanceof wbol.Content) 
-					ac = wbol.wbolAC.read; // NOTE: this is a content without a parent nor a RBAC, it's in limbo! Contents referenced by Copycats
+				else if (this instanceof webspinner.Content) 
+					ac = webspinner.wbolAC.read; // NOTE: this is a content without a parent nor a RBAC, it's in limbo! Contents referenced by Copycats
 			return ac;
 		}
 		
 		// Add child to element, note, we are adding a child not moving it
 		add(child) {
-			if (child && this.children.indexOf(child) === -1) {
-				if (child.parent) child = new wbol.Reference(child);
+			if (child && child !== this && this.children.indexOf(child) === -1) {
+				if (child.parent) child = new webspinner.Reference(child);
 				child.parent = this;
 				this.children.push(child);
 				this.lastmod = (new Date()).toISOString();
@@ -70,14 +70,14 @@ module.exports = wbol => {
 			return this;
 		}
 		
-		// Deep copy element, note, the web is not clonable, use export instead
+		// Deep copy element, note, the web is not clonable, use write() instead
 		clone() {
 			let obj;
-			if (this instanceof wbol.Chapter) {
-				obj = new wbol.Chapter();
-			} else if (this instanceof wbol.Page) {
-				obj = new wbol.Page();
-			} else if (this instanceof wbol.Content) {
+			if (this instanceof webspinner.Chapter) {
+				obj = new webspinner.Chapter();
+			} else if (this instanceof webspinner.Page) {
+				obj = new webspinner.Page();
+			} else if (this instanceof webspinner.Content) {
 				obj = new this.constructor();
 			}
 			return obj;
@@ -88,7 +88,8 @@ module.exports = wbol => {
 			if (this !== parent) {
 				var i = this.parent.children.indexOf(this);
 				if (i !== -1) this.parent.children.splice(i, 1);
-				if (parent) parent.children.push(this);
+				if (parent) 
+					parent.children.push(this);
 				else {
 					// TODO: remove shortcuts, visit all elements in the webbase
 					delete this;
@@ -99,19 +100,19 @@ module.exports = wbol => {
 			this.move();
 		}
 
-		// Semantic URL based on element name and language
+		// Semantic URL based on element name and active language
 		slug(full) {
 			if (full) return _slug(this);
 			return this.name().replace(/\s+/g, '-').toLowerCase(); // TODO: retain only [a-z0-9-]
 			
 			function _slug(element) {
-				if (element instanceof wbol.Document)
+				if (element instanceof webspinner.Document)
 					return '';
 				return _slug(element.parent) + '/' + element.name().replace(/\s+/g, '-').toLowerCase();
 			}
 		}
 		
-		persist() {
+		write() {
 			var fragment;
 			
 			fragment = '<name>\n';
@@ -121,14 +122,14 @@ module.exports = wbol => {
 
 			if (this.children.length > 0) { 
 				fragment += '<children>\n';
-				this.children.forEach(child => fragment += child.persist());
+				this.children.forEach(child => fragment += child.write());
 				fragment += '</children>\n';
 			}
 
 			if (Object.keys(this.rbac).length > 0) {
 				fragment += '<authorizations>\n';
 				for (var role in this.rbac)
-					fragment += `<authorize role="${role}" permission="${this.rbac[role]}"/>\n`;
+					fragment += `<authorize role="${role}" permission="${['-', 'r', 'w', 'x'][this.rbac[role]]}"/>\n`;
 				fragment += '</authorizations>\n';
 			}
 			

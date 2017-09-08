@@ -1,6 +1,6 @@
 /*!
- * Document
- * Copyright(c) 2016 Giancarlo Trevisan
+ * Book
+ * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
 'use strict';
@@ -11,8 +11,8 @@ const url = require('url'),
 	xmldom = require('xmldom').DOMParser, // Persist webbase in XML
 	util = require('../util');
 
-module.exports = wbol => {
-	wbol.Document = class Document extends wbol.Chapter {
+module.exports = (webspinner) => {
+	webspinner.Book = class Book extends webspinner.Chapter {
 		constructor(name) {
 			super(name);
 			this._protocol = 'http';
@@ -32,14 +32,14 @@ module.exports = wbol => {
 			return this;
 		}
 
-		persist() {
+		write() {
 			var fragment;
 			
-			fragment = `<document id="D${this.id}" guid="${this.guid}" lastmod="${this.lastmod}"`;
+			fragment = `<book id="D${this.id}" guid="${this.guid}" lastmod="${this.lastmod}"`;
 			
-			fragment += super.persist();
+			fragment += super.write();
 
-			fragment += '</document>\n';
+			fragment += '</book>\n';
 			
 			return fragment;
 		}

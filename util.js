@@ -1,6 +1,6 @@
 /*!
  * util
- * Copyright(c) 2016 Giancarlo Trevisan
+ * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
 'use strict';
@@ -12,7 +12,7 @@ module.exports.newId = () => {
 };
 
 // Return langs RFC 3282 as a language array sorted by preference
-module.exports.acceptLanguage = langs => {
+module.exports.acceptLanguage = (langs) => {
     const pattern = /([a-z][a-z](-[a-z][a-z])?|\*)(;q=([01](\.[0-9]+)?))?/gi;
     var match, accept = '';
     while (match = pattern.exec(langs)) {

@@ -1,11 +1,11 @@
 /*!
  * tree
- * Copyright(c) 2016 Giancarlo Trevisan
+ * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
 'use strict';
 
-module.exports = wbol => {
+module.exports = (wbol) => {
 	wbol.Tree = class Tree extends wbol.Content {
 		constructor (name, template) {
 			super(name, template);

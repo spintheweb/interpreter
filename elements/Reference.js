@@ -1,12 +1,12 @@
 /*!
  * Reference
- * Copyright(c) 2016 Giancarlo Trevisan
+ * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
 'use strict';
 
 // A wbol.Reference is pointer to a wbol.Content
-module.exports = wbol => {
+module.exports = (wbol) => {
 	wbol.Reference = class Reference extends wbol.Content {
 		constructor(related) {
 			super(related.name());
@@ -18,12 +18,12 @@ module.exports = wbol => {
 			if (this.granted())
 				return this.ref.render(req, res);
 		}
-		persist() {
+		write() {
 			var fragment;
 			
 			fragment = `<content id="R${this.id}" guid="${this.guid}" lastmod="${this.lastmod}" type="${this.constructor.name}" ref="${this.ref.id}"`;
 			
-			fragment += super.persist();
+			fragment += super.write();
 
 			fragment += '</content>\n';
 			
