@@ -106,7 +106,7 @@ module.exports = (webspinner) => {
 			return this.name().replace(/\s+/g, '-').toLowerCase(); // TODO: retain only [a-z0-9-]
 			
 			function _slug(element) {
-				if (element instanceof webspinner.Document)
+				if (element instanceof webspinner.Book)
 					return '';
 				return _slug(element.parent) + '/' + element.name().replace(/\s+/g, '-').toLowerCase();
 			}

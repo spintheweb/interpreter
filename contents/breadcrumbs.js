@@ -9,7 +9,7 @@ module.exports = (wbol) => {
 	wbol.Breadcrumbs = class Breadcrumbs extends wbol.Content {
 		render(req, res) {
 			return super.render(req, res, (req, res) => {
-				var path = [], slug = '', parent = this.parent;
+				let path = [], slug = '', parent = this.parent;
 				
 				// Shared content, parent refers to the session pathname
 				if (parent instanceof wbol.Chapter)

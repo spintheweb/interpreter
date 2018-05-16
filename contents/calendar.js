@@ -27,7 +27,7 @@ module.exports = (wbol) => {
 				for (var d = 0; d < 42; ++d) {
 					var cssDay = date.toDateString() === today.toDateString() ? 'wbolToday' : '';
 						
-					fragment += `<li class="wbolDay ${cssDay}" data-ref="${date}"><div>${date.getDate()}</div></li>${date.getDay() !== 6 ? '' : '<br>'}`;
+					fragment += `<li class="wbolDay ${cssDay}" data-ref="${new Date(date.setHours(0, 0, 0, 0)).toISOString().substr(0, 10)}"><div>${date.getDate()}</div></li>${date.getDay() !== 6 ? '' : '<br>'}`;
 					
 					var newDate = date.setDate(date.getDate() + 1);
 					date = new Date(newDate);

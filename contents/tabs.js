@@ -12,12 +12,12 @@ module.exports = (wbol) => {
 			this._category = wbol.wbolContentCategory.ORGANIZATIONAL;
 			
 			// Code executed by the client in order to manage the content
-			this.manage = function (id) {
-				var tabs = document.getElementById(id), tab = tabs.querySelectorAll('.wbolTabLabel');
-				for (var i = 0; i < tab.length; ++i) {
+			this.manage = (id) => {
+				let tabs = document.getElementById(id), tab = tabs.querySelectorAll('.wbolTabLabel');
+				for (let i = 0; i < tab.length; ++i) {
                     tab[i].addEventListener('click', event => {
-                    	for (var i = 0; i < tab.length; ++i) {
-                    		var selected = (event.target === tab[i]);
+                    	for (let i = 0; i < tab.length; ++i) {
+                    		let selected = (event.target === tab[i]);
                     		tab[i].classList[selected ? 'add' : 'remove']('wbolSelected');
                     		tabs.querySelector(`.wbolTab[data-ref="${tab[i].dataset.ref}"]`).hidden = !selected;
                     	}
@@ -27,12 +27,29 @@ module.exports = (wbol) => {
 			};
 		}
 		
+		react(event, callback) {
+			if (callback)
+				callback(event);
+
+			let target = event.currentTarget.closest('.wbolTabLabel');
+			if (event.type === 'click' && target) {
+				// Switch tab
+				let tabs = target.closest('ul').children;
+				tabs.forEach((tab, i) => {
+					if (tab.classList.contains('wbolTabLabel')) {
+            			tab.classList[(target === tab) ? 'add' : 'remove']('wbolSelected');
+            			tabs.children[2 * i + 1].hidden = (target !== tab);
+					}
+				});
+			}
+		}
+		
 		render(req, res) {
 			return super.render(req, res, () => {
-				var labels = '', tabs = '';
+				let labels = '', tabs = '';
 				this.children.forEach((tab, i) => {
 					if (tab.ref && tab.granted()) {
-						var fragment = tab.ref.render(req, res);
+						let fragment = tab.ref.render(req, res);
 						if (fragment) {
 							labels += `<li class="wbolTabLabel" data-ref="${i}">${tab.name()}</li>`;
 							tabs += `<li class="wbolTab" data-ref="${i}"><article id="${tab.ref.id}" lang="${wbol.lang()}" class="${tab.ref.cssClass()}">${fragment}</article></li>`;
@@ -44,7 +61,7 @@ module.exports = (wbol) => {
 		}
 		add(child, name) {
 			if (!(child instanceof wbol.Reference) && child instanceof wbol.Content) {
-				var reference = new wbol.Reference(child);
+				let reference = new wbol.Reference(child);
 				reference.parent = this;
 				this.children.push(reference);
 			}

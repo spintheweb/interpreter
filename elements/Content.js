@@ -99,6 +99,7 @@ module.exports = (webspinner) => {
 			return fragment;
 		}
 		renderRow(req, res) {
+			let fragment = '';
 			return '';
 		}
 

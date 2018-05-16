@@ -8,16 +8,17 @@
 /// Create default webbase programmatically
 // Note: shared contents are contents children of Chapters
 module.exports = (webspinner, name) => {
-	var book, chapter, page, mainmenu;
+	let book, chapter, page, mainmenu;
 
 	book = new webspinner.Book(name);
 	book.add(mainmenu = new webspinner.Menu('Main menu')
 		.grant('guests', webspinner.wbolAC.read)
 		.section('header')); // Shared content
-	book.add(new webspinner.Text('Copyright', '<span>&copy; 2017 Giancarlo Trevisan</span><span style="float:right">Spin the Web&trade;</span>')
+	book.add(new webspinner.Text('Copyright', `<span>&copy; ${new Date().getFullYear()} Giancarlo Trevisan</span><span style="float:right">Spin the Web&trade;</span>`)
 		.grant('guests', webspinner.wbolAC.read)
 		.section('footer')
 		.cssClass('wbolText')); // Shared content
+	
 	book.add(new webspinner.Breadcrumbs()
 			.grant('guests', webspinner.wbolAC.read)
 			.sequence(1).section('main'));

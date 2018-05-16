@@ -5,12 +5,12 @@
  */
 
 // TODO: Should be CDN delivered
-var wbol;
+let wbol;
 
 (function() {
     // Load remote script then call callback
     function loadScript(url, callback) {
-        var script = document.createElement('script');
+        let script = document.createElement('script');
         script.onload = callback;
         script.src = url;
         document.getElementsByTagName('head')[0].appendChild(script);
@@ -31,11 +31,11 @@ var wbol;
             document.querySelector('title').setAttribute('lang', page.lang);
         });
         wbol.on('content', function(content) {
-            var article = document.querySelector('article[data-ref=' + content.section.toString() + Math.floor(content.sequence).toString() + ']');
+            let article = document.querySelector('article[data-ref=' + content.section.toString() + Math.floor(content.sequence).toString() + ']');
             if (article)
                 article.parentElement.removeChild(article);
 
-            var section = document.getElementById(content.section);
+            let section = document.getElementById(content.section);
             if (section && content.body) {
                 article = document.createElement('article');
                 article.setAttribute('id', content.id);
@@ -44,12 +44,13 @@ var wbol;
                 article.setAttribute('data-ref', content.section.toString() + Math.floor(content.sequence).toString());
                 article.innerHTML = content.body;
                 
-                for (var i = 0; i < section.children.length && Math.floor(section.children[i].dataset.seq) < content.sequence; ++i);
+                let i = 0;
+                for (; i < section.children.length && Math.floor(section.children[i].dataset.seq) < content.sequence; ++i);
                 section.insertBefore(article, section.children[i] || null);
             }
         });
         wbol.on('script', function(content) {
-            var script = document.getElementById(content.id);
+            let script = document.getElementById(content.id);
             if (script)
                 script.parentElement.removeChild(script);
             script = document.createElement('script');
@@ -58,8 +59,8 @@ var wbol;
             document.body.appendChild(script);
         });
         wbol.on('wrapup', function(data) {
-            var articles = document.querySelectorAll('article[data-ref]');
-            for (var i = 0; i < articles.length; ++i) {
+            let articles = document.querySelectorAll('article[data-ref]');
+            for (let i = 0; i < articles.length; ++i) {
                 if (data.emitted.indexOf(articles[i].getAttribute('data-ref')) === -1)
                     articles[i].parentElement.removeChild(articles[i]);
             }

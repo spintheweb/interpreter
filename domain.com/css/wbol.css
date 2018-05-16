@@ -5,15 +5,20 @@
  */
 
 /* TODO: Should be CDN delivered, the content dependent selectors should be placed in separate css files, this file should be the result of a merge */
- 
-/* Special color: #fe7d00 */
+
+@import "//use.fontawesome.com/releases/v5.0.9/css/solid.css";
+@import "//use.fontawesome.com/releases/v5.0.9/css/regular.css";
+@import "//use.fontawesome.com/releases/v5.0.9/css/fontawesome.css";
+
+:root { --special: #fe7d00; } 
+
 a {color:inherit; text-decoration:none;}
 
 .wbolError {background-color:#ff0000; color:#ffffff;}
 .wbolContent {position:relative; padding:1em 0;}
-.wbolSelected {background-color:#fe7d00 !important; color:#ffffff !important; border-color:#fe7d00 !important;}
+.wbolSelected {background-color:var(--special) !important; color:#ffffff !important; border-color:var(--special) !important;}
 
-.wbolCaption {color:#fe7d00;}
+.wbolCaption {color:var(--special);}
 .wbolHeader {}
 .wbolFooter {}
 .wbolPager {}
@@ -32,7 +37,7 @@ a {color:inherit; text-decoration:none;}
 .wbolTab {position:relative; border:1px solid #f0f0f0; padding:0.5em;}
 
 .wbolKeypad ul {list-style-type:none; margin:0; padding:0;}
-.wbolKeypad li {display:inline-block; padding:0.5em; border:1px solid #f0f0f0; border-radius:0.5em; min-width:1em; margin:0.25em; text-align:center; cursor:pointer;}
+.wbolKeypad li {display:inline-block; padding:0.5em; border:1px solid #f0f0f0; border-radius:0.5em; min-width:2em; margin:0.25em; text-align:center; cursor:pointer;}
 .wbolKeypad li:hover {background-color:#f0f0f0; color:#000000;}
 
 .wbolBreadcrumbs a {text-transform:lowercase; padding:0.25em; border-radius:0.25em; cursor:pointer;}
@@ -47,13 +52,13 @@ a {color:inherit; text-decoration:none;}
 .wbolTree li {padding:0.5em 0 0 0; cursor:pointer;}
 
 .wbolCalendar ul {list-style-type:none; margin:0em; padding:0;}
-.wbolCalendar li {display:inline-block; padding:0.5em; min-width:2em; margin:0; text-align:center;}
-.wbolWeekday {color:#fe7d00; border-top:2px solid #f0f0f0;}
+.wbolCalendar li {display:inline-block; padding:0.5em; min-width:3em; text-align:center;}
+.wbolWeekday {color:var(--special); border-top:2px solid #f0f0f0;}
 .wbolWeedday > div {font-size:0.50em;}
 .wbolDay {cursor:pointer; border-top:1px solid #f0f0f0;}
 .wbolDay > div {font-size:1.20em; padding:0.05em; border:1px solid transparent; border-radius:1.20em;}
 .wbolDay:hover {background-color:#f0f0f0; color:#000000;}
-.wbolToday > div {border-color:#fe7d00;}
+.wbolToday > div {border-color:var(--special);}
 
 .wbolChart svg {margin: 1em;}
 .wbolChart circle, .wbolChart path {stroke: #DDD; stroke-width: 1; fill: #FFF;}

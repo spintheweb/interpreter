@@ -35,7 +35,7 @@ module.exports = (webspinner) => {
 		write() {
 			var fragment = '';
 			
-			if (!(this instanceof webspinner.Document))
+			if (!(this instanceof webspinner.Book))
 				fragment = `<chapter id="A${this.id}" guid="${this.guid}" lastmod="${this.lastmod}"`;
 
 			if (this._mainpage) fragment += ` mainpage="${this._mainpage.id}"`; 
@@ -44,7 +44,7 @@ module.exports = (webspinner) => {
 			
 			fragment += super.write();
 			
-			if (!(this instanceof webspinner.Document))
+			if (!(this instanceof webspinner.Book))
 				fragment += '</chapter>\n';
 
 			return fragment;

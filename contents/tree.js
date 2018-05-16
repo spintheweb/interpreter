@@ -10,14 +10,14 @@ module.exports = (wbol) => {
 		constructor (name, template) {
 			super(name, template);
 			
-			// Code executed by the client in orther to manage the content
+			// Code executed by the client in order to manage the content
 			this.manage = null;
 		}
 		render(req, res) {
 			return super.render(req, res, () => {
 				var fragment = '<ul class="wbolBody">';
 				if (this.template() === 'webbase') {
-					_render(wbol.webbase.document);
+					_render(wbol.webbase.book);
 				} else {
 					this.data.forEach(function(row, i) {
 						// TODO: render template recursively
@@ -26,7 +26,7 @@ module.exports = (wbol) => {
 				}
 				return fragment + '</ul>';
 
-				function _render (element) {
+				function _render(element) {
 					if (!(element instanceof wbol.Content) && element.children.length > 0) {
 						fragment += `<li class="wbol${element.constructor.name} wbolAC${element.granted()}" data-ref="${element.id}" title="${element.slug(true)}">${element.name()}<ul>`;
 						element.children.forEach(child => _render(child));

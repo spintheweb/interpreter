@@ -131,7 +131,7 @@ module.exports = ((webspinner) => {
 		listen(server) {
 			server.addListener('request', (req, res) => {
 				// Load webbase
-				var hostname = url.parse(req.url).hostname || 'domain.com';
+				let hostname = url.parse(req.url).hostname || 'domain.com';
 				if (!(webspinner.webbase.book instanceof webspinner.Book) || webspinner.webbase.book.name() !== hostname) {
 					try {
 						fs.statSync(`${__dirname}/${hostname}/data/webbase.xml`);
@@ -152,7 +152,7 @@ module.exports = ((webspinner) => {
 				webspinner.webbase.render(req, res);
 			});
 			
-			var listener = io.listen(server);
+			let listener = io.listen(server);
 			listener.sockets.on('connection', socket => {
 				webspinner.webbase.sockets[socket.id] = socket;
 				
@@ -187,10 +187,10 @@ module.exports = ((webspinner) => {
 						return;
 					}
 
-					var element = this.route(URL.pathname), emitted = [];
+					let element = this.route(URL.pathname), emitted = [];
 					if (element instanceof webspinner.Page) {
 						socket.emit('page', { id: element.id, lang: webspinner.lang(), name: element.name() });
-						for (var content of element.children)
+						for (let content of element.children)
 							_emit(content, true);
 							
 						_recurse(element.parent); // Walk up the webbase and show "shared" contents, shared contents are children of areas and are shared by the underlying pages.
@@ -206,7 +206,7 @@ module.exports = ((webspinner) => {
 							return false;
 						
 						// Render content
-						var fragment = content.render(null, socket);
+						let fragment = content.render(null, socket);
 						if (fragment !== '') {
 							emitted.push(content.section().toString() + Math.floor(content.sequence()));
 						
@@ -227,7 +227,7 @@ module.exports = ((webspinner) => {
 						return fragment !== '';
 					}
 					function _recurse(element) {
-						for (var content of element.children)
+						for (let content of element.children)
 							if (content instanceof webspinner.Content)
 								_emit(content, true);
 						if (element.parent)
@@ -240,8 +240,8 @@ module.exports = ((webspinner) => {
 		// Determine the requested webbase element given the url
 		route(pathname) {
 			if (!pathname || pathname === '/') return this.book.mainpage();
-			var levels = pathname.split('/');
-			var _route = (element, level) => {
+			let levels = pathname.split('/');
+			let _route = (element, level) => {
 				for (let child of element.children)
 					if (child.slug() === levels[level]) {
 						if (++level !== levels.length) return _route(child, level);
@@ -253,7 +253,7 @@ module.exports = ((webspinner) => {
 		}
 		render(req, res) {
 			if (req.method === 'GET') {
-				var path = url.parse(req.url).pathname;
+				let path = url.parse(req.url).pathname;
 				
 				switch (path) {
 					case '/sitemap.xml':
@@ -268,7 +268,7 @@ module.exports = ((webspinner) => {
 
 				fs.readFile(`${this.settings.static}${path}`, (err, data) => {
 					if (err) { // If the request is not a file than it must be a webbase element, if not return the mainpage
-						var element = this.route(path);
+						let element = this.route(path);
 						if (element && element.granted())
 							element.render(req, res);
 					} else {
@@ -284,7 +284,7 @@ module.exports = ((webspinner) => {
 
 		// Build a site map (see sitemaps.org) that includes the urls of the visible pages in the book 
 		sitemap() {
-			var fragment = '';
+			let fragment = '';
 			_url(webspinner.webbase.book);
 			return `<?xml version="1.0" encoding="utf-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${fragment}</urlset>`;
 
@@ -298,7 +298,7 @@ module.exports = ((webspinner) => {
 		
 		// XML persistancy
 		write(element) {
-			var fragment;
+			let fragment;
 			
 			fragment = '<?xml version="1.0" encoding="utf-8"?>\n';
 			fragment += '<webspinner version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://webspinner.org" xsi:schemaLocation="https://webspinner.org/schemas webspinner.xsd">\n';
@@ -308,17 +308,17 @@ module.exports = ((webspinner) => {
     		
 			fragment += '<security>\n';
 			fragment += '<roles>\n';
-			for (var role in this.roles)
+			for (let role in this.roles)
 				fragment += `<role name="${role}" enabled="${this.roles[role].enabled}" description="${this.roles[role].description}"/>\n`;
 			fragment += '</roles>\n';
 			fragment += '<users>\n';
-			for (var user in this.users)
+			for (let user in this.users)
 				fragment += `<user name="${user}" password="${this.users[user].password}" enabled="${this.users[user].enabled}" description="${this.users[user].description}" roles="${this.users[user].roles}"/>\n`;
 			fragment += '</users>\n';
 			fragment += '</security>\n';
 
 			fragment += '<datasources>\n';
-			for (var datasource in this.datasources)
+			for (let datasource in this.datasources)
 				fragment += `<datasource name="${datasource}"><![CDATA[${this.datasources[datasource]}]]></datasource>\n`;
 			fragment += '</datasources>\n';
 

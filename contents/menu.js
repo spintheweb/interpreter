@@ -9,11 +9,11 @@ module.exports = (wbol) => {
 	wbol.Menu = class Menu extends wbol.Content {
 		render(req, res) {
 			return super.render(req, res, () => {
-				var options = '';
-				this.children.forEach(option => {
+				let options = '';
+				this.children.forEach((option) => {
 					switch (true) {
 						case option.ref instanceof wbol.Content:
-							var fragment = option.render(req, res);
+							let fragment = option.render(req, res);
 							if (fragment)
 								options += `<li class="wbolMenuOption"><article id="${option.ref.id}" lang="${wbol.lang()}" class="${option.ref.cssClass()}">${fragment}</article></li>`;
 							break;
@@ -34,7 +34,7 @@ module.exports = (wbol) => {
 		}
 		add(child, name) {
 			if (!(child instanceof wbol.Reference) && child instanceof wbol.wbolCore) {
-				var reference = new wbol.Reference(child);
+				let reference = new wbol.Reference(child);
 				reference.parent = this;
 				this.children.push(reference);
 			}
