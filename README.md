@@ -11,23 +11,23 @@ The term webbase was first used in 1998, a name given to a relational database w
 
 ## Features
 * Centered on contents
-* Role Based Access Control: read, write and execute
+* Role Based Access Control
 * Multilingual & Multinational
 * Templated
 * Extensible
 
 ## Rendering paradigm
-A user may request a single content or page, via HTTP GET coded in the URL, if a chapter is requested, Spin the Web responds with the chapter's main page. If the page is not available Spin the Web responds with the document main page.
-If the content is not available an empty response is returned.
+A user may request a single content or page (collection of contents), via HTTP GET coded in the URL, if an area is requested, Spin the Web responds with the area's main page. If the requested page is not available Spin the Web responds with the home page.
+If the requested content is not available an empty response is returned (200 OK).
 At least one of the roles that the user is part of needs to be authorized to the content or page requested.
-Role based authorization is inherited, the guests role is authorized, by default, to view only the document main page. 
+Role based authorization is inherited, the guests role is authorized, by default, to view only the home page. 
 
 
 ## License
 
 (The MIT License)
 
-Copyright (c) Giancarlo Trevisan &lt;g.trevisan@spintheweb.org&gt;
+Copyright (c) Giancarlo Trevisan
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
