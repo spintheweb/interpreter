@@ -34,19 +34,14 @@ module.exports = ((webspinner) => {
 		.forEach(content => { require(`./contents/${content}`)(webspinner); });
 
 	// Enum WBOL Roled Based Access Control permissions
-	webspinner.wbolAC = {
-		none: 0,
-		read: 1,
-		write: 2,
-		execute: 3
-	};
+	webspinner.wbolAC = { none: 0, read: 1, write: 2, execute: 3 };
 	
 	class Webbase {
 		constructor() {
 			this.guid = null;
 			this.id = util.newId();
 			this.cipher = crypto.createCipher('aes192', 'Type a passphrase');
-			this.lang = 'en'; // Webbase default language
+			this.lang = 'en'; // Webbase default language, eg. en-US
 			this.roles = {
 				administrators: {
 					enabled: true
@@ -96,10 +91,13 @@ module.exports = ((webspinner) => {
 			};
 
 			webspinner.webbase = this;
-			webspinner.lang = (main) => {
-				if (main && webspinner.webbase.socket.lang)
-					return webspinner.webbase.socket.lang[0];
-				return webspinner.webbase.socket.lang || webspinner.webbase.lang;
+			// TODO: Consider cultural translation, a language can be choosen based on the dialect
+			webspinner.lang = (text) => {
+				return this.lang;
+
+//				if (main && webspinner.webbase.socket.lang)
+//					return webspinner.webbase.socket.lang[0];
+//				return webspinner.webbase.socket.lang[0] || webspinner.webbase.lang[0];
 			};
 			webspinner.user = () => {
 				return webspinner.webbase.socket.user || 'guest';
@@ -217,10 +215,10 @@ module.exports = ((webspinner) => {
 								cssClass: content.cssClass(),
 								body: fragment
 							});
-							if (typeof content.manage === 'function') {
+							if (typeof content.handler === 'function') {
 								socket.emit('script', {
-									id: `manage${content.constructor.name}`,
-									body: `(${content.manage.toString()})('${content.id}');`
+									id: content.constructor.name,
+									body: content.handler.toString()
 								});
 							}
 						}

@@ -11,37 +11,20 @@ module.exports = (wbol) => {
 			super(name, template);
 			this._category = wbol.wbolContentCategory.ORGANIZATIONAL;
 			
-			// Code executed by the client in order to manage the content
-			this.manage = (id) => {
-				let tabs = document.getElementById(id), tab = tabs.querySelectorAll('.wbolTabLabel');
-				for (let i = 0; i < tab.length; ++i) {
-                    tab[i].addEventListener('click', event => {
-                    	for (let i = 0; i < tab.length; ++i) {
-                    		let selected = (event.target === tab[i]);
-                    		tab[i].classList[selected ? 'add' : 'remove']('wbolSelected');
-                    		tabs.querySelector(`.wbolTab[data-ref="${tab[i].dataset.ref}"]`).hidden = !selected;
-                    	}
-                    });
-                }
-                tabs.querySelector('.wbolTabLabel').click();
-			};
-		}
-		
-		react(event, callback) {
-			if (callback)
-				callback(event);
-
-			let target = event.currentTarget.closest('.wbolTabLabel');
-			if (event.type === 'click' && target) {
-				// Switch tab
-				let tabs = target.closest('ul').children;
-				tabs.forEach((tab, i) => {
+			// Code executed by the client to handle the content
+			this.handler = function wbolTabs(event) {
+				let target = event.target; tabs = target.closest('ul').children;
+				for (let i = 0; i < tabs.length / 2; ++i) {
+					let tab = tabs[i];
 					if (tab.classList.contains('wbolTabLabel')) {
             			tab.classList[(target === tab) ? 'add' : 'remove']('wbolSelected');
-            			tabs.children[2 * i + 1].hidden = (target !== tab);
+						if (target === tab)
+							tabs[tabs.length / 2 + i].removeAttribute('hidden');
+						else
+							tabs[tabs.length / 2 + i].setAttribute('hidden', true);
 					}
-				});
-			}
+				}
+			};
 		}
 		
 		render(req, res) {
@@ -51,8 +34,8 @@ module.exports = (wbol) => {
 					if (tab.ref && tab.granted()) {
 						let fragment = tab.ref.render(req, res);
 						if (fragment) {
-							labels += `<li class="wbolTabLabel" data-ref="${i}">${tab.name()}</li>`;
-							tabs += `<li class="wbolTab" data-ref="${i}"><article id="${tab.ref.id}" lang="${wbol.lang()}" class="${tab.ref.cssClass()}">${fragment}</article></li>`;
+							labels += `<li class="wbolTabLabel${i === 0 ? ' wbolSelected' : ''}" data-ref="${i}" onclick="wbolTabs(event)">${tab.name()}</li>`;
+							tabs += `<li class="wbolTab"${i !== 0 ? ' hidden' : ''} data-ref="${i}"><article id="${tab.ref.id}" lang="${wbol.lang()}" class="${tab.ref.cssClass()}">${fragment}</article></li>`;
 						}
 					}
 				});

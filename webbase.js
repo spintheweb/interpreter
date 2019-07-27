@@ -26,18 +26,19 @@ module.exports = (webspinner, name) => {
 	book.add(chapter);
 	page = new webspinner.Page('Home');
 	book.mainpage(page);
-	page.add(new webspinner.Form('A("http://www.domain.com").p().p("param1", "uno&s").p("#prot").f(); nl(); t("pippo", {style: "color: red"}); nl(); t("pluto", {style: "color: green"}); e();').sequence(2).section('main'))
+	page.add(new webspinner.Form('Form', (req, res) => { A("http://www.domain.com").p().p("param1", "uno&s").p("#prot").f(); nl(); t("pippo", {style: "color: red"}); nl(); t("pluto", {style: "color: green"}); e(); }).sequence(2).section('main'))
 		.add(new webspinner.Keypad().sequence(3).section('main')) // Alphabet keys
-		// .add(new webspinner.Breadcrumbs()
-		// 	.sequence(1).section('main'))
+//		.add(new webspinner.Breadcrumbs()
+//			.sequence(1).section('main'))
 		.add(new webspinner.Tabs('Tabs')
 			.sequence(5).section('main')
 			.add(new webspinner.Chart('Pie'))
 			.add(new webspinner.Calendar('Calendar'))
 			.add(new webspinner.Text('Tab 2', 'This is Tab 2')
 				.grant('guests', webspinner.wbolAC.none))
-			.add(new webspinner.Keypad('Keypad', '123\n456\n789\n*0#'))
-			);
+			.add(new webspinner.Keypad('Keypad', '123\n456\n789\n*0#')))
+		.add(new webspinner.Table('Table', () => { settings({ header: "People" }); })
+			.sequence(6).section('main'))
 	book.add(page)
 		.add(new webspinner.Page('About us'))
 		.add(new webspinner.Page('Products').grant('guests', webspinner.wbolAC.read)

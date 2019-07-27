@@ -50,13 +50,12 @@ let wbol;
             }
         });
         wbol.on('script', function(content) {
-            let script = document.getElementById(content.id);
-            if (script)
-                script.parentElement.removeChild(script);
-            script = document.createElement('script');
-            script.setAttribute('id', content.id);
-            script.text = content.body;
-            document.body.appendChild(script);
+            if (!document.getElementById('wbol' + content.id)) {
+                let script = document.createElement('script');
+                script.setAttribute('id', 'wbol' + content.id);
+                script.text = content.body;
+                document.body.appendChild(script);
+            }
         });
         wbol.on('wrapup', function(data) {
             let articles = document.querySelectorAll('article[data-ref]');

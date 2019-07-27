@@ -5,7 +5,7 @@
  */
 'use strict';
 
-module.exports = (webspinner) => {
+module.exports = (content) => {
 	// Helper functions
 	function _name(name) { return name; }
 	function _value(value, fallback) { return value || fallback; }
@@ -18,30 +18,30 @@ module.exports = (webspinner) => {
 	}
 
 	// Layout symbols
-	webspinner.Content.NL = (attrs) => {};
+	content.NL = (attrs) => {};
 
-	webspinner.Content.nl = (attrs) => {
+	content.nl = (attrs) => {
 		if (this.renderAs === "form")
-			fragment += `<tr${_attributes(attrs)}>`; // Should be closed
+			content.fragment += `<tr${_attributes(attrs)}>`; // Should be closed
 		else
 			fragment += "<br>";
 	};
 
-	webspinner.Content.cr = () => {
+	content.cr = () => {
 		fragment += "<br>"
 	};
 
-	webspinner.Content.tab = (attrs) => {
+	content.tab = (attrs) => {
 		if (this.renderAs === "table" || this.renderAs === "form")
 			fragment += `<td${_attributes(attrs)}>`; // Should be closed
 	};
 
-	webspinner.Content.settings = (settings) => {
-		webspinner.Content._settings = settings;
+	content.settings = (settings) => {
+		content._settings = settings;
 	};
 
 	/// Anchor
-	webspinner.Content.a = (destination, attrs, _destination) => {
+	content.a = (destination, attrs, _destination) => {
 		destination = _value(destination);
 		if (!_destination) _destination = destination;
 		attrs.href = destination;
@@ -74,19 +74,19 @@ module.exports = (webspinner) => {
 	};
 
 	/// Anchor new window
-	webspinner.Content.A = (destination, attrs) => {
+	content.A = (destination, attrs = {}) => {
 		attrs.target = "_blank";
 		return a(destination, attrs);
 	};
 
 	/// Button
-	webspinner.Content.b = (destination, name, img, action, attrs) => {
+	content.b = (destination, name, img, action, attrs = {}) => {
 		attrs.type = "button";
 		fragment += `<input${_attributes(attrs)}>`;
 	};
 
 	/// Checkbox
-	webspinner.Content.c = (name, value, options, attrs) => {
+	content.c = (name, value, options, attrs = {}) => {
 		attrs.type = "checkbox";
 		attrs.name = _name(name);
 		let txt = "";
@@ -102,7 +102,7 @@ module.exports = (webspinner) => {
 	};
 
 	/// Drop-down
-	webspinner.Content.d = (name, value, options, attrs) => {
+	content.d = (name, value, options, attrs = {}) => {
 		attrs.id = 0;
 		attrs.name = _name(name);
 		attrs.value = _value(value);
@@ -126,7 +126,7 @@ module.exports = (webspinner) => {
 	};
 
 	/// Edit box
-	webspinner.Content.e = (format, name, value, attrs) => {
+	content.e = (format, name, value, attrs = {}) => {
 		attrs.id = 0;
 		attrs.name = _name(name);
 		attrs.value = _value(value);
@@ -134,12 +134,12 @@ module.exports = (webspinner) => {
 	};
 
 	/// Field value
-	webspinner.Content.f = (format, attrs) => {
+	content.f = (format, attrs) => {
 		fragment += "fufi";
 	};
 
 	/// Hidden field
-	webspinner.Content.h = (name, value, attrs) => {
+	content.h = (name, value, attrs = {}) => {
 		attrs.type = "hidden";
 		attrs.id = 0;
 		attrs.name = _name(name);
@@ -148,29 +148,29 @@ module.exports = (webspinner) => {
 	};
 
 	/// Image
-	webspinner.Content.i = (src, attrs) => {
+	content.i = (src, attrs = {}) => {
 		attrs.src = src;
 		fragment += `<img${_attributes(attrs)}>`;
 	};
 
-	webspinner.Content.k = (name, value) => {
+	content.k = (name, value) => {
 		if (value !== undefined) {}
 	};
 
 	/// Label
-	webspinner.Content.l = (name, attrs) => {
+	content.l = (name, attrs) => {
 		fragment += `<label${_attributes(attrs)}>${txt}</label>`;
 	};
 
 	/// Text area
-	webspinner.Content.m = (name, value, attrs) => {
+	content.m = (name, value, attrs) => {
 		fragment += `<textarea${_attributes(attrs)}>${txt}</textarea>`;
 	};
 
-	webspinner.Content.n = () => {};
+	content.n = () => {};
 
 	/// Embedded content
-	webspinner.Content.o = (url) => {
+	content.o = (url) => {
 		url = _value(url);
 		return {
 			p: (name, value) => {
@@ -189,12 +189,12 @@ module.exports = (webspinner) => {
 	};
 
 	/// Radio button
-	webspinner.Content.r = () => {};
+	content.r = () => {};
 
-	webspinner.Content.s = () => {};
+	content.s = () => {};
 	
 	/// Text
-	webspinner.Content.t = (txt, attrs) => {
+	content.t = (txt, attrs) => {
 		if (attrs !== {})
 			fragment += `<span${_attributes(attrs)}>${txt}</span>`;
 		else
@@ -202,7 +202,7 @@ module.exports = (webspinner) => {
 	};
 
 	/// HTML encoded text
-	webspinner.Content.T = (txt) => {
+	content.T = (txt) => {
 		txt = txt
 			.replace(/&/g, "&amp;")
 			.replace(/"/g, "&quot;")
@@ -213,12 +213,12 @@ module.exports = (webspinner) => {
 	};
 
 	/// Upload
-	webspinner.Content.u = () => {};
+	content.u = () => {};
 
-	webspinner.Content.v = () => {};
+	content.v = () => {};
 
 	/// Password field
-	webspinner.Content.w = (name, value, attrs) => {
+	content.w = (name, value, attrs = {}) => {
 		attrs.type = "password";
 		attrs.id = 0;
 		attrs.name = _name(name);
@@ -226,7 +226,7 @@ module.exports = (webspinner) => {
 		fragment += `<input${_attributes(attrs)}>`;
 	};
 
-	webspinner.Content.x = () => {}; // Add x to array
-	webspinner.Content.y = () => {}; // Add y to array
-	webspinner.Content.z = () => {}; // Add z to array
+	content.x = () => {}; // Add x to array
+	content.y = () => {}; // Add y to array
+	content.z = () => {}; // Add z to array
 };

@@ -18,6 +18,7 @@ module.exports = (webspinner) => {
 			this.id = util.newId();
 			this.parent = null;
 			this.children = [];
+			this.cultures = null; // TODO: International vs Multinational concern
 			this._name = {}; // lang: string
 			this.rbac = {}; // role: wbolAC
 			this.lastmod = (new Date()).toISOString();
@@ -102,7 +103,8 @@ module.exports = (webspinner) => {
 
 		// Semantic URL based on element name and active language
 		slug(full) {
-			if (full) return _slug(this);
+			if (full) 
+				return _slug(this);
 			return this.name().replace(/\s+/g, '-').toLowerCase(); // TODO: retain only [a-z0-9-]
 			
 			function _slug(element) {
