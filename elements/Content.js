@@ -32,7 +32,7 @@ class Layout {
 	// Symbols to HTML
 	render(req, res) {
 		this.fragment = '';
-		this.content._template[req.webspinner.lang()](req, res)
+		//this.content._template[req.webspinner.lang()](req, res)
 		return this.fragment;
 	}
 
@@ -119,7 +119,7 @@ module.exports = (webspinner) => {
 	webspinner.Content = class Content extends webspinner.Page {
 		constructor(name, template) {
 			super(name, null);
-			this._cssClass = 'wbolContent wbol' + this.constructor.name;
+			this._cssClass = 'stwContent stw' + this.constructor.name;
 			this._section = ''; // Null section, do not render
 			this._sequence = 1;
 			this._datasource = null;

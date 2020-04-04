@@ -1,11 +1,11 @@
 /*!
- * wbol-client.js
+ * stw-client.js
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
 
 // TODO: Should be CDN delivered
-let wbol;
+let stw;
 
 (function() {
     // Load remote script then call callback
@@ -17,20 +17,20 @@ let wbol;
     }
 
     loadScript('/socket.io/socket.io.js', () => {
-        wbol = io.connect();
+        stw = io.connect();
 
-        wbol.on('connect', function(data) {});
-        wbol.on('disconnect', function(data) {});
-        wbol.on('reload', function(data) {
+        stw.on('connect', function(data) {});
+        stw.on('disconnect', function(data) {});
+        stw.on('reload', function(data) {
             window.location = data.url;
         });
 
-        wbol.on('page', function(page) {
+        stw.on('page', function(page) {
             document.querySelector('html').setAttribute('id', page.id);
+            document.querySelector('html').setAttribute('lang', page.lang);
             document.querySelector('title').innerHTML = page.name;
-            document.querySelector('title').setAttribute('lang', page.lang);
         });
-        wbol.on('content', function(content) {
+        stw.on('content', function(content) {
             let article = document.querySelector('article[data-ref=' + content.section.toString() + Math.floor(content.sequence).toString() + ']');
             if (article)
                 article.parentElement.removeChild(article);
@@ -49,15 +49,15 @@ let wbol;
                 section.insertBefore(article, section.children[i] || null);
             }
         });
-        wbol.on('script', function(content) {
-            if (!document.getElementById('wbol' + content.id)) {
+        stw.on('script', function(content) {
+            if (!document.getElementById('stw' + content.id)) {
                 let script = document.createElement('script');
-                script.setAttribute('id', 'wbol' + content.id);
+                script.setAttribute('id', 'stw' + content.id);
                 script.text = content.body;
                 document.body.appendChild(script);
             }
         });
-        wbol.on('wrapup', function(data) {
+        stw.on('wrapup', function(data) {
             let articles = document.querySelectorAll('article[data-ref]');
             for (let i = 0; i < articles.length; ++i) {
                 if (data.emitted.indexOf(articles[i].getAttribute('data-ref')) === -1)
@@ -65,6 +65,6 @@ let wbol;
             }
         });
 
-        wbol.emit('content', window.location); // Initial request of page contents
+        stw.emit('content', window.location); // Initial request of page contents
     });
 })();

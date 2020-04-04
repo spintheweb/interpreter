@@ -5,19 +5,19 @@
  */
 'use strict';
 
-module.exports = (wbol) => {
-	wbol.Tabs = class Tabs extends wbol.Content {
+module.exports = (stw) => {
+	stw.Tabs = class Tabs extends stw.Content {
 		constructor (name, template) {
 			super(name, template);
-			this._category = wbol.wbolContentCategory.ORGANIZATIONAL;
+			this._category = stw.stwContentCategory.ORGANIZATIONAL;
 			
 			// Code executed by the client to handle the content
-			this.handler = function wbolTabs(event) {
+			this.handler = function stwTabs(event) {
 				let target = event.target; tabs = target.closest('ul').children;
 				for (let i = 0; i < tabs.length / 2; ++i) {
 					let tab = tabs[i];
-					if (tab.classList.contains('wbolTabLabel')) {
-            			tab.classList[(target === tab) ? 'add' : 'remove']('wbolSelected');
+					if (tab.classList.contains('stwTabLabel')) {
+            			tab.classList[(target === tab) ? 'add' : 'remove']('stwSelected');
 						if (target === tab)
 							tabs[tabs.length / 2 + i].removeAttribute('hidden');
 						else
@@ -34,17 +34,17 @@ module.exports = (wbol) => {
 					if (tab.ref && tab.granted()) {
 						let fragment = tab.ref.render(req, res);
 						if (fragment) {
-							labels += `<li class="wbolTabLabel${i === 0 ? ' wbolSelected' : ''}" data-ref="${i}" onclick="wbolTabs(event)">${tab.name()}</li>`;
-							tabs += `<li class="wbolTab"${i !== 0 ? ' hidden' : ''} data-ref="${i}"><article id="${tab.ref.id}" lang="${wbol.lang()}" class="${tab.ref.cssClass()}">${fragment}</article></li>`;
+							labels += `<li class="stwTabLabel${i === 0 ? ' stwSelected' : ''}" data-ref="${i}" onclick="stwTabs(event)">${tab.name()}</li>`;
+							tabs += `<li class="stwTab"${i !== 0 ? ' hidden' : ''} data-ref="${i}"><article id="${tab.ref.id}" lang="${stw.lang()}" class="${tab.ref.cssClass()}">${fragment}</article></li>`;
 						}
 					}
 				});
-				return `<ul class="wbolBody">${labels}${tabs}</ul>`;
+				return `<ul class="stwBody">${labels}${tabs}</ul>`;
 			});
 		}
 		add(child, name) {
-			if (!(child instanceof wbol.Reference) && child instanceof wbol.Content) {
-				let reference = new wbol.Reference(child);
+			if (!(child instanceof stw.Reference) && child instanceof stw.Content) {
+				let reference = new stw.Reference(child);
 				reference.parent = this;
 				this.children.push(reference);
 			}

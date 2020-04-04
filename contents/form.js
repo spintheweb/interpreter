@@ -5,11 +5,11 @@
  */
 'use strict';
 
-module.exports = (wbol) => {
-	wbol.Form = class Form extends wbol.Content {
+module.exports = (stw) => {
+	stw.Form = class Form extends stw.Content {
 		render(req, res) {
 			return super.render(req, res, () => {
-				return `<div class="wbolBody">${this.renderRow()}</div>`;
+				return `<div class="stwBody">${this.renderRow()}</div>`;
 			});
 		}
 	};

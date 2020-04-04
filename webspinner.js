@@ -24,17 +24,17 @@ NOTES
 module.exports = ((webspinner) => {
 	webspinner.webbase = {};
 	
-	// Require WBOL elements
-	['wbolCore', 'Chapter', 'Book', 'Page', 'Content', 'Reference']
+	// Require STW elements
+	['stwCore', 'Chapter', 'Book', 'Page', 'Content', 'Reference']
 		.forEach(element => { require(`./elements/${element}.js`)(webspinner); });
 
-	// Require WBOL contents
-	webspinner.wbolContentCategory = { SENSORIAL: 1, NAVIGATIONAL: 2, ORGANIZATIONAL: 3, SPECIAL: 4 };
+	// Require STW contents
+	webspinner.stwContentCategory = { SENSORIAL: 1, NAVIGATIONAL: 2, ORGANIZATIONAL: 3, SPECIAL: 4 };
 	fs.readdirSync('./contents')
 		.forEach(content => { require(`./contents/${content}`)(webspinner); });
 
-	// Enum WBOL Roled Based Access Control permissions
-	webspinner.wbolAC = { none: 0, read: 1, write: 2, execute: 3 };
+	// Enum STW Roled Based Access Control permissions
+	webspinner.stwAC = { none: 0, read: 1, write: 2, execute: 3 };
 	
 	class Webbase {
 		constructor() {
@@ -84,7 +84,7 @@ module.exports = ((webspinner) => {
 			this.book = {};
 
 			this.settings = {};
-			this.sockets = {};
+			this.sockets = {}; // Session management
 			this.socket = { 
 				lang: webspinner.webbase.lang, 
 				user: 'guest' 
@@ -299,7 +299,7 @@ module.exports = ((webspinner) => {
 			let fragment;
 			
 			fragment = '<?xml version="1.0" encoding="utf-8"?>\n';
-			fragment += '<webspinner version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://webspinner.org" xsi:schemaLocation="https://webspinner.org/schemas webspinner.xsd">\n';
+			fragment += '<webspinner version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://webspinner.org" xsi:schemaLocation="https://webspinner.org/schemas wbol.xsd">\n';
 			fragment += `<!--Spin the Web (TM) webbase generated ${(new Date()).toISOString()}-->\n`;
 
     		fragment += `<webbase id="W${this.id}" language="${this.lang}" guid="${this.guid}" key="${this.key}">\n`;

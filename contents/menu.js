@@ -5,36 +5,36 @@
  */
 'use strict';
 
-module.exports = (wbol) => {
-	wbol.Menu = class Menu extends wbol.Content {
+module.exports = (stw) => {
+	stw.Menu = class Menu extends stw.Content {
 		render(req, res) {
 			return super.render(req, res, () => {
 				let options = '';
 				this.children.forEach((option) => {
 					switch (true) {
-						case option.ref instanceof wbol.Content:
+						case option.ref instanceof stw.Content:
 							let fragment = option.render(req, res);
 							if (fragment)
-								options += `<li class="wbolMenuOption"><article id="${option.ref.id}" lang="${wbol.lang()}" class="${option.ref.cssClass()}">${fragment}</article></li>`;
+								options += `<li class="stwMenuOption"><article id="${option.ref.id}" lang="${stw.lang()}" class="${option.ref.cssClass()}">${fragment}</article></li>`;
 							break;
-						case option.ref instanceof wbol.Page:
+						case option.ref instanceof stw.Page:
 							if (option.granted())
-								options += `<li class="wbolMenuOption"><a onclick="wbol.emit('content', '/${option.slug()}')">${option.name()}</a></li>`;
+								options += `<li class="stwMenuOption"><a onclick="stw.emit('content', '/${option.slug()}')">${option.name()}</a></li>`;
 							break;
-						case option.ref instanceof wbol.Chapter:
+						case option.ref instanceof stw.Chapter:
 							option.ref.children.forEach(suboption => {
-								if (!(suboption instanceof wbol.Content) && suboption instanceof wbol.Page && suboption.granted())
-									options += `<li class="wbolMenuOption"><a onclick="wbol.emit('content', '/${suboption.slug()}')">${suboption.name()}</a></li>`;
+								if (!(suboption instanceof stw.Content) && suboption instanceof stw.Page && suboption.granted())
+									options += `<li class="stwMenuOption"><a onclick="stw.emit('content', '/${suboption.slug()}')">${suboption.name()}</a></li>`;
 							});
 							break;
 					}
 				});
-				return `<nav><ul class="wbolBody">${options}</ul></nav>`;
+				return `<nav><ul class="stwBody">${options}</ul></nav>`;
 			});
 		}
 		add(child, name) {
-			if (!(child instanceof wbol.Reference) && child instanceof wbol.wbolCore) {
-				let reference = new wbol.Reference(child);
+			if (!(child instanceof stw.Reference) && child instanceof stw.stwCore) {
+				let reference = new stw.Reference(child);
 				reference.parent = this;
 				this.children.push(reference);
 			}

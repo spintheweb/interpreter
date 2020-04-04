@@ -13,7 +13,7 @@ const url = require('url'),
 
 /// Organizer
 module.exports = (webspinner) => {
-    webspinner.Chapter = class Chapter extends webspinner.wbolCore {
+    webspinner.Chapter = class Chapter extends webspinner.stwCore {
 		constructor(name) {
 			super(name);
 			this._mainpage = null;

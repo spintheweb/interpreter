@@ -35,9 +35,7 @@ module.exports = (webspinner) => {
 			var fragment;
 
 			fragment = `<webo id="D${this.id}" guid="${this.guid}" lastmod="${this.lastmod}"`;
-
 			fragment += super.write();
-
 			fragment += '</webo>\n';
 
 			return fragment;

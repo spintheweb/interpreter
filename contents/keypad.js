@@ -5,8 +5,8 @@
  */
 'use strict';
 
-module.exports = (wbol) => {
-	wbol.Keypad = class Keypad extends wbol.Content {
+module.exports = (stw) => {
+	stw.Keypad = class Keypad extends stw.Content {
 		constructor (name, template) {
 			super(name, template || 'abcdefghijklmnopqrstuvwxyz');
 		}
@@ -18,7 +18,7 @@ module.exports = (wbol) => {
 						return fragment += '<br>';
 					return fragment += `<li data-ref="${c}">${c}</a></li>`;
 				});
-				return `<ul class="wbolBody">${fragment}</ul>`;
+				return `<ul class="stwBody">${fragment}</ul>`;
 			});
 		}
 	};

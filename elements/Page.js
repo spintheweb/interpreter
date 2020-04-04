@@ -12,7 +12,7 @@ const url = require('url'),
 	util = require('../util');
 
 module.exports = (webspinner) => {
-	webspinner.Page = class Page extends webspinner.wbolCore {
+	webspinner.Page = class Page extends webspinner.stwCore {
 		constructor(name, template) { // TODO: How is the page template handled? Reloading a page breaks the socket connection! Can the connection be reestablished?
 			super(name);
 			this._contentType = 'text/html';

@@ -1,5 +1,5 @@
 /*!
- * wbolCore
+ * stwCore
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
@@ -12,7 +12,7 @@ const url = require('url'),
 	util = require('../util');
 
 module.exports = (webspinner) => {
-    webspinner.wbolCore = class wbolCore {
+    webspinner.stwCore = class stwCore {
 		constructor(name) {
 			this.guid = null;
 			this.id = util.newId();
@@ -20,7 +20,7 @@ module.exports = (webspinner) => {
 			this.children = [];
 			this.cultures = null; // TODO: International vs Multinational concern
 			this._name = {}; // lang: string
-			this.rbac = {}; // role: wbolAC
+			this.rbac = {}; // role: stwAC
 			this.lastmod = (new Date()).toISOString();
 			
 			this.name(name || this.constructor.name); // NOTE: siblings may have identical names, however, the router will select the first
@@ -45,18 +45,18 @@ module.exports = (webspinner) => {
 		// Return the highest access control associated to the given roles
 		granted() {
 			var roles = webspinner.webbase.users[webspinner.user()].roles;
-			if (this instanceof webspinner.Page && webspinner.webbase.book.mainpage() === this) return webspinner.wbolAC.read; // Main web page always visible
+			if (this instanceof webspinner.Page && webspinner.webbase.book.mainpage() === this) return webspinner.stwAC.read; // Main web page always visible
 			var ac = null;
 			for (let i = 0; i < roles.length; ++i) {
 				let role = roles[i];
-				if (this.rbac[role] === webspinner.wbolAC.execute) return webspinner.wbolAC.execute;
+				if (this.rbac[role] === webspinner.stwAC.execute) return webspinner.stwAC.execute;
 				ac = Math.max(ac, this.rbac[role]);
 			}
 			if (isNaN(ac) || ac === null)
 				if (this.parent) 
 					ac = this.parent.granted();
 				else if (this instanceof webspinner.Content) 
-					ac = webspinner.wbolAC.read; // NOTE: this is a content without a parent nor a RBAC, it's in limbo! Contents referenced by Copycats
+					ac = webspinner.stwAC.read; // NOTE: this is a content without a parent nor a RBAC, it's in limbo! Contents referenced by Copycats
 			return ac;
 		}
 		

@@ -6,8 +6,8 @@
 'use strict';
 const xmldom = require('xmldom').DOMParser;
 
-module.exports = (wbol) => {
-	wbol.Chart = class Chart extends wbol.Content {
+module.exports = (stw) => {
+	stw.Chart = class Chart extends stw.Content {
 	    render(req, res) {
 	        var document;
 	        

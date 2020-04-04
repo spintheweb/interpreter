@@ -5,8 +5,8 @@
  */
 'use strict';
 
-module.exports = (wbol) => {
-	wbol.Tree = class Tree extends wbol.Content {
+module.exports = (stw) => {
+	stw.Tree = class Tree extends stw.Content {
 		constructor (name, template) {
 			super(name, template);
 			
@@ -15,9 +15,9 @@ module.exports = (wbol) => {
 		}
 		render(req, res) {
 			return super.render(req, res, () => {
-				var fragment = '<ul class="wbolBody">';
+				var fragment = '<ul class="stwBody">';
 				if (this.template() === 'webbase') {
-					_render(wbol.webbase.book);
+					_render(stw.webbase.book);
 				} else {
 					this.data.forEach(function(row, i) {
 						// TODO: render template recursively
@@ -27,12 +27,12 @@ module.exports = (wbol) => {
 				return fragment + '</ul>';
 
 				function _render(element) {
-					if (!(element instanceof wbol.Content) && element.children.length > 0) {
-						fragment += `<li class="wbol${element.constructor.name} wbolAC${element.granted()}" data-ref="${element.id}" title="${element.slug(true)}">${element.name()}<ul>`;
+					if (!(element instanceof stw.Content) && element.children.length > 0) {
+						fragment += `<li class="stw${element.constructor.name} stwAC${element.granted()}" data-ref="${element.id}" title="${element.slug(true)}">${element.name()}<ul>`;
 						element.children.forEach(child => _render(child));
 						fragment += '</ul></li>';
 					} else
-						fragment += `<li class="wbol${element.constructor.name} wbolAC${element.granted()}" data-ref="${element.id}" title="${element.slug(true)}"> ${element.name()}</li>`;
+						fragment += `<li class="stw${element.constructor.name} stwAC${element.granted()}" data-ref="${element.id}" title="${element.slug(true)}"> ${element.name()}</li>`;
 				}
 			});
 		}

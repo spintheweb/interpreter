@@ -5,8 +5,8 @@
  */
 'use strict';
 
-module.exports = (wbol) => {
-	wbol.Script = class Script extends wbol.Content {
+module.exports = (stw) => {
+	stw.Script = class Script extends stw.Content {
 		constructor(name, template) {
 			super(name, template || '');
 			this._cssClass = 'clientside'; // clientside || serverside

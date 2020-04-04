@@ -5,11 +5,11 @@
  */
 'use strict';
 
-module.exports = (wbol) => {
-	wbol.Table = class Table extends wbol.Content {
+module.exports = (stw) => {
+	stw.Table = class Table extends stw.Content {
 		render(req, res) {
 			return super.render(req, res, () => {
-				let fragment =  '<table class="wbolBody">';
+				let fragment =  '<table class="stwBody">';
 				fragment += '<thead><tr></tr></thead><tbody>'; // Consider l and tab symbols
 				this.data.forEach(function(row, i) {
 					fragment += `<tr>${this.renderRow()}</tr>`;

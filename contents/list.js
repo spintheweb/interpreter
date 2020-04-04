@@ -5,8 +5,8 @@
  */
 'use strict';
 
-module.exports = (wbol) => {
-	wbol.List = class List extends wbol.Content {
+module.exports = (stw) => {
+	stw.List = class List extends stw.Content {
 		render(req, res) {
 			super.render(req, res, () => {
 				var fragment = '';
@@ -14,7 +14,7 @@ module.exports = (wbol) => {
 					// TODO: render template
 					fragment += `<li>${this.renderRow()}</li>`;
 				});
-				return `<ul class="wbolBody">${fragment}</ul>`;
+				return `<ul class="stwBody">${fragment}</ul>`;
 			});
 		}
 	};

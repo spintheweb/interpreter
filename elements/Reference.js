@@ -5,9 +5,9 @@
  */
 'use strict';
 
-// A wbol.Reference is pointer to a wbol.Content
-module.exports = (wbol) => {
-	wbol.Reference = class Reference extends wbol.Content {
+// A stw.Reference is pointer to a stw.Content
+module.exports = (stw) => {
+	stw.Reference = class Reference extends stw.Content {
 		constructor(related) {
 			super(related.name());
 			this._cssClass = related._cssClass;

@@ -6,6 +6,6 @@
 'use strict';
 
 // TODO: this is a line connected graph
-module.exports = (wbol) => {
-	wbol.Graph = class Graph extends wbol.Content {}; // SVG or canvas
+module.exports = (stw) => {
+	stw.Graph = class Graph extends stw.Content {}; // SVG or canvas
 };

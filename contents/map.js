@@ -5,6 +5,6 @@
  */
 'use strict';
 
-module.exports = (wbol) => {
-	wbol.Map = class Map extends wbol.Content {}; // GIS
+module.exports = (stw) => {
+	stw.Map = class Map extends stw.Content {}; // GIS
 };

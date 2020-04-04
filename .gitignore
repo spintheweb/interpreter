@@ -1,2 +1,4 @@
-/.c9
+.vscode
+.jshintrc
 /node_modules
+trash
