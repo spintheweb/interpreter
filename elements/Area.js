@@ -1,5 +1,5 @@
 /*!
- * Chapter
+ * Area
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
@@ -13,7 +13,7 @@ const url = require('url'),
 
 /// Organizer
 module.exports = (webspinner) => {
-    webspinner.Chapter = class Chapter extends webspinner.stwCore {
+    webspinner.Area = class Area extends webspinner.stwCore {
 		constructor(name) {
 			super(name);
 			this._mainpage = null;
@@ -33,19 +33,18 @@ module.exports = (webspinner) => {
 		}
 		
 		write() {
-			var fragment = '';
+			let fragment = '';
 			
-			if (!(this instanceof webspinner.Book))
-				fragment = `<chapter id="A${this.id}" guid="${this.guid}" lastmod="${this.lastmod}"`;
+			if (!(this instanceof webspinner.Webo))
+				fragment = `<area id="A${this.id}" guid="${this.guid}" lastmod="${this.lastmod}"`;
 
 			if (this._mainpage) fragment += ` mainpage="${this._mainpage.id}"`; 
 
 			fragment += '>\n';
-			
 			fragment += super.write();
 			
-			if (!(this instanceof webspinner.Book))
-				fragment += '</chapter>\n';
+			if (!(this instanceof webspinner.Webo))
+				fragment += '</area>\n';
 
 			return fragment;
 		}

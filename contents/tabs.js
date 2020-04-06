@@ -5,11 +5,11 @@
  */
 'use strict';
 
-module.exports = (stw) => {
-	stw.Tabs = class Tabs extends stw.Content {
+module.exports = (webspinner) => {
+	webspinner.Tabs = class Tabs extends webspinner.Content {
 		constructor (name, template) {
-			super(name, template);
-			this._category = stw.stwContentCategory.ORGANIZATIONAL;
+			super(name, template || 'f', true);
+			this._category = webspinner.stwContentCategory.ORGANIZATIONAL;
 			
 			// Code executed by the client to handle the content
 			this.handler = function stwTabs(event) {
@@ -28,14 +28,14 @@ module.exports = (stw) => {
 		}
 		
 		render(req, res) {
-			return super.render(req, res, () => {
+			return super.render(req, res, (req, template) => {
 				let labels = '', tabs = '';
 				this.children.forEach((tab, i) => {
 					if (tab.ref && tab.granted()) {
 						let fragment = tab.ref.render(req, res);
 						if (fragment) {
 							labels += `<li class="stwTabLabel${i === 0 ? ' stwSelected' : ''}" data-ref="${i}" onclick="stwTabs(event)">${tab.name()}</li>`;
-							tabs += `<li class="stwTab"${i !== 0 ? ' hidden' : ''} data-ref="${i}"><article id="${tab.ref.id}" lang="${stw.lang()}" class="${tab.ref.cssClass()}">${fragment}</article></li>`;
+							tabs += `<li class="stwTab"${i !== 0 ? ' hidden' : ''} data-ref="${i}"><article id="${tab.ref.id}" lang="${webspinner.lang()}" class="${tab.ref.cssClass()}">${fragment}</article></li>`;
 						}
 					}
 				});
@@ -43,8 +43,8 @@ module.exports = (stw) => {
 			});
 		}
 		add(child, name) {
-			if (!(child instanceof stw.Reference) && child instanceof stw.Content) {
-				let reference = new stw.Reference(child);
+			if (!(child instanceof webspinner.Reference) && child instanceof webspinner.Content) {
+				let reference = new webspinner.Reference(child);
 				reference.parent = this;
 				this.children.push(reference);
 			}

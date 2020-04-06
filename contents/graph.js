@@ -6,6 +6,6 @@
 'use strict';
 
 // TODO: this is a line connected graph
-module.exports = (stw) => {
-	stw.Graph = class Graph extends stw.Content {}; // SVG or canvas
+module.exports = (webspinner) => {
+	webspinner.Graph = class Graph extends webspinner.Content { }; // SVG or canvas
 };

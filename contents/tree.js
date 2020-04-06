@@ -7,19 +7,20 @@
 
 module.exports = (stw) => {
 	stw.Tree = class Tree extends stw.Content {
-		constructor (name, template) {
-			super(name, template);
-			
+		constructor(name, template) {
+			super(name, template, true);
+
 			// Code executed by the client in order to manage the content
 			this.manage = null;
 		}
+
 		render(req, res) {
-			return super.render(req, res, () => {
-				var fragment = '<ul class="stwBody">';
+			return super.render(req, res, (req, template) => {
+				let fragment = '<ul>';
 				if (this.template() === 'webbase') {
-					_render(stw.webbase.book);
+					_render(stw.webbase.webo);
 				} else {
-					this.data.forEach(function(row, i) {
+					this.data.forEach(function (row, i) {
 						// TODO: render template recursively
 						fragment += `<li>${row}</li>`;
 					});

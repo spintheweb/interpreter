@@ -19,12 +19,10 @@ module.exports = (stw) => {
 				return this.ref.render(req, res);
 		}
 		write() {
-			var fragment;
+			let fragment;
 			
 			fragment = `<content id="R${this.id}" guid="${this.guid}" lastmod="${this.lastmod}" type="${this.constructor.name}" ref="${this.ref.id}"`;
-			
 			fragment += super.write();
-
 			fragment += '</content>\n';
 			
 			return fragment;

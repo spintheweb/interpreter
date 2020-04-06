@@ -3,6 +3,7 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
+'use strict';
 
 const url = require('url'),
 	fs = require('fs'),
@@ -32,12 +33,12 @@ module.exports = (webspinner) => {
 		}
 
 		write() {
-			var fragment;
-
+			let fragment;
+			
 			fragment = `<webo id="D${this.id}" guid="${this.guid}" lastmod="${this.lastmod}"`;
 			fragment += super.write();
 			fragment += '</webo>\n';
-
+			
 			return fragment;
 		}
 	};

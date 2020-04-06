@@ -14,7 +14,7 @@ module.exports.newId = () => {
 // Return langs RFC 3282 as a language array sorted by preference
 module.exports.acceptLanguage = (langs) => {
     const pattern = /([a-z][a-z](-[a-z][a-z])?|\*)(;q=([01](\.[0-9]+)?))?/gi;
-    var match, accept = '';
+    let match, accept = '';
     while (match = pattern.exec(langs)) {
         pattern.lastIndex += (match.index === pattern.lastIndex);
         accept += (accept !== '' ? ',' : '[') + `{"l":"${match[1]}","q":${match[4] || 1}}`;
@@ -24,7 +24,7 @@ module.exports.acceptLanguage = (langs) => {
 
 // Pick the preferred localized text, if pick is true return the picked locale
 module.exports.localize = (langs, txts, pick) => {
-    var _langs = Object.keys(txts);
+    let _langs = Object.keys(txts);
     switch (_langs.length) {
         case 0:
             return null;

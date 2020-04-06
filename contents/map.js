@@ -5,6 +5,6 @@
  */
 'use strict';
 
-module.exports = (stw) => {
-	stw.Map = class Map extends stw.Content {}; // GIS
+module.exports = (webspinner) => {
+	webspinner.Map = class Map extends webspinner.Content {}; // GIS
 };

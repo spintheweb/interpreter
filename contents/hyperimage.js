@@ -5,6 +5,6 @@
  */
 'use strict';
 
-module.exports = (stw) => {
-	stw.HyperImage = class HyperImage extends stw.Content {};
+module.exports = (webspinner) => {
+	webspinner.HyperImage = class HyperImage extends webspinner.Content {};
 };

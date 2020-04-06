@@ -5,18 +5,18 @@
  */
 'use strict';
 
-module.exports = (stw) => {
-	stw.Script = class Script extends stw.Content {
+module.exports = (webspinner) => {
+	webspinner.Script = class Script extends webspinner.Content {
 		constructor(name, template) {
 			super(name, template || '');
 			this._cssClass = 'clientside'; // clientside || serverside
 		}
 		
 		render(req, res) {
-			var fragment;
+			let fragment;
 			if (this.granted()) {
 				this.data = []; // TODO: Retrieve data asynchronously
-				fragment = this.template();
+				fragment = `<script>${this.template()}</script>`;
 			}
 			return fragment;
 		}

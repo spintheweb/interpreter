@@ -44,9 +44,9 @@ module.exports = (webspinner) => {
 		
 		// Return the highest access control associated to the given roles
 		granted() {
-			var roles = webspinner.webbase.users[webspinner.user()].roles;
-			if (this instanceof webspinner.Page && webspinner.webbase.book.mainpage() === this) return webspinner.stwAC.read; // Main web page always visible
-			var ac = null;
+			let roles = webspinner.webbase.users[webspinner.user()].roles;
+			if (this instanceof webspinner.Page && webspinner.webbase.webo.mainpage() === this) return webspinner.stwAC.read; // Main web page always visible
+			let ac = null;
 			for (let i = 0; i < roles.length; ++i) {
 				let role = roles[i];
 				if (this.rbac[role] === webspinner.stwAC.execute) return webspinner.stwAC.execute;
@@ -74,8 +74,8 @@ module.exports = (webspinner) => {
 		// Deep copy element, note, the web is not clonable, use write() instead
 		clone() {
 			let obj;
-			if (this instanceof webspinner.Chapter) {
-				obj = new webspinner.Chapter();
+			if (this instanceof webspinner.Area) {
+				obj = new webspinner.Area();
 			} else if (this instanceof webspinner.Page) {
 				obj = new webspinner.Page();
 			} else if (this instanceof webspinner.Content) {
@@ -87,7 +87,7 @@ module.exports = (webspinner) => {
 		// Move and Remove element
 		move(parent) {
 			if (this !== parent) {
-				var i = this.parent.children.indexOf(this);
+				let i = this.parent.children.indexOf(this);
 				if (i !== -1) this.parent.children.splice(i, 1);
 				if (parent) 
 					parent.children.push(this);
@@ -108,17 +108,17 @@ module.exports = (webspinner) => {
 			return this.name().replace(/\s+/g, '-').toLowerCase(); // TODO: retain only [a-z0-9-]
 			
 			function _slug(element) {
-				if (element instanceof webspinner.Book)
+				if (element instanceof webspinner.Webo)
 					return '';
 				return _slug(element.parent) + '/' + element.name().replace(/\s+/g, '-').toLowerCase();
 			}
 		}
 		
 		write() {
-			var fragment;
+			let fragment;
 			
 			fragment = '<name>\n';
-			for (var name in this._name)
+			for (let name in this._name)
 				fragment += `<text lang="${name}"><![CDATA[${this._name[name]}]]></text>\n`;
 			fragment += '</name>\n';
 
@@ -130,7 +130,7 @@ module.exports = (webspinner) => {
 
 			if (Object.keys(this.rbac).length > 0) {
 				fragment += '<authorizations>\n';
-				for (var role in this.rbac)
+				for (let role in this.rbac)
 					fragment += `<authorize role="${role}" permission="${['-', 'r', 'w', 'x'][this.rbac[role]]}"/>\n`;
 				fragment += '</authorizations>\n';
 			}

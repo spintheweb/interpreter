@@ -12,6 +12,10 @@ const url = require('url'),
 	xmldom = require('xmldom').DOMParser, // Persist webbase in XML
 	util = require('./util');
 
+const AES_METHOD = 'aes-256-cbc';
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY; // Must be 256 bits (32 characters)
+const IV_LENGTH = 16; // For AES, this is always 16
+
 /*
 NOTES
 1. Sockets allow JIT pushes, a page request pushes contents in a particular page
@@ -25,11 +29,11 @@ module.exports = ((webspinner) => {
 	webspinner.webbase = {};
 	
 	// Require STW elements
-	['stwCore', 'Chapter', 'Book', 'Page', 'Content', 'Reference']
+	['stwCore', 'Area', 'Webo', 'Page', 'Content', 'Reference']
 		.forEach(element => { require(`./elements/${element}.js`)(webspinner); });
 
 	// Require STW contents
-	webspinner.stwContentCategory = { SENSORIAL: 1, NAVIGATIONAL: 2, ORGANIZATIONAL: 3, SPECIAL: 4 };
+	webspinner.stwContentCategory = { PRESENTATIONAL: 1, NAVIGATIONAL: 2, ORGANIZATIONAL: 3, SPECIAL: 4 };
 	fs.readdirSync('./contents')
 		.forEach(content => { require(`./contents/${content}`)(webspinner); });
 
@@ -40,7 +44,7 @@ module.exports = ((webspinner) => {
 		constructor() {
 			this.guid = null;
 			this.id = util.newId();
-			this.cipher = crypto.createCipher('aes192', 'Type a passphrase');
+			//this.cipher = crypto.createCipheriv(AES_METHOD, Buffer.from(ENCRYPTION_KEY), crypto.randomBytes(IV_LENGTH));
 			this.lang = 'en'; // Webbase default language, eg. en-US
 			this.roles = {
 				administrators: {
@@ -70,7 +74,7 @@ module.exports = ((webspinner) => {
 				},
 				administrator: {
 					name: 'Administrator',
-					password: this.cipher.update('password', 'utf8', 'hex'),
+					password: null, //this.cipher.update('password', 'utf8', 'hex'),
 					enabled: true,
 					roles: ['administrators']
 				}
@@ -81,7 +85,7 @@ module.exports = ((webspinner) => {
 				xml: '',
 				csv: ''
 			}; // Predefined datasources
-			this.book = {};
+			this.webo = {};
 
 			this.settings = {};
 			this.sockets = {}; // Session management
@@ -130,7 +134,7 @@ module.exports = ((webspinner) => {
 			server.addListener('request', (req, res) => {
 				// Load webbase
 				let hostname = url.parse(req.url).hostname || 'domain.com';
-				if (!(webspinner.webbase.book instanceof webspinner.Book) || webspinner.webbase.book.name() !== hostname) {
+				if (!(webspinner.webbase.webo instanceof webspinner.Webo) || webspinner.webbase.webo.name() !== hostname) {
 					try {
 						fs.statSync(`${__dirname}/${hostname}/data/webbase.xml`);
 						webspinner.webbase.import();
@@ -138,7 +142,7 @@ module.exports = ((webspinner) => {
 						console.log(`Load webbase for ${hostname}...`);
 						
 						webspinner.webbase.lang = (util.acceptLanguage(req.headers['accept-language'] + ',en;q=0.1'))[0];
-						webspinner.webbase.book = require('./webbase')(webspinner, hostname);
+						webspinner.webbase.webo = require('./webbase')(webspinner, hostname);
 						webspinner.webbase.settings.static = `${__dirname}/${hostname}`;
 						
 						// TODO: Create directory by copying the default domain.com to ${webspinner.webbase.settings.static}
@@ -180,7 +184,7 @@ module.exports = ((webspinner) => {
 					socket.url = URL;
 
 					// Server restarted, emit page reload
-					if (this.book.constructor.name === 'Object') {
+					if (this.webo.constructor.name === 'Object') {
 						socket.emit('reload', { url: URL });
 						return;
 					}
@@ -204,7 +208,7 @@ module.exports = ((webspinner) => {
 							return false;
 						
 						// Render content
-						let fragment = content.render(null, socket);
+						let fragment = content.render(socket, null);
 						if (fragment !== '') {
 							emitted.push(content.section().toString() + Math.floor(content.sequence()));
 						
@@ -237,7 +241,7 @@ module.exports = ((webspinner) => {
 
 		// Determine the requested webbase element given the url
 		route(pathname) {
-			if (!pathname || pathname === '/') return this.book.mainpage();
+			if (!pathname || pathname === '/') return this.webo.mainpage();
 			let levels = pathname.split('/');
 			let _route = (element, level) => {
 				for (let child of element.children)
@@ -245,9 +249,9 @@ module.exports = ((webspinner) => {
 						if (++level !== levels.length) return _route(child, level);
 						return child;
 					}
-				return levels[level] === '' ? null : element.mainpage() || this.book.mainpage();
+				return levels[level] === '' ? null : element.mainpage() || this.webo.mainpage();
 			};
-			return _route(this.book, 1);
+			return _route(this.webo, 1);
 		}
 		render(req, res) {
 			if (req.method === 'GET') {
@@ -280,17 +284,17 @@ module.exports = ((webspinner) => {
 			}
 		}
 
-		// Build a site map (see sitemaps.org) that includes the urls of the visible pages in the book 
+		// Build a site map (see sitemaps.org) that includes the urls of the visible pages in the webo 
 		sitemap() {
 			let fragment = '';
-			_url(webspinner.webbase.book);
+			_url(webspinner.webbase.webo);
 			return `<?xml version="1.0" encoding="utf-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${fragment}</urlset>`;
 
 			function _url(element) {
-				if (element instanceof webspinner.Chapter && element.children.length > 0)
+				if (element instanceof webspinner.Area && element.children.length > 0)
 					element.children.forEach(child => _url(child));
 				else if (element instanceof webspinner.Page && !(element instanceof webspinner.Content) && element.granted())
-					fragment += `<url><loc>${webspinner.webbase.book.protocol()}://${webspinner.webbase.book.name()}${element.slug(true)}</loc><lastmod>${element.lastmod}</lastmod><priority>0.5</priority></url>\n`;
+					fragment += `<url><loc>${webspinner.webbase.webo.protocol()}://${webspinner.webbase.webo.name()}${element.slug(true)}</loc><lastmod>${element.lastmod}</lastmod><priority>0.5</priority></url>\n`;
 			}
 		}
 		
@@ -320,7 +324,7 @@ module.exports = ((webspinner) => {
 				fragment += `<datasource name="${datasource}"><![CDATA[${this.datasources[datasource]}]]></datasource>\n`;
 			fragment += '</datasources>\n';
 
-			(element || webspinner.webbase.book).children.forEach(child => fragment += child.write());
+			(element || webspinner.webbase.webo).children.forEach(child => fragment += child.write());
 			
 			fragment += '</webbase>\n';
 			fragment += '</webspinner>';

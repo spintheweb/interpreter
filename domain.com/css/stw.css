@@ -15,8 +15,8 @@
 a {color:inherit; text-decoration:none;}
 
 .stwError {background-color:#ff0000; color:#ffffff;}
-.stwContent {position:relative; padding:1em 0;}
-.stwSelected {background-color:var(--special) !important; color:#ffffff !important; border-color:var(--special) !important;}
+.stwContent { position:relative; padding:1em 0; border: thin dashed transparent; }
+.stwContent:hover { border-color: #000; }.stwSelected {background-color:var(--special) !important; color:#ffffff !important; border-color:var(--special) !important;}
 
 .stwCaption {color:var(--special);}
 /*.stwHeader {}*/

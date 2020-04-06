@@ -47,13 +47,12 @@ module.exports = (webspinner) => {
 			});
 		}
 		write() {
-			var fragment = '';
+			let fragment = '';
 			
 			if (!(this instanceof webspinner.Content))
 				fragment = `<page id="P${this.id}" guid="${this.guid}" lastmod="${this.lastmod}" template="${this._template}"`;
 
 			fragment += '>\n';
-
 			fragment += super.write();
 
 			if (!(this instanceof webspinner.Content))

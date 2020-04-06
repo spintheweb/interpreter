@@ -1,4 +1,4 @@
-var server = require('http').createServer();
+let server = require('http').createServer();
 
 // Spin the web listens to server
 require('./webspinner').listen(server);

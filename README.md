@@ -8,9 +8,16 @@ WBOL can describe web sites, intranets, extranets, portals, web apps, web servic
 
 The term webbase was first used in 1998, a name given to a relational database whose schema defined a webo: its structure, content, layout, localization, navigation and security aspects. Later, to ease portability, the webbase was formalized into the XML based Webbase Ontology Language (WBOL), this introduced the term webbaselet, a webbase fragment.
 
+## Components 
+Spin the Web addresses three issues to ease web develpments: describe, interpret and build. It is based on pillars of web development, HTML (SVG), CSS, Javascript, it is not for the faint of hearts, a good dose of knowhow is necessary, knowhow at the root of web developments, full stack developer.
+
+Sockets
+
+Content are described macroscopically (WBOL) Webbase Ontology Language and microscopically (WBLL) Webbase Layout Language
+
 ## Features
 * Content centered
 * Role Based Access Control
 * Multilingual & Multinational
 * Templated
-* Extensible
+

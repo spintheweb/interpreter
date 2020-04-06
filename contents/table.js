@@ -5,16 +5,22 @@
  */
 'use strict';
 
-module.exports = (stw) => {
-	stw.Table = class Table extends stw.Content {
+module.exports = (webspinner) => {
+	webspinner.Table = class Table extends webspinner.Content {
+		constructor(name, template) {
+			super(name, template, true);
+		}
+
 		render(req, res) {
-			return super.render(req, res, () => {
-				let fragment =  '<table class="stwBody">';
-				fragment += '<thead><tr></tr></thead><tbody>'; // Consider l and tab symbols
+			return super.render(req, res, (req, template) => {
+				let fragment =  '<table>';
+				fragment += '<thead><tr></tr></thead><tbody>'; // TODO: Special handling of l, \t and \n symbols
 				this.data.forEach(function(row, i) {
 					fragment += `<tr>${this.renderRow()}</tr>`;
 				});
-				fragment += '</tbody><tfoot><tr></tr></tfoot>'; // Consider 
+				fragment += '</tbody><tfoot><tr>'; 
+				fragment += 'This is pager space'; // TODO: Paging
+				fragment += '</tr></tfoot></table>';
 				return fragment;
 			});
 		}

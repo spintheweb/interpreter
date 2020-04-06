@@ -5,12 +5,14 @@
  */
 'use strict';
 
-module.exports = (stw) => {
-	stw.Form = class Form extends stw.Content {
+module.exports = (webspinner) => {
+	webspinner.Form = class Form extends webspinner.Content {
+		constructor(name, template) {
+			super(name, template, true);
+		}
+
 		render(req, res) {
-			return super.render(req, res, () => {
-				return `<div class="stwBody">${this.renderRow()}</div>`;
-			});
+			return super.render(req, res, this.renderRow);
 		}
 	};
 };
