@@ -28,9 +28,9 @@ NOTES
 module.exports = ((webspinner) => {
 	webspinner.webbase = {};
 	
-	// Require STW elements
-	['stwCore', 'Area', 'Webo', 'Page', 'Content', 'Reference']
-		.forEach(element => { require(`./elements/${element}.js`)(webspinner); });
+	// Require STW classes
+	['Base', 'Area', 'Webo', 'Page', 'Content', 'Reference']
+		.forEach(element => { require(`./classes/${element}.js`)(webspinner); });
 
 	// Require STW contents
 	webspinner.stwContentCategory = { PRESENTATIONAL: 1, NAVIGATIONAL: 2, ORGANIZATIONAL: 3, SPECIAL: 4 };
@@ -133,7 +133,7 @@ module.exports = ((webspinner) => {
 		listen(server) {
 			server.addListener('request', (req, res) => {
 				// Load webbase
-				let hostname = url.parse(req.url).hostname || 'domain.com';
+				let hostname = url.parse(req.url).hostname || 'public';
 				if (!(webspinner.webbase.webo instanceof webspinner.Webo) || webspinner.webbase.webo.name() !== hostname) {
 					try {
 						fs.statSync(`${__dirname}/${hostname}/data/webbase.xml`);
@@ -145,7 +145,7 @@ module.exports = ((webspinner) => {
 						webspinner.webbase.webo = require('./webbase')(webspinner, hostname);
 						webspinner.webbase.settings.static = `${__dirname}/${hostname}`;
 						
-						// TODO: Create directory by copying the default domain.com to ${webspinner.webbase.settings.static}
+						// TODO: Create directory by copying the default public to ${webspinner.webbase.settings.static}
 //						fs.mkdirSync(`${webspinner.webbase.settings.static}/data`);
 //						webspinner.webbase.export(`${webspinner.webbase.settings.static}/data/webbase.xml`);
 					}

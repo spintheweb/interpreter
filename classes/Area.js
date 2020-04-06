@@ -13,7 +13,7 @@ const url = require('url'),
 
 /// Organizer
 module.exports = (webspinner) => {
-    webspinner.Area = class Area extends webspinner.stwCore {
+    webspinner.Area = class Area extends webspinner.Base {
 		constructor(name) {
 			super(name);
 			this._mainpage = null;

@@ -38,7 +38,7 @@ module.exports = (webspinner) => {
 			});
 		}
 		add(child, name) {
-			if (!(child instanceof webspinner.Reference) && child instanceof webspinner.stwCore) {
+			if (!(child instanceof webspinner.Reference) && child instanceof webspinner.Base) {
 				let reference = new webspinner.Reference(child);
 				reference.parent = this;
 				this.children.push(reference);

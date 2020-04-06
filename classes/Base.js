@@ -1,5 +1,5 @@
 /*!
- * stwCore
+ * Base
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
@@ -12,7 +12,7 @@ const url = require('url'),
 	util = require('../util');
 
 module.exports = (webspinner) => {
-    webspinner.stwCore = class stwCore {
+    webspinner.Base = class Base {
 		constructor(name) {
 			this.guid = null;
 			this.id = util.newId();
@@ -92,7 +92,7 @@ module.exports = (webspinner) => {
 				if (parent) 
 					parent.children.push(this);
 				else {
-					// TODO: remove shortcuts, visit all elements in the webbase
+					// TODO: remove shortcuts, visit all classes in the webbase
 					delete this;
 				}
 			}
