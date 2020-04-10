@@ -6,5 +6,10 @@
 'use strict';
 
 module.exports = (webspinner) => {
-	webspinner.Map = class Map extends webspinner.Content {}; // GIS
+	webspinner.Map = class Map extends webspinner.Content {
+		constructor(name, template) {
+			super(name, template, true);
+			this._category = webspinner.stwContentCategory.NAVIGATIONAL;
+		}
+	}; // GIS
 };

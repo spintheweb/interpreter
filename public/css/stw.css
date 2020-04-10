@@ -10,24 +10,29 @@
 @import "//use.fontawesome.com/releases/v5.0.9/css/regular.css";
 @import "//use.fontawesome.com/releases/v5.0.9/css/fontawesome.css";
 
-:root { --special: #fe7d00; } 
+:root { --special: #966535; } 
 
 a {color:inherit; text-decoration:none;}
+h1 {margin:0;}
 
 .stwError {background-color:#ff0000; color:#ffffff;}
-.stwContent { position:relative; padding:1em 0; border: thin dashed transparent; }
-.stwContent:hover { border-color: #000; }.stwSelected {background-color:var(--special) !important; color:#ffffff !important; border-color:var(--special) !important;}
+.stwSelected {background-color:var(--special) !important; color:#ffffff !important; border-color:var(--special) !important;}
+
+section {position:relative; padding:0;}
+section:hover {opacity: 0.8;}
+article.stwContent {position:relative; padding:0.25em; border: thin dashed transparent;}
+article.stwContent:hover {border-color: #000;}
 
 .stwCaption {color:var(--special);}
-/*.stwHeader {}*/
-/*.stwFooter {}*/
-/*.stwPager {}*/
+.stwHeader {display: block;}
+.stwFooter {display: block;}
+.stwPager {display: block;}
 
 .stwACNaN {color:#b0b0b0;}
-.stwAC0 {color:#b0b0b0; text-decoration:line-through;}
+.stwAC0 {color:#b0b0b0;}
 .stwAC1 {color:#333333;}
 .stwAC2 {color:#00ff00;}
-.stwAC3 {color:#ff0000;}
+.stwAC4 {color:#ff0000;}
 
 .stwText {position:relative; padding:1em;}
 
@@ -43,12 +48,13 @@ a {color:inherit; text-decoration:none;}
 .stwBreadcrumbs a {text-transform:lowercase; padding:0.25em; border-radius:0.25em; cursor:pointer;}
 .stwBreadcrumbs a:hover {background-color:#f0f0f0; color:#000000;}
 
-.stwMenu ul {list-style-type:none; margin:0; padding:0;}
+.stwMenu ul {display:flex; align-items:center; list-style-type:none; margin:0; padding:0;}
 .stwMenuOption {display:inline-block; text-align:center;}
 .stwMenuOption a {width:100%; padding:0.5em; margin:0.25em; cursor:pointer; border-radius:0.5em;}
 .stwMenuOption a:hover {background-color:#f0f0f0; color:#000000;}
 
-.stwTree ul {list-style-type:none; margin-left:1em; padding:0;}
+.stwTree ul ul {list-style-type:none; margin-left:1em; padding:0;}
+.stwTree .stwBody>ul {margin:0;}
 .stwTree li {padding:0.5em 0 0 0; cursor:pointer;}
 
 .stwCalendar ul {list-style-type:none; margin:0em; padding:0;}
@@ -66,3 +72,24 @@ a {color:inherit; text-decoration:none;}
 .stwChart .grid {stroke: #DDD; stroke-dasharray: 1 1; shape-rendering: crispEdges; vector-effect: non-scaling-stroke;}
 .stwChart .axes {stroke-width: 1px; stroke: #000; shape-rendering: crispEdges; vector-effect: non-scaling-stroke;}
 .stwChart text {fill: #000;}
+
+li.stwWebo::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0ac";}
+li.stwArea::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f07b";}
+li.stwPage::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f15b";}
+li.stwContent::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c8";}
+li.stwReference::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c1";}
+
+li.stwBreadcrumbs::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f101";}
+li.stwCalendar::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f073";}
+li.stwChart::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f080";}
+li.stwForm::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f2bb";}
+li.stwHyperimage::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f2bb";}
+li.stwKeypad::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f11c";}
+li.stwList::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f03a";}
+li.stwMap::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f279";}
+li.stwMenu::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c9";}
+li.stwScript::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f121";}
+li.stwTable::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0ce";}
+li.stwTabs::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f24d";}
+li.stwText::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f031";}
+li.stwTree::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f1bb";}

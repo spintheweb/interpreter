@@ -9,6 +9,7 @@ module.exports = (webspinner) => {
 	webspinner.Calendar = class Calendar extends webspinner.Content {
 		constructor(name, template) {
 			super(name, template, true);
+			this._category = webspinner.stwContentCategory.ORGANIZATIONAL;
 		}
 
 		render(req, res) {

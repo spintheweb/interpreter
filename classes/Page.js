@@ -9,7 +9,7 @@ const url = require('url'),
 	fs = require('fs'),
 	io = require('socket.io'),
 	xmldom = require('xmldom').DOMParser, // Persist webbase in XML
-	util = require('../util');
+	util = require('../utilities');
 
 module.exports = (webspinner) => {
 	webspinner.Page = class Page extends webspinner.Base {

@@ -5,20 +5,23 @@
  */
 'use strict';
 
-module.exports = (stw) => {
-	stw.Tree = class Tree extends stw.Content {
+const fs = require('fs');
+
+module.exports = (webspinner) => {
+	webspinner.Tree = class Tree extends webspinner.Content {
 		constructor(name, template) {
 			super(name, template, true);
+			this._category = webspinner.stwContentCategory.ORGANIZATIONAL;
 
-			// Code executed by the client in order to manage the content
-			this.manage = null;
+			// Code executed by the client to handle the content
+			this.handler = null;
 		}
 
 		render(req, res) {
 			return super.render(req, res, (req, template) => {
 				let fragment = '<ul>';
-				if (this.template() === 'webbase') {
-					_render(stw.webbase.webo);
+				if (!this.datasource()) {
+					_webbase(webspinner.webbase.webo); // Render webbase structure
 				} else {
 					this.data.forEach(function (row, i) {
 						// TODO: render template recursively
@@ -27,13 +30,21 @@ module.exports = (stw) => {
 				}
 				return fragment + '</ul>';
 
-				function _render(element) {
-					if (!(element instanceof stw.Content) && element.children.length > 0) {
-						fragment += `<li class="stw${element.constructor.name} stwAC${element.granted()}" data-ref="${element.id}" title="${element.slug(true)}">${element.name()}<ul>`;
-						element.children.forEach(child => _render(child));
+				function _webbase(element) {
+					if (/*!(element instanceof webspinner.Content) &&*/ element.children.length > 0) {
+						fragment += `<li class="stw${element.constructor.name} stwAC${element.granted()}" data-ref="${element.id}" title="${element.slug(true)}"> ${element.name()}<ul>`;
+						element.children.forEach(child => _webbase(child));
 						fragment += '</ul></li>';
-					} else
-						fragment += `<li class="stw${element.constructor.name} stwAC${element.granted()}" data-ref="${element.id}" title="${element.slug(true)}"> ${element.name()}</li>`;
+					} else {
+						if (element.constructor.name == 'Content')
+							fragment += `<li class="stwText stwAC${element.granted()}" data-ref="${element.id}" title="${element.slug(true)}"> ${element.name()}</li>`;
+						else
+							fragment += `<li class="stw${element.constructor.name} stwAC${element.granted()}" data-ref="${element.id}" title="${element.slug(true)}"> ${element.name()}</li>`;
+					}
+				}
+
+				function _dir() {
+					// TODO: Directory structure
 				}
 			});
 		}

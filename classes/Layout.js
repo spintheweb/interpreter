@@ -133,17 +133,19 @@ function renderer(req, layout) {
     if (typeof layout == 'string')
         return layout;
 
+    req.data = req.data || { _cols: [], _col: 0 }
+
     let html = '', str;
     for (let token of layout.tokens)
         try {
             switch (token.symbol) {
                 case 'a':
                     str = token.args ? token.args[0] : '@@';
-                    html += `<a href="${renderParameters(req, str, token.params)}"${renderAttributes(req, token.attrs)}>${render(req, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [str] }] })}</a>`;
+                    html += `<a href="${renderParameters(req, str, token.params)}"${renderAttributes(req, token.attrs)}>${renderer(req, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [str] }] })}</a>`;
                     break;
                 case 'b':
                     str = token.args ? token.args[0] : '@@';
-                    html += `<button type="submit" formaction="${renderParameters(req, str, token.params)}"${renderAttributes(req, token.attrs)}>${render(req, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [''] }] } || str)}</button>`;
+                    html += `<button type="submit" formaction="${renderParameters(req, str, token.params)}"${renderAttributes(req, token.attrs)}>${renderer(req, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [''] }] } || str)}</button>`;
                     break;
                 case 'c':
                     token.attrs = token.attrs || {};

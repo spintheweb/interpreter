@@ -10,7 +10,8 @@ const url = require('url'),
 	io = require('socket.io'),
 	crypto = require('crypto'),
 	xmldom = require('xmldom').DOMParser, // Persist webbase in XML
-	util = require('./util');
+	util = require('./utilities'),
+	mime = require('mime-types');
 
 const AES_METHOD = 'aes-256-cbc';
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY; // Must be 256 bits (32 characters)
@@ -27,7 +28,7 @@ NOTES
 */
 module.exports = ((webspinner) => {
 	webspinner.webbase = {};
-	
+
 	// Require STW classes
 	['Base', 'Area', 'Webo', 'Page', 'Content', 'Reference']
 		.forEach(element => { require(`./classes/${element}.js`)(webspinner); });
@@ -39,7 +40,7 @@ module.exports = ((webspinner) => {
 
 	// Enum STW Roled Based Access Control permissions
 	webspinner.stwAC = { none: 0, read: 1, write: 2, execute: 3 };
-	
+
 	class Webbase {
 		constructor() {
 			this.guid = null;
@@ -80,18 +81,15 @@ module.exports = ((webspinner) => {
 				}
 			}; // Predefined users
 			this.datasources = {
-				webbase: webspinner.webbase,
-				json: '',
-				xml: '',
-				csv: ''
+				webbase: webspinner.webbase
 			}; // Predefined datasources
 			this.webo = {};
 
 			this.settings = {};
 			this.sockets = {}; // Session management
-			this.socket = { 
-				lang: webspinner.webbase.lang, 
-				user: 'guest' 
+			this.socket = {
+				lang: webspinner.webbase.lang,
+				user: 'guest'
 			};
 
 			webspinner.webbase = this;
@@ -99,9 +97,9 @@ module.exports = ((webspinner) => {
 			webspinner.lang = (text) => {
 				return this.lang;
 
-//				if (main && webspinner.webbase.socket.lang)
-//					return webspinner.webbase.socket.lang[0];
-//				return webspinner.webbase.socket.lang[0] || webspinner.webbase.lang[0];
+				//				if (main && webspinner.webbase.socket.lang)
+				//					return webspinner.webbase.socket.lang[0];
+				//				return webspinner.webbase.socket.lang[0] || webspinner.webbase.lang[0];
 			};
 			webspinner.user = () => {
 				return webspinner.webbase.socket.user || 'guest';
@@ -127,8 +125,8 @@ module.exports = ((webspinner) => {
 			this.users[name].password = newpassword;
 			return 0;
 		}
-		datasource() {}
-		
+		datasource() { }
+
 		// Bootstrap, load webbase in memory and open websocket channel
 		listen(server) {
 			server.addListener('request', (req, res) => {
@@ -140,24 +138,24 @@ module.exports = ((webspinner) => {
 						webspinner.webbase.import();
 					} catch (ex) {
 						console.log(`Load webbase for ${hostname}...`);
-						
+
 						webspinner.webbase.lang = (util.acceptLanguage(req.headers['accept-language'] + ',en;q=0.1'))[0];
 						webspinner.webbase.webo = require('./webbase')(webspinner, hostname);
 						webspinner.webbase.settings.static = `${__dirname}/${hostname}`;
-						
+
 						// TODO: Create directory by copying the default public to ${webspinner.webbase.settings.static}
-//						fs.mkdirSync(`${webspinner.webbase.settings.static}/data`);
-//						webspinner.webbase.export(`${webspinner.webbase.settings.static}/data/webbase.xml`);
+						//						fs.mkdirSync(`${webspinner.webbase.settings.static}/data`);
+						//						webspinner.webbase.export(`${webspinner.webbase.settings.static}/data/webbase.xml`);
 					}
 				}
-				
+
 				webspinner.webbase.render(req, res);
 			});
-			
+
 			let listener = io.listen(server);
 			listener.sockets.on('connection', socket => {
 				webspinner.webbase.sockets[socket.id] = socket;
-				
+
 				socket.user = 'guest';
 				socket.lang = util.acceptLanguage(socket.handshake.headers['accept-language']);
 				socket.url = null;
@@ -174,12 +172,12 @@ module.exports = ((webspinner) => {
 				socket.on('disconnect', () => {
 					delete webspinner.webbase.sockets[socket.id];
 				});
-				
+
 				// Rendering
 				socket.on('content', URL => {
-					if (typeof URL !== 'object') 
+					if (typeof URL !== 'object')
 						URL = url.parse(URL);
-					
+
 					webspinner.webbase.socket = socket;
 					socket.url = URL;
 
@@ -194,9 +192,9 @@ module.exports = ((webspinner) => {
 						socket.emit('page', { id: element.id, lang: webspinner.lang(), name: element.name() });
 						for (let content of element.children)
 							_emit(content, true);
-							
+
 						_recurse(element.parent); // Walk up the webbase and show "shared" contents, shared contents are children of areas and are shared by the underlying pages.
-						
+
 						socket.emit('wrapup', { emitted: emitted });
 					} else if (element instanceof webspinner.Content)
 						_emit(element, false);
@@ -206,14 +204,14 @@ module.exports = ((webspinner) => {
 						// Avoid re-emitting the content if a content with the same section and integer sequence has already been emitted in the current request
 						if (emitted.indexOf(content.section() + Math.floor(content.sequence())) !== -1)
 							return false;
-						
+
 						// Render content
 						let fragment = content.render(socket, null);
 						if (fragment !== '') {
 							emitted.push(content.section().toString() + Math.floor(content.sequence()));
-						
+
 							socket.emit(content instanceof webspinner.Script ? 'script' : 'content', {
-								id: content.id,
+								id: content.permalink(), // content.id
 								section: content.section(),
 								sequence: content.sequence(),
 								cssClass: content.cssClass(),
@@ -253,10 +251,11 @@ module.exports = ((webspinner) => {
 			};
 			return _route(this.webo, 1);
 		}
+
 		render(req, res) {
 			if (req.method === 'GET') {
 				let path = url.parse(req.url).pathname;
-				
+
 				switch (path) {
 					case '/sitemap.xml':
 						res.writeHead(200, { 'Content-Type': 'text/xml' }); // OK
@@ -273,8 +272,10 @@ module.exports = ((webspinner) => {
 						let element = this.route(path);
 						if (element && element.granted())
 							element.render(req, res);
+//						else if (element instanceof webspinner.Area)
+//							element.mainpage.render(req, res);
 					} else {
-						res.writeHead(200);
+						res.writeHead(200, { 'content-type': mime.lookup(path) });
 						res.end(data);
 					}
 				});
@@ -297,17 +298,17 @@ module.exports = ((webspinner) => {
 					fragment += `<url><loc>${webspinner.webbase.webo.protocol()}://${webspinner.webbase.webo.name()}${element.slug(true)}</loc><lastmod>${element.lastmod}</lastmod><priority>0.5</priority></url>\n`;
 			}
 		}
-		
+
 		// XML persistancy
 		write(element) {
 			let fragment;
-			
+
 			fragment = '<?xml version="1.0" encoding="utf-8"?>\n';
 			fragment += '<webspinner version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://webspinner.org" xsi:schemaLocation="https://webspinner.org/schemas wbol.xsd">\n';
 			fragment += `<!--Spin the Web (TM) webbase generated ${(new Date()).toISOString()}-->\n`;
 
-    		fragment += `<webbase id="W${this.id}" language="${this.lang}" guid="${this.guid}" key="${this.key}">\n`;
-    		
+			fragment += `<webbase id="W${this.id}" language="${this.lang}" guid="${this.guid}" key="${this.key}">\n`;
+
 			fragment += '<security>\n';
 			fragment += '<roles>\n';
 			for (let role in this.roles)
@@ -325,13 +326,13 @@ module.exports = ((webspinner) => {
 			fragment += '</datasources>\n';
 
 			(element || webspinner.webbase.webo).children.forEach(child => fragment += child.write());
-			
+
 			fragment += '</webbase>\n';
 			fragment += '</webspinner>';
-			
+
 			return fragment;
 		}
-		load(pathname) {}
+		load(pathname) { }
 	}
 
 	return new Webbase();

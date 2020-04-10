@@ -6,7 +6,7 @@
 'use strict';
 
 /// Create a webbase programmatically
-// Note: shared contents are contents that are children of Chapters
+// Note: shared contents are contents that are children of areas
 module.exports = (webspinner, name) => {
 	let webo, area, page, mainmenu;
 
@@ -18,18 +18,29 @@ module.exports = (webspinner, name) => {
 		.grant('guests', webspinner.stwAC.read)
 		.section('footer')
 		.cssClass('stwText')); // Shared content
-	
+
 	webo.add(new webspinner.Breadcrumbs()
-			.grant('guests', webspinner.stwAC.read)
-			.sequence(1).section('main'));
+		.grant('guests', webspinner.stwAC.read)
+		.sequence(1).section('main'));
 	area = new webspinner.Area('Private');
 	webo.add(area);
 	page = new webspinner.Page('Home');
 	webo.mainpage(page);
 	page.add(new webspinner.Form('Form', `\\s('caption="This is the caption" header="This is the header" footer="This is the footer"')l('Label')\\te(';foo;default')\\nA('http://www.domain.com')pp('param1;uno&s')p('prot')f\nt('pippo')\\a('style="color: red"')\nt('pluto')\\a('style="color: green"')e`).sequence(2).section('main'))
+		.add(new webspinner.Tabs('Properties')
+			.section('sidebar').sequence(2)
+			.add(new webspinner.Tree('<i class="fa fa-globe" title="Webbase"></i>'))
+			.add(new webspinner.Text('<i class="fa fa-folder" title="File system"></i>', 'Files'))
+			.add(new webspinner.Text('<i class="fa fa-database" title="Datasources"></i>', 'Datasources'))
+		)
+		.add(new webspinner.Tabs('Properties')
+			.section('sidebar').sequence(3)
+			.add(new webspinner.Form('<i class="fa fa-cog" title="Properties"></i>', `l('Name')e\\nl('Position')e\\ne\\nl('Type')d('')\\nl('Datasource')e\\nl('Query')m\\nl('Parameters')e\\nl('Layout')m\\nb(';Save')`))
+			.add(new webspinner.List('<i class="fas fa-shield-alt" title="Authorizations"></i>', `t('Authorizations')`))
+		)
 		.add(new webspinner.Keypad().sequence(3).section('main')) // Alphabet keys
-//		.add(new webspinner.Breadcrumbs()
-//			.sequence(1).section('main'))
+		//		.add(new webspinner.Breadcrumbs()
+		//			.sequence(1).section('main'))
 		.add(new webspinner.Tabs('Tabs')
 			.sequence(5).section('main')
 			.add(new webspinner.Chart('Pie'))
@@ -42,8 +53,6 @@ module.exports = (webspinner, name) => {
 	webo.add(page)
 		.add(new webspinner.Page('About us'))
 		.add(new webspinner.Page('Products').grant('guests', webspinner.stwAC.read)
-			.add(new webspinner.Tree('Webbase', 'webbase')
-				.section('sidebar').sequence(2))
 			.add(new webspinner.Text('Override shared', 'This content overrides the shared footer')
 				.section('footer').sequence(1)))
 		.add(new webspinner.Page('Profile')
@@ -52,9 +61,9 @@ module.exports = (webspinner, name) => {
 			.grant('guests', webspinner.stwAC.read)
 			.add(new webspinner.Script('Code', 'alert("Welcome from webspinner!");'))
 		);
-	mainmenu.add(new webspinner.Text('Option', '<img src="/media/logo-bw_64x64.png" alt="Logo webspinner">'));
+	mainmenu.add(new webspinner.Text('Logo', '<img src="/media/logo-bw_64x64.png" alt="Logo webspinner">'));
 	mainmenu.add(webo);
-//	mainmenu.add(new webspinner.Calendar());
-	
+	//	mainmenu.add(new webspinner.Calendar());
+
 	return webo;
 };

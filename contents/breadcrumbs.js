@@ -24,8 +24,8 @@ module.exports = (webspinner) => {
 				for (let element = parent; element.parent; path.unshift(element), element = element.parent);
 				return '<nav>' + path.map(element => {
 					slug += `/${element.slug()}`;
-					return `<a onclick="stw.emit('content', '${slug}')">${element.name()}</a>`;
-				}).join(' / ') + '</nav>';
+					return `<a href="${slug}">${element.name()}</a>`;
+				}).join('/') + '</nav>';
 			});
 		}
 	};

@@ -9,7 +9,7 @@ const url = require('url'),
 	fs = require('fs'),
 	io = require('socket.io'),
 	xmldom = require('xmldom').DOMParser, // Persist webbase in XML
-	util = require('../util'),
+	util = require('../utilities'),
 	layout = require('./Layout');
 
 module.exports = (webspinner) => {
@@ -27,7 +27,7 @@ module.exports = (webspinner) => {
 
 			this.data = [];
 			this.template(wbll, template); // NOTE: text or layout functions
-			this.manage = null; // Client side code that manages content
+			this.handler = null; // Client side code that manages content
 		}
 
 		cssClass(value) {
@@ -79,8 +79,22 @@ module.exports = (webspinner) => {
 			this.lastmod = (new Date()).toISOString();
 			return this;
 		}
+		add(child) {
+			if (!child || child == this || child instanceof webspinner.Webo)
+				return this;
 
-		add() { } // Override predefined add()
+			if (!(child instanceof webspinner.Content))
+				child = new webspinner.Reference(child);
+
+			if (this.children.indexOf(child) === -1) {
+				if (child.parent) 
+					child = new webspinner.Reference(child);
+				child.parent = this;
+				this.children.push(child);
+				this.lastmod = (new Date()).toISOString();
+			}
+			return this;
+		}
 		getData() {
 			// TODO: Request data
 			return [];
