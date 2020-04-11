@@ -16,6 +16,43 @@ module.exports = (webspinner) => {
 		constructor(name) {
 			super(name);
 			this._protocol = 'http';
+			this.lang = 'en'; // Webbase default language, eg. en-US
+			this.roles = {
+				administrators: {
+					enabled: true
+				}, // Everything
+				developers: {
+					enabled: true
+				}, // Modify webbase
+				translators: {
+					enabled: false
+				}, // Modify texts in webbase
+				guests: {
+					enabled: true
+				}, // Interact webbase
+				users: {
+					enabled: true
+				}, // Interact webbase
+				webmasters: {
+					enabled: false
+				} // Add data
+			}; // Predefined roles
+			this.users = {
+				guest: {
+					name: 'Guest',
+					enabled: true,
+					roles: ['guests']
+				},
+				administrator: {
+					name: 'Administrator',
+					password: null, //this.cipher.update('password', 'utf8', 'hex'),
+					enabled: true,
+					roles: ['administrators']
+				}
+			}; // Predefined users
+			this.datasources = {
+				webbase: webspinner.webbase
+			}; // Predefined datasources
 		}
 
 		protocol(value) {
@@ -31,11 +68,20 @@ module.exports = (webspinner) => {
 			this.lastmod = (new Date()).toISOString();
 			return this;
 		}
+		datasource(name, obj) {
+			if (!name && !obj)
+				return this.datasources;
+			if (name && !obj)
+				return this.datasources[name];
+			if (name && obj)
+				this.datasources[name] = obj;
+			return obj;
+		}
 
 		write() {
 			let fragment;
 			
-			fragment = `<webo id="D${this.id}" guid="${this.guid}" lastmod="${this.lastmod}"`;
+			fragment = `<webo id="D${this.id}" uuid="${this.uuid}" lastmod="${this.lastmod}"`;
 			fragment += super.write();
 			fragment += '</webo>\n';
 			

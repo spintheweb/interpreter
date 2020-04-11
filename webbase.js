@@ -11,6 +11,13 @@ module.exports = (webspinner, name) => {
 	let webo, area, page, mainmenu;
 
 	webo = new webspinner.Webo(name);
+	webo.datasource('somedata', {
+		id: 12,
+		name: 'webo',
+		dob: new Date(),
+		notes: 'This is but a test'
+	});
+
 	webo.add(mainmenu = new webspinner.Menu('Main menu')
 		.grant('guests', webspinner.stwAC.read)
 		.section('header')); // Shared content

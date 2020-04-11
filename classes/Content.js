@@ -129,7 +129,7 @@ module.exports = (webspinner) => {
 		write() {
 			let fragment = "";
 			if (!(this instanceof webspinner.Reference))
-				fragment = `<content id="C${this.id}" guid="${this.guid}" lastmod="${this.lastmod}" type="${this.constructor.name}"`;
+				fragment = `<content id="C${this.id}" uuid="${this.uuid}" lastmod="${this.lastmod}" type="${this.constructor.name}"`;
 
 			if (this._cssClass) fragment += ` cssClass="${this._cssClass}"`;
 			if (this._section) fragment += ` section="${this._section}"`;

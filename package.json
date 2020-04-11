@@ -7,6 +7,7 @@
     "mime-types": "^2.1.26",
     "mongodb": "^2.2.36",
     "socket.io": "^0.9.17",
+    "uuid": "^7.0.3",
     "xmldom": "^0.1.31"
   },
   "devDependencies": {
@@ -23,13 +24,15 @@
   },
   "keywords": [
     "wbol",
+    "wbll",
     "webspinner",
-    "cms"
+    "webo",
+    "wboler"
   ],
-  "author": "Giancarlo Trevisan <g.trevisan@keyvisions.it> (http://www.spintheweb.org)",
+  "author": "Giancarlo Trevisan <g.trevisan@keyvisions.it> (https://www.spintheweb.org)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/spintheweb/spintheweb/issues"
   },
-  "homepage": "https://www.spintheweb.ord"
+  "homepage": "https://www.spintheweb.org"
 }

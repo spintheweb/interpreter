@@ -5,11 +5,9 @@
  */
 'use strict';
 
-// Generate a psudo id
-// TODO: what if simply an incrementer?
-module.exports.newId = () => {
-    return new Date().getTime() + Math.random();
-};
+const uuid = require('uuid');
+
+module.exports.newId = () => uuid.v1();
 
 // Return langs RFC 3282 as a language array sorted by preference
 module.exports.acceptLanguage = (langs) => {

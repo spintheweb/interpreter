@@ -14,7 +14,7 @@ const url = require('url'),
 module.exports = (webspinner) => {
 	webspinner.Base = class Base {
 		constructor(name) {
-			this.guid = null;
+			this.uuid = null;
 			this.id = util.newId();
 			this.parent = null;
 			this.children = [];

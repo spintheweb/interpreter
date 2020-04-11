@@ -21,7 +21,7 @@ module.exports = (stw) => {
 		write() {
 			let fragment;
 			
-			fragment = `<content id="R${this.id}" guid="${this.guid}" lastmod="${this.lastmod}" type="${this.constructor.name}" ref="${this.ref.id}"`;
+			fragment = `<content id="R${this.id}" uuid="${this.uuid}" lastmod="${this.lastmod}" type="${this.constructor.name}" ref="${this.ref.id}"`;
 			fragment += super.write();
 			fragment += '</content>\n';
 			

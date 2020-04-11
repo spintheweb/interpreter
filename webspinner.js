@@ -41,12 +41,13 @@ module.exports = ((webspinner) => {
 	// Enum STW Roled Based Access Control permissions
 	webspinner.stwAC = { none: 0, read: 1, write: 2, execute: 3 };
 
-	class Webbase {
+	class WebSpinner {
 		constructor() {
-			this.guid = null;
+			this.uuid = null;
 			this.id = util.newId();
 			//this.cipher = crypto.createCipheriv(AES_METHOD, Buffer.from(ENCRYPTION_KEY), crypto.randomBytes(IV_LENGTH));
-			this.lang = 'en'; // Webbase default language, eg. en-US
+		
+			this.lang = 'en'; // WebSpinner default language, eg. en-US
 			this.roles = {
 				administrators: {
 					enabled: true
@@ -85,6 +86,7 @@ module.exports = ((webspinner) => {
 			}; // Predefined datasources
 			this.webo = {};
 
+			
 			this.settings = {};
 			this.sockets = {}; // Session management
 			this.socket = {
@@ -125,7 +127,6 @@ module.exports = ((webspinner) => {
 			this.users[name].password = newpassword;
 			return 0;
 		}
-		datasource() { }
 
 		// Bootstrap, load webbase in memory and open websocket channel
 		listen(server) {
@@ -301,13 +302,11 @@ module.exports = ((webspinner) => {
 
 		// XML persistancy
 		write(element) {
-			let fragment;
-
-			fragment = '<?xml version="1.0" encoding="utf-8"?>\n';
+			let fragment = '<?xml version="1.0" encoding="utf-8"?>\n';
 			fragment += '<webspinner version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://webspinner.org" xsi:schemaLocation="https://webspinner.org/schemas wbol.xsd">\n';
 			fragment += `<!--Spin the Web (TM) webbase generated ${(new Date()).toISOString()}-->\n`;
 
-			fragment += `<webbase id="W${this.id}" language="${this.lang}" guid="${this.guid}" key="${this.key}">\n`;
+			fragment += `<webbase id="W${this.id}" language="${this.lang}" uuid="${this.uuid}" key="${this.key}">\n`;
 
 			fragment += '<security>\n';
 			fragment += '<roles>\n';
@@ -335,5 +334,5 @@ module.exports = ((webspinner) => {
 		load(pathname) { }
 	}
 
-	return new Webbase();
+	return new WebSpinner();
 })({});

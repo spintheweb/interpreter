@@ -10,7 +10,6 @@ module.exports = (webspinner) => {
 		constructor(name, template) {
 			super(name, template || '');
 			this._category = webspinner.stwContentCategory.SPECIAL;
-			this._cssClass = 'clientside'; // clientside || serverside
 		}
 		
 		render(req, res) {

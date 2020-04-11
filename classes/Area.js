@@ -36,7 +36,7 @@ module.exports = (webspinner) => {
 			let fragment = '';
 			
 			if (!(this instanceof webspinner.Webo))
-				fragment = `<area id="A${this.id}" guid="${this.guid}" lastmod="${this.lastmod}"`;
+				fragment = `<area id="A${this.id}" uuid="${this.uuid}" lastmod="${this.lastmod}"`;
 
 			if (this._mainpage) fragment += ` mainpage="${this._mainpage.id}"`; 
 
