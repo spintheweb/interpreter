@@ -1,4 +1,4 @@
-.vscode
-.jshintrc
+.*
 /node_modules
+!/.gitignore
 trash
