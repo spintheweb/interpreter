@@ -9,8 +9,8 @@ const url = require('url'),
 	fs = require('fs'),
 	io = require('socket.io'),
 	crypto = require('crypto'),
-	xmldom = require('xmldom').DOMParser, // Persist webbase in XML
 	util = require('./utilities'),
+	uuid = require('uuid'),
 	mime = require('mime-types');
 
 const AES_METHOD = 'aes-256-cbc';
@@ -38,15 +38,11 @@ module.exports = ((webspinner) => {
 	fs.readdirSync('./contents')
 		.forEach(content => { require(`./contents/${content}`)(webspinner); });
 
-	// Enum STW Roled Based Access Control permissions
-	webspinner.stwAC = { none: 0, read: 1, write: 2, execute: 3 };
-
 	class WebSpinner {
 		constructor() {
-			this.uuid = null;
-			this.id = util.newId();
+			this.id = uuid.v1();
 			//this.cipher = crypto.createCipheriv(AES_METHOD, Buffer.from(ENCRYPTION_KEY), crypto.randomBytes(IV_LENGTH));
-		
+
 			this.lang = 'en'; // WebSpinner default language, eg. en-US
 			this.roles = {
 				administrators: {
@@ -86,7 +82,6 @@ module.exports = ((webspinner) => {
 			}; // Predefined datasources
 			this.webo = {};
 
-			
 			this.settings = {};
 			this.sockets = {}; // Session management
 			this.socket = {
@@ -189,7 +184,15 @@ module.exports = ((webspinner) => {
 					}
 
 					let element = this.route(URL.pathname), emitted = [];
-					if (element instanceof webspinner.Page) {
+					if (element instanceof webspinner.Content) {
+						if (URL.query === 'children')
+							for (let content of element.children) {
+								content.position(content.permalink());
+								_emit(content, false);
+							}
+						else
+							_emit(element, false);
+					} else if (element instanceof webspinner.Page) {
 						socket.emit('page', { id: element.id, lang: webspinner.lang(), name: element.name() });
 						for (let content of element.children)
 							_emit(content, true);
@@ -197,26 +200,26 @@ module.exports = ((webspinner) => {
 						_recurse(element.parent); // Walk up the webbase and show "shared" contents, shared contents are children of areas and are shared by the underlying pages.
 
 						socket.emit('wrapup', { emitted: emitted });
-					} else if (element instanceof webspinner.Content)
-						_emit(element, false);
+					}
 
-					// TODO: Render syblings if requested, syblings are contents in the same section and with the same integer sequence (see rendering paradigm)
+					// TODO: Render syblings if requested, syblings are contents in the same position and with the same integer sequence (see rendering paradigm)
 					function _emit(content, syblings) {
-						// Avoid re-emitting the content if a content with the same section and integer sequence has already been emitted in the current request
-						if (emitted.indexOf(content.section() + Math.floor(content.sequence())) !== -1)
+						// Avoid re-emitting the content if a content with the same position and integer sequence has already been emitted in the current request
+						if (emitted.indexOf(content.position() + Math.floor(content.sequence())) !== -1)
 							return false;
 
 						// Render content
 						let fragment = content.render(socket, null);
 						if (fragment !== '') {
-							emitted.push(content.section().toString() + Math.floor(content.sequence()));
+							emitted.push(content.position().toString() + Math.floor(content.sequence()));
 
 							socket.emit(content instanceof webspinner.Script ? 'script' : 'content', {
 								id: content.permalink(), // content.id
-								section: content.section(),
+								position: content.position(),
 								sequence: content.sequence(),
 								cssClass: content.cssClass(),
-								body: fragment
+								children: (content.children.length > 0),
+								body: fragment.toString()
 							});
 							if (typeof content.handler === 'function') {
 								socket.emit('script', {
@@ -273,8 +276,8 @@ module.exports = ((webspinner) => {
 						let element = this.route(path);
 						if (element && element.granted())
 							element.render(req, res);
-//						else if (element instanceof webspinner.Area)
-//							element.mainpage.render(req, res);
+						//						else if (element instanceof webspinner.Area)
+						//							element.mainpage.render(req, res);
 					} else {
 						res.writeHead(200, { 'content-type': mime.lookup(path) });
 						res.end(data);
@@ -306,7 +309,7 @@ module.exports = ((webspinner) => {
 			fragment += '<webspinner version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://webspinner.org" xsi:schemaLocation="https://webspinner.org/schemas wbol.xsd">\n';
 			fragment += `<!--Spin the Web (TM) webbase generated ${(new Date()).toISOString()}-->\n`;
 
-			fragment += `<webbase id="W${this.id}" language="${this.lang}" uuid="${this.uuid}" key="${this.key}">\n`;
+			fragment += `<webbase id="W${this.id}" language="${this.lang}" key="${this.key}">\n`;
 
 			fragment += '<security>\n';
 			fragment += '<roles>\n';

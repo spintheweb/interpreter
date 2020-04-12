@@ -7,10 +7,9 @@
 
 // Plain text, i.e., renders template as plain text if there is a datasource @ and @@ substitutions are performed
 module.exports = (webspinner) => {
-    webspinner.Text = class extends webspinner.Content {
+    webspinner.Text = class Text extends webspinner.Content {
 		constructor(name, template) {
 			super(name, template);
-			this._category = webspinner.stwContentCategory.PRESENTATIONAL;
 			this._cssClass = null;
 		}
 		

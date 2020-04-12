@@ -10,10 +10,9 @@
 @import "//use.fontawesome.com/releases/v5.0.9/css/regular.css";
 @import "//use.fontawesome.com/releases/v5.0.9/css/fontawesome.css";
 
-:root { --special: #966535; } 
+:root { --special: #966535; --fore: #333333; --faint: #a0a0a0; --back: #ffffff; } 
 
 a {color:inherit; text-decoration:none;}
-h1 {margin:0;}
 
 .stwError {background-color:#ff0000; color:#ffffff;}
 .stwSelected {background-color:var(--special) !important; color:#ffffff !important; border-color:var(--special) !important;}
@@ -23,16 +22,17 @@ section:hover {opacity: 0.8;}
 article.stwContent {position:relative; padding:0.25em; border: thin dashed transparent;}
 article.stwContent:hover {border-color: #000;}
 
-.stwCaption {color:var(--special);}
+.stwCaption {color: var(--back); background-color: var(--special); margin:0.25em 0; padding: 0.25em 0.5em; border-radius: 0.25em;}
+.stwCaption .fa-times {float:right; line-height: 1.25em; cursor:pointer;}
 .stwHeader {display: block;}
 .stwFooter {display: block;}
 .stwPager {display: block;}
 
-.stwACNaN {color:#b0b0b0;}
-.stwAC0 {color:#b0b0b0;}
-.stwAC1 {color:#333333;}
-.stwAC2 {color:#00ff00;}
-.stwAC4 {color:#ff0000;}
+.stwACnull {color: var(--faint);}
+.stwAC0 {color: var(--faint); font-weight: normal;}
+.stwAC1 {color: var(--fore); font-weight: bold;}
+.stwAC2 {color: var(--faint); font-weight: normal;}
+.stwAC3 {color: var(--fore); font-weight: normal;}
 
 .stwText {position:relative; padding:1em;}
 
@@ -45,7 +45,8 @@ article.stwContent:hover {border-color: #000;}
 .stwKeypad li {display:inline-block; padding:0.5em; border:1px solid #f0f0f0; border-radius:0.5em; min-width:2em; margin:0.25em; text-align:center; cursor:pointer;}
 .stwKeypad li:hover {background-color:#f0f0f0; color:#000000;}
 
-.stwBreadcrumbs a {text-transform:lowercase; padding:0.25em; border-radius:0.25em; cursor:pointer;}
+.stwBreadcrumbs nav {margin:0.5em 0;}
+.stwBreadcrumbs a {text-transform:lowercase; padding:0.25em 0.5em; border-radius:0.25em; cursor:pointer;}
 .stwBreadcrumbs a:hover {background-color:#f0f0f0; color:#000000;}
 
 .stwMenu ul {display:flex; align-items:center; list-style-type:none; margin:0; padding:0;}

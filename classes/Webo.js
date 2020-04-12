@@ -81,7 +81,7 @@ module.exports = (webspinner) => {
 		write() {
 			let fragment;
 			
-			fragment = `<webo id="D${this.id}" uuid="${this.uuid}" lastmod="${this.lastmod}"`;
+			fragment = `<webo id="D${this.id}" lastmod="${this.lastmod}"`;
 			fragment += super.write();
 			fragment += '</webo>\n';
 			

@@ -31,19 +31,10 @@ module.exports = (webspinner) => {
 			return super.render(req, res, (req, template) => {
 				let labels = '', tabs = '';
 				this.children.forEach((tab, i) => {
-					if (tab.ref && tab.granted()) {
-						let fragment = tab.ref.render(req, res);
-						if (fragment) {
-							labels += `<li class="stwTabLabel${i === 0 ? ' stwSelected' : ''}" data-ref="${i}" onclick="stwTabs(event)">${tab.name()}</li>`;
-							tabs += `<li id="${tab.permalink()}" class="stwTab"${i !== 0 ? ' hidden' : ''} data-ref="${i}"><article id="${tab.ref.id}" lang="${webspinner.lang()}" class="${tab.ref.cssClass()}">${fragment}</article></li>`;
-						}
-					}
-					if (tab && tab.granted()) {
-						let fragment = tab.render(req, res);
-						if (fragment) {
-							labels += `<li class="stwTabLabel${i === 0 ? ' stwSelected' : ''}" data-ref="${i}" onclick="stwTabs(event)">${tab.name()}</li>`;
-							tabs += `<li id="${tab.permalink()}" class="stwTab"${i !== 0 ? ' hidden' : ''} data-ref="${i}"><article id="${tab.id}" lang="${webspinner.lang()}" class="${tab.cssClass()}">${fragment}</article></li>`;
-						}
+					if (tab.granted() & 0b1) {
+						labels += `<li class="stwTabLabel${i === 0 ? ' stwSelected' : ''}" onclick="stwTabs(event)">${tab.name()}</li>`;
+						tabs += `<li id="${tab.permalink()}" class="stwTab"${i !== 0 ? ' hidden' : ''} data-ref="${tab.permalink()}1"></li>`;
+//						webspinner.emit(tab);
 					}
 				});
 				return `<ul>${labels}${tabs}</ul>`;

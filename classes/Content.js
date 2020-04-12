@@ -18,7 +18,7 @@ module.exports = (webspinner) => {
 			super(name, null);
 			this._category = webspinner.stwContentCategory.PRESENTATIONAL;
 			this._cssClass = 'stwContent stw' + this.constructor.name;
-			this._section = ''; // Null section, do not render
+			this._position = '';
 			this._sequence = 1;
 			this._datasource = null;
 			this._query = null;
@@ -36,9 +36,9 @@ module.exports = (webspinner) => {
 			this.lastmod = (new Date()).toISOString();
 			return this;
 		}
-		section(value) {
-			if (typeof value === 'undefined') return this._section;
-			this._section = value.toString();
+		position(value) {
+			if (typeof value === 'undefined') return this._position;
+			this._position = value.toString();
 			this.lastmod = (new Date()).toISOString();
 			return this;
 		}
@@ -46,9 +46,9 @@ module.exports = (webspinner) => {
 			if (typeof value === 'undefined') return this._sequence;
 			this._sequence = isNaN(value) || value < 1 ? 1 : value;
 			this.lastmod = (new Date()).toISOString();
-			if (this.parent) // Order by section, sequence
+			if (this.parent) // Order by position, sequence
 				this.parent.children.sort((a, b) =>
-					a._section + ('0000' + a._sequence.toFixed(2)).slice(-5) > b._section + ('0000' + b._sequence.toFixed(2)).slice(-5));
+					a._position + ('0000' + a._sequence.toFixed(2)).slice(-5) > b._position + ('0000' + b._sequence.toFixed(2)).slice(-5));
 			return this;
 		}
 		datasource(value) {
@@ -83,7 +83,9 @@ module.exports = (webspinner) => {
 			if (!child || child == this || child instanceof webspinner.Webo)
 				return this;
 
-			if (!(child instanceof webspinner.Content))
+			if (child instanceof webspinner.Content)
+				child.position(this.permalink());
+			else
 				child = new webspinner.Reference(child);
 
 			if (this.children.indexOf(child) === -1) {
@@ -101,19 +103,19 @@ module.exports = (webspinner) => {
 		}
 		render(req, res, renderBody) {
 			let fragment = '', template;
-			if (this.section !== '' && this.granted()) {
+			if (this.position !== '' && this.granted()) {
 				this.data = this.getData(); // TODO: Retrieve data asynchronously
 
 				template = this._template[webspinner.lang()];
 
 				if (typeof template === 'object') {
 					if (template.settings.caption)
-						fragment += `<h1>${template.settings.caption}</h1>`;
+						fragment += `<h1 class="stwCaption">${template.settings.caption}<i class="fas fa-fw fa-times"></i></h1>`;
 					if (template.settings.header)
-						fragment += `<header>${template.settings.header}</header>`;
+						fragment += `<header class="stwHeader">${template.settings.header}</header>`;
 					fragment += `<div class="stwBody">${renderBody(req, template)}</div>`;
 					if (template.settings.footer)
-						fragment += `<footer>${template.settings.footer}</footer>`;
+						fragment += `<footer class="stwFooter">${template.settings.footer}</footer>`;
 				} else
 					fragment = renderBody(req, template);
 			}
@@ -129,10 +131,10 @@ module.exports = (webspinner) => {
 		write() {
 			let fragment = "";
 			if (!(this instanceof webspinner.Reference))
-				fragment = `<content id="C${this.id}" uuid="${this.uuid}" lastmod="${this.lastmod}" type="${this.constructor.name}"`;
+				fragment = `<content id="C${this.id}" lastmod="${this.lastmod}" type="${this.constructor.name}"`;
 
 			if (this._cssClass) fragment += ` cssClass="${this._cssClass}"`;
-			if (this._section) fragment += ` section="${this._section}"`;
+			if (this._position) fragment += ` position="${this._position}"`;
 			if (this._sequence) fragment += ` sequence="${this._sequence}"`;
 
 			fragment += super.write();

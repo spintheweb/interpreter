@@ -50,7 +50,7 @@ module.exports = (webspinner) => {
 			let fragment = '';
 			
 			if (!(this instanceof webspinner.Content))
-				fragment = `<page id="P${this.id}" uuid="${this.uuid}" lastmod="${this.lastmod}" template="${this._template}"`;
+				fragment = `<page id="P${this.id}" lastmod="${this.lastmod}" template="${this._template}"`;
 
 			fragment += '>\n';
 			fragment += super.write();

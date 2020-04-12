@@ -5,22 +5,18 @@
  */
 'use strict';
 
-const url = require('url'),
-	fs = require('fs'),
-	io = require('socket.io'),
-	xmldom = require('xmldom').DOMParser, // Used to read webbase.xml
+const uuid = require('uuid'),
 	util = require('../utilities');
 
 module.exports = (webspinner) => {
 	webspinner.Base = class Base {
 		constructor(name) {
-			this.uuid = null;
-			this.id = util.newId();
+			this.id = uuid.v1();
 			this.parent = null;
 			this.children = [];
 			this.cultures = null; // TODO: International vs Multinational concern
 			this._name = {}; // lang: string
-			this.rbac = {}; // role: stwAC
+			this.rbac = {}; // role: { false | true }
 			this.lastmod = (new Date()).toISOString();
 
 			this.name(name || this.constructor.name); // NOTE: siblings may have identical names, however, the router will select the first
@@ -35,8 +31,10 @@ module.exports = (webspinner) => {
 		// Grant a role an access control, if no access control is specified remove the role from the RBAC list.
 		grant(role, ac) {
 			if (webspinner.webbase.roles[role]) {
-				if (this.rbac[role] && !ac) delete this.rbac[role];
-				else this.rbac[role] = ac;
+				if (this.rbac[role] && !ac)
+					delete this.rbac[role];
+				else
+					this.rbac[role] = ac;
 				this.lastmod = (new Date()).toISOString();
 			}
 			return this;
@@ -46,21 +44,19 @@ module.exports = (webspinner) => {
 		granted(recurse = false) {
 			let roles = webspinner.webbase.users[webspinner.user()].roles;
 			if (this instanceof webspinner.Page && webspinner.webbase.webo.mainpage() === this)
-				return webspinner.stwAC.read; // Main web page always visible
+				return recurse ? 0b11 : 0b01; // Main web page always visible
+
 			let ac = null;
-			for (let i = 0; i < roles.length; ++i) {
-				let role = roles[i];
-				if (this.rbac[role] === webspinner.stwAC.execute)
-					return webspinner.stwAC.execute;
-				ac = Math.max(ac, this.rbac[role]);
-			}
-			if (isNaN(ac) || ac === null)
+			for (let i = 0; ac != 0b01 && i < roles.length; ++i)
+				if (this.rbac.hasOwnProperty(roles[i]))
+					ac |= this.rbac[roles[i]] ? 0b01 : 0b00;
+
+			if (ac === null)
 				if (this.parent)
-					ac = this.parent.granted(true);
+					ac = 0b10 | this.parent.granted(true);
 				else if (this instanceof webspinner.Content)
-					ac = webspinner.stwAC.read; // NOTE: this is a content without a parent nor a RBAC, it's in limbo! Contents referenced by Copycats
-			if (!recurse && isNaN(ac))
-				return webspinner.stwAC.none;
+					ac = 0b11; // NOTE: this is a content without a parent nor a RBAC, it's in limbo! Contents referenced by Copycats
+
 			return ac;
 		}
 
@@ -123,7 +119,7 @@ module.exports = (webspinner) => {
 		permalink() {
 			if (this.parent)
 				return this.parent.permalink() + '/' + this.slug();
-			return '/' + this.slug();
+			return '';
 		}
 
 		write() {

@@ -5,10 +5,6 @@
  */
 'use strict';
 
-const uuid = require('uuid');
-
-module.exports.newId = () => uuid.v1();
-
 // Return langs RFC 3282 as a language array sorted by preference
 module.exports.acceptLanguage = (langs) => {
     const pattern = /([a-z][a-z](-[a-z][a-z])?|\*)(;q=([01](\.[0-9]+)?))?/gi;

@@ -21,6 +21,11 @@ module.exports = (webspinner) => {
 			return super.render(req, res, (req, template) => {
 				let fragment = '<ul>';
 				if (!this.datasource()) {
+					this.handler = function stwTreeWebbase(event) {
+						let target = event.target.closest('li');
+						alert(target.getAttribute('data-ref'));
+					};
+					fragment = '<ul onclick="stwTreeWebbase(event)">';
 					_webbase(webspinner.webbase.webo); // Render webbase structure
 				} else {
 					this.data.forEach(function (row, i) {
@@ -31,7 +36,7 @@ module.exports = (webspinner) => {
 				return fragment + '</ul>';
 
 				function _webbase(element) {
-					if (/*!(element instanceof webspinner.Content) &&*/ element.children.length > 0) {
+					if (element.children.length > 0) {
 						fragment += `<li class="stw${element.constructor.name} stwAC${element.granted()}" data-ref="${element.id}" title="${element.slug(true)}"> ${element.name()}<ul>`;
 						element.children.forEach(child => _webbase(child));
 						fragment += '</ul></li>';
