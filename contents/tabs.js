@@ -34,7 +34,6 @@ module.exports = (webspinner) => {
 					if (tab.granted() & 0b1) {
 						labels += `<li class="stwTabLabel${i === 0 ? ' stwSelected' : ''}" onclick="stwTabs(event)">${tab.name()}</li>`;
 						tabs += `<li id="${tab.permalink()}" class="stwTab"${i !== 0 ? ' hidden' : ''} data-ref="${tab.permalink()}1"></li>`;
-//						webspinner.emit(tab);
 					}
 				});
 				return `<ul>${labels}${tabs}</ul>`;

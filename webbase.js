@@ -70,7 +70,7 @@ module.exports = (webspinner, name) => {
 		);
 	mainmenu.add(new webspinner.Text('Logo', '<img src="/media/logo-bw_64x64.png" alt="Logo webspinner">'));
 	mainmenu.add(webo);
-	//	mainmenu.add(new webspinner.Calendar());
+	mainmenu.add(page);
 
 	return webo;
 };

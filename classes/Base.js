@@ -93,7 +93,7 @@ module.exports = (webspinner) => {
 				if (parent)
 					parent.children.push(this);
 				else {
-					// TODO: remove shortcuts, visit all classes in the webbase
+					// TODO: while visiting the site remove shortcuts that point to nothing
 					delete this;
 					return;
 				}

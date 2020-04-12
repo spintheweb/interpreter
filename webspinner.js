@@ -210,7 +210,7 @@ module.exports = ((webspinner) => {
 
 						// Render content
 						let fragment = content.render(socket, null);
-						if (fragment !== '') {
+						if (fragment != undefined && fragment !== '') {
 							emitted.push(content.position().toString() + Math.floor(content.sequence()));
 
 							socket.emit(content instanceof webspinner.Script ? 'script' : 'content', {
