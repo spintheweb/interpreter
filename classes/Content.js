@@ -103,7 +103,7 @@ module.exports = (webspinner) => {
 		}
 		render(req, res, renderBody) {
 			let fragment = '', template;
-			if (this.position !== '' && this.granted()) {
+			if (this.position !== '' && this.granted() & 0b01) {
 				this.data = this.getData(); // TODO: Retrieve data asynchronously
 
 				template = this._template[webspinner.lang()];

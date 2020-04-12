@@ -16,7 +16,7 @@ module.exports = (webspinner) => {
 			this.children = [];
 			this.cultures = null; // TODO: International vs Multinational concern
 			this._name = {}; // lang: string
-			this.rbac = {}; // role: { false | true }
+			this.rbv = {}; // role: { false | true } Role based visibilities
 			this.lastmod = (new Date()).toISOString();
 
 			this.name(name || this.constructor.name); // NOTE: siblings may have identical names, however, the router will select the first
@@ -28,13 +28,17 @@ module.exports = (webspinner) => {
 			return this;
 		}
 
+		inRole(user, role) {
+			return (webspinner.webbase.users[user].roles || []).includes(role);
+		}
+
 		// Grant a role an access control, if no access control is specified remove the role from the RBAC list.
 		grant(role, ac) {
 			if (webspinner.webbase.roles[role]) {
-				if (this.rbac[role] && !ac)
-					delete this.rbac[role];
+				if (this.rbv[role] && !ac)
+					delete this.rbv[role];
 				else
-					this.rbac[role] = ac;
+					this.rbv[role] = ac ? 1 : 0;
 				this.lastmod = (new Date()).toISOString();
 			}
 			return this;
@@ -48,14 +52,14 @@ module.exports = (webspinner) => {
 
 			let ac = null;
 			for (let i = 0; ac != 0b01 && i < roles.length; ++i)
-				if (this.rbac.hasOwnProperty(roles[i]))
-					ac |= this.rbac[roles[i]] ? 0b01 : 0b00;
+				if (this.rbv.hasOwnProperty(roles[i]))
+					ac |= this.rbv[roles[i]] ? 0b01 : 0b00;
 
 			if (ac === null)
 				if (this.parent)
 					ac = 0b10 | this.parent.granted(true);
 				else if (this instanceof webspinner.Content)
-					ac = 0b11; // NOTE: this is a content without a parent nor a RBAC, it's in limbo! Contents referenced by Copycats
+					ac = 0b10; // NOTE: this is a content without a parent nor a RBAC, it's in limbo! Contents referenced by Copycats
 
 			return ac;
 		}
@@ -107,7 +111,7 @@ module.exports = (webspinner) => {
 		slug(full) {
 			if (full)
 				return _slug(this);
-			return this.name().trim().toLowerCase().replace(/[^a-z0-9 _-]/g, '').replace(/\s+/g, '_'); // TODO: retain only [a-z0-9-]
+			return this.name().trim().toLowerCase().replace(/[^a-z0-9 _-]/g, '').replace(/\s+/g, '_');
 
 			function _slug(element) {
 				if (!element || (!(element instanceof webspinner.Area) && element instanceof webspinner.Webo))
@@ -136,10 +140,10 @@ module.exports = (webspinner) => {
 				fragment += '</children>\n';
 			}
 
-			if (Object.keys(this.rbac).length > 0) {
+			if (Object.keys(this.rbv).length > 0) {
 				fragment += '<authorizations>\n';
-				for (let role in this.rbac)
-					fragment += `<authorize role="${role}" permission="${['-', 'r', 'w', 'x'][this.rbac[role]]}"/>\n`;
+				for (let role in this.rbv)
+					fragment += `<authorize role="${role}" permission="${['-', 'r', 'w', 'x'][this.rbv[role]]}"/>\n`;
 				fragment += '</authorizations>\n';
 			}
 

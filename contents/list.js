@@ -10,18 +10,18 @@ module.exports = (webspinner) => {
 		constructor(name, template) {
 			super(name, template, true);
 			this._category = webspinner.stwContentCategory.ORGANIZATIONAL;
-
-			// Code executed by the client to handle the content
-			this.handler = function stwList(event) {
-				alert('clicked');
-			};
 		}
 
 		render(req, res) {
 			return super.render(req, res, (req, template) => {
 				let fragment = '<ul>';
 				if (!this.datasource()) {
-					_render(webspinner.webbase.roles); // Render webbase roles
+					this.handler = function stwListRoles(event) {
+						let target = event.target.closest('li');
+//						target.classList.replace();
+					};
+
+					_visibilities(webspinner.webbase.roles, this.rbv); // Role based visibilities
 				} else {
 					this.data.forEach(function (row, i) {
 						// TODO: render template recursively
@@ -30,10 +30,10 @@ module.exports = (webspinner) => {
 				}
 				return fragment + '</ul>';
 
-				function _render(roles) {
-					for (let role in roles) {
-						fragment += `<li class="stw${roles[role].enabled} title="${role}" onclick="stwList(event)"> ${role}</li>`;
-					}
+				function _visibilities(roles, rbv) {
+					// TODO: get element visibilities
+					for (let role in roles)
+						fragment += `<li class="stwRbv${rbv[role] || null} title="${role}" onclick="stwListRoles(event)" data-ref="${rbv[role] || null}"> ${role}</li>`;
 				}
 			});
 		}

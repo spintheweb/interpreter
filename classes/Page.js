@@ -16,7 +16,7 @@ module.exports = (webspinner) => {
 		constructor(name, template) { // TODO: How is the page template handled? Reloading a page breaks the socket connection! Can the connection be reestablished?
 			super(name);
 			this._contentType = 'text/html';
-			this._template = template || 'index.html';
+			this._template = template || 'index.htm';
 		}
 
 		contentType(value) {
@@ -33,8 +33,10 @@ module.exports = (webspinner) => {
 		}
 
 		render(req, res) {
-			fs.readFile(`${webspinner.webbase.settings.static}/${this.template()}`, (err, data) => {
-				if (typeof res === 'object' && res.constructor.name === 'ServerResponse') {
+			let filename = `${webspinner.webbase.settings.static}/${this.template()}`;
+
+			fs.readFile(filename, (err, data) => {
+				if (res && res.constructor.name === 'ServerResponse') {
 					if (err) {
 						res.writeHead(302); // Not found
 					} else {
@@ -43,7 +45,7 @@ module.exports = (webspinner) => {
 					}
 					res.end();
 				} else
-					res.emit('page', { url: this.slug(), contentType: this.contentType(), body: data.toString() });
+					req.emit('page', { url: this.slug(), contentType: this.contentType(), body: data.toString() });
 			});
 		}
 		write() {

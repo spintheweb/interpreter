@@ -12,9 +12,6 @@ module.exports = (webspinner) => {
 		constructor(name, template) {
 			super(name, template, true);
 			this._category = webspinner.stwContentCategory.ORGANIZATIONAL;
-
-			// Code executed by the client to handle the content
-			this.handler = null;
 		}
 
 		render(req, res) {
@@ -23,7 +20,7 @@ module.exports = (webspinner) => {
 				if (!this.datasource()) {
 					this.handler = function stwTreeWebbase(event) {
 						let target = event.target.closest('li');
-						alert(target.getAttribute('data-ref'));
+						stw.emit('content', '/properties?id=' + target.id);
 					};
 					fragment = '<ul onclick="stwTreeWebbase(event)">';
 					_webbase(webspinner.webbase.webo); // Render webbase structure
@@ -37,14 +34,14 @@ module.exports = (webspinner) => {
 
 				function _webbase(element) {
 					if (element.children.length > 0) {
-						fragment += `<li class="stw${element.constructor.name}Icon stwAC${element.granted()}" id="${element.id}" data-ref="${element.permalink()}" title="${element.slug(true)}"> ${element.name()}<ul>`;
+						fragment += `<li class="stw${element.constructor.name}Icn stwAC${element.granted()}" id="${element.id}" data-ref="${element.permalink()}" title="${element.slug(true)}"> ${element.name()}<ul>`;
 						element.children.forEach(child => _webbase(child));
 						fragment += '</ul></li>';
 					} else {
 						if (element.constructor.name == 'Content')
-							fragment += `<li class="stwTextIcon stwAC${element.granted()}" id="${element.id}" data-ref="${element.permalink()}" title="${element.slug(true)}"> ${element.name()}</li>`;
+							fragment += `<li class="stwTextIcn stwAC${element.granted()}" id="${element.id}" data-ref="${element.permalink()}" title="${element.slug(true)}"> ${element.name()}</li>`;
 						else
-							fragment += `<li class="stw${element.constructor.name}Icon stwAC${element.granted()}" id="${element.id}" data-ref="${element.permalink()}" title="${element.slug(true)}"> ${element.name()}</li>`;
+							fragment += `<li class="stw${element.constructor.name}Icn stwAC${element.granted()}" id="${element.id}" data-ref="${element.permalink()}" title="${element.slug(true)}"> ${element.name()}</li>`;
 					}
 				}
 

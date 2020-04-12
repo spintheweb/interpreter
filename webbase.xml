@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<webspinner version="1.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns="http://webspinner.org" xsi:schemaLocation="https://webspinner.org/schemas wbol.xsd">
+    <!--Spin the Web (TM) webbase generated 2020-04-12T15:47:43.874Z-->
+    <webbase id="Wc3396150-7cd4-11ea-9dd3-19b3801fa9b6" language="it" key="undefined">
+        <security>
+            <roles>
+                <role name="administrators" enabled="true" description="undefined"/>
+                <role name="developers" enabled="true" description="undefined"/>
+                <role name="translators" enabled="false" description="undefined"/>
+                <role name="guests" enabled="true" description="undefined"/>
+                <role name="users" enabled="true" description="undefined"/>
+                <role name="webmasters" enabled="false" description="undefined"/>
+            </roles>
+            <users>
+                <user name="guest" password="undefined" enabled="true" description="undefined" roles="guests,developers"/>
+                <user name="administrator" password="null" enabled="true" description="undefined" roles="administrators"/>
+            </users>
+        </security>
+        <datasources>
+            <datasource name="webbase"><![CDATA[[object Object]]]></datasource>
+        </datasources>
+        <content id="Cc4b26cc1-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.323Z" type="Menu" cssClass="stwContent stwMenu" position="header" sequence="1">
+            <name>
+                <text lang="it"><![CDATA[Main menu]]></text>
+            </name>
+            <children>
+                <content id="Cc4b37e31-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.774Z" type="Text" position="/main_menu/logo" sequence="1">
+                    <name>
+                        <text lang="it"><![CDATA[Logo]]></text>
+                    </name>
+                    <template>
+                        <text lang="it"><![CDATA[<img src="/media/logo-bw_64x64.png" alt="Logo webspinner">]]></text>
+                    </template>
+                </content>
+                <content id="Rc4b37e32-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.776Z" type="Reference" ref="c4b26cc0-7cd4-11ea-9dd3-19b3801fa9b6" position="/main_menu/public" sequence="1">
+                    <name>
+                        <text lang="it"><![CDATA[public]]></text>
+                    </name>
+                    <template>
+                    </template>
+                </content>
+            </children>
+            <authorizations>
+                <authorize role="guests" permission="undefined"/>
+            </authorizations>
+            <template>
+            </template>
+        </content>
+        <content id="Cc4b293d0-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.317Z" type="Text" cssClass="stwText" position="footer" sequence="1">
+            <name>
+                <text lang="it"><![CDATA[Copyright]]></text>
+            </name>
+            <authorizations>
+                <authorize role="guests" permission="undefined"/>
+            </authorizations>
+            <template>
+                <text lang="it"><![CDATA[<span>&copy; 2020 Giancarlo Trevisan</span><span style="float:right">Spin the Web&trade;</span>]]></text>
+            </template>
+        </content>
+        <content id="Cc4b293d1-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.318Z" type="Tabs" cssClass="stwContent stwTabs" position="sidebar" sequence="2">
+            <name>
+                <text lang="it"><![CDATA[Structure]]></text>
+            </name>
+            <children>
+                <content id="Cc4b2bae0-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.777Z" type="Tree" cssClass="stwContent stwTree" position="/structure/i_classfa_fa-globe_titlewebbasei" sequence="1">
+                    <name>
+                        <text lang="it"><![CDATA[<i class="fa fa-globe" title="Webbase"></i>]]></text>
+                    </name>
+                    <template>
+                    </template>
+                </content>
+                <content id="Cc4b2bae1-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.782Z" type="Text" position="/structure/i_classfa_fa-folder_titlefile_systemi" sequence="1">
+                    <name>
+                        <text lang="it"><![CDATA[<i class="fa fa-folder" title="File system"></i>]]></text>
+                    </name>
+                    <template>
+                        <text lang="it"><![CDATA[Files]]></text>
+                    </template>
+                </content>
+                <content id="Cc4b2bae2-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.784Z" type="Text" position="/structure/i_classfa_fa-database_titledatasourcesi" sequence="1">
+                    <name>
+                        <text lang="it"><![CDATA[<i class="fa fa-database" title="Datasources"></i>]]></text>
+                    </name>
+                    <template>
+                        <text lang="it"><![CDATA[Datasources]]></text>
+                    </template>
+                </content>
+            </children>
+            <authorizations>
+                <authorize role="developers" permission="undefined"/>
+            </authorizations>
+            <template>
+                <text lang="it"><![CDATA[[object Object]]]></text>
+            </template>
+        </content>
+        <content id="Cc4b2bae3-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.320Z" type="Tabs" cssClass="stwContent stwTabs" position="sidebar" sequence="3">
+            <name>
+                <text lang="it"><![CDATA[Properties]]></text>
+            </name>
+            <children>
+                <content id="Cc4b2e1f0-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.787Z" type="Form" cssClass="stwContent stwForm" position="/properties/i_classfa_fa-cog_titlepropertiesi" sequence="1">
+                    <name>
+                        <text lang="it"><![CDATA[<i class="fa fa-cog" title="Properties"></i>]]></text>
+                    </name>
+                    <template>
+                        <text lang="it"><![CDATA[[object Object]]]></text>
+                    </template>
+                </content>
+                <content id="Cc4b30900-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.790Z" type="List" cssClass="stwContent stwList" position="/properties/i_classfas_fa-shield-alt_titleauthorizationsi" sequence="1">
+                    <name>
+                        <text lang="it"><![CDATA[<i class="fas fa-shield-alt" title="Authorizations"></i>]]></text>
+                    </name>
+                    <template>
+                        <text lang="it"><![CDATA[[object Object]]]></text>
+                    </template>
+                </content>
+            </children>
+            <authorizations>
+                <authorize role="developers" permission="undefined"/>
+            </authorizations>
+            <template>
+                <text lang="it"><![CDATA[[object Object]]]></text>
+            </template>
+        </content>
+        <content id="Cc4b30901-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.320Z" type="Breadcrumbs" cssClass="stwContent stwBreadcrumbs" position="main" sequence="1">
+            <name>
+                <text lang="it"><![CDATA[Breadcrumbs]]></text>
+            </name>
+            <authorizations>
+                <authorize role="guests" permission="undefined"/>
+            </authorizations>
+            <template>
+            </template>
+        </content>
+        <area id="Ac4b30902-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.320Z">
+            <name>
+                <text lang="it"><![CDATA[Private]]></text>
+            </name>
+        </area>
+        <page id="Pc4b30903-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.322Z" template="index.htm">
+            <name>
+                <text lang="it"><![CDATA[Home]]></text>
+            </name>
+            <children>
+                <content id="Cc4b30904-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.321Z" type="Form" cssClass="stwContent stwForm" position="main" sequence="2">
+                    <name>
+                        <text lang="it"><![CDATA[Form]]></text>
+                    </name>
+                    <template>
+                        <text lang="it"><![CDATA[[object Object]]]></text>
+                    </template>
+                </content>
+                <content id="Cc4b33010-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.321Z" type="Keypad" cssClass="stwContent stwKeypad" position="main" sequence="3">
+                    <name>
+                        <text lang="it"><![CDATA[Keypad]]></text>
+                    </name>
+                    <template>
+                        <text lang="it"><![CDATA[abcdefghijklmnopqrstuvwxyz]]></text>
+                    </template>
+                </content>
+                <content id="Cc4b33011-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.322Z" type="Tabs" cssClass="stwContent stwTabs" position="main" sequence="5">
+                    <name>
+                        <text lang="it"><![CDATA[Tabs]]></text>
+                    </name>
+                    <children>
+                        <content id="Cc4b35720-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.750Z" type="Chart" cssClass="stwContent stwChart" position="/home/tabs/pie" sequence="1">
+                            <name>
+                                <text lang="it"><![CDATA[Pie]]></text>
+                            </name>
+                            <template>
+                            </template>
+                        </content>
+                        <content id="Cc4b35721-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.756Z" type="Calendar" cssClass="stwContent stwCalendar" position="/home/tabs/calendar" sequence="1">
+                            <name>
+                                <text lang="it"><![CDATA[Calendar]]></text>
+                            </name>
+                            <template>
+                            </template>
+                        </content>
+                        <content id="Cc4b35722-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.773Z" type="Text" position="/home/tabs/tab_2" sequence="1">
+                            <name>
+                                <text lang="it"><![CDATA[Tab 2]]></text>
+                            </name>
+                            <authorizations>
+                                <authorize role="guests" permission="undefined"/>
+                            </authorizations>
+                            <template>
+                                <text lang="it"><![CDATA[This is Tab 2]]></text>
+                            </template>
+                        </content>
+                        <content id="Cc4b35723-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.773Z" type="Keypad" cssClass="stwContent stwKeypad" position="/home/tabs/keypad" sequence="1">
+                            <name>
+                                <text lang="it"><![CDATA[Keypad]]></text>
+                            </name>
+                            <template>
+                                <text lang="it"><![CDATA[123
+456
+789
+*0#]]></text>
+                            </template>
+                        </content>
+                    </children>
+                    <template>
+                    </template>
+                </content>
+                <content id="Cc4b35724-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.322Z" type="Table" cssClass="stwContent stwTable" position="main" sequence="6">
+                    <name>
+                        <text lang="it"><![CDATA[Table]]></text>
+                    </name>
+                    <template>
+                        <text lang="it"><![CDATA[[object Object]]]></text>
+                    </template>
+                </content>
+            </children>
+        </page>
+        <page id="Pc4b35725-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.322Z" template="index.htm">
+            <name>
+                <text lang="it"><![CDATA[About us]]></text>
+            </name>
+        </page>
+        <page id="Pc4b35726-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.322Z" template="index.htm">
+            <name>
+                <text lang="it"><![CDATA[Products]]></text>
+            </name>
+            <children>
+                <content id="Cc4b35727-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.322Z" type="Text" position="footer" sequence="1">
+                    <name>
+                        <text lang="it"><![CDATA[Override shared]]></text>
+                    </name>
+                    <template>
+                        <text lang="it"><![CDATA[This content overrides the shared footer]]></text>
+                    </template>
+                </content>
+            </children>
+            <authorizations>
+                <authorize role="guests" permission="undefined"/>
+            </authorizations>
+        </page>
+        <page id="Pc4b35728-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.322Z" template="index.htm">
+            <name>
+                <text lang="it"><![CDATA[Profile]]></text>
+            </name>
+            <authorizations>
+                <authorize role="guests" permission="undefined"/>
+            </authorizations>
+        </page>
+        <page id="Pc4b35729-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.323Z" template="index.htm">
+            <name>
+                <text lang="it"><![CDATA[Contact us]]></text>
+            </name>
+            <children>
+                <content id="Cc4b37e30-7cd4-11ea-9dd3-19b3801fa9b6" lastmod="2020-04-12T15:46:26.323Z" type="Script" cssClass="stwContent stwScript" sequence="1">
+                    <name>
+                        <text lang="it"><![CDATA[Code]]></text>
+                    </name>
+                    <template>
+                        <text lang="it"><![CDATA[alert("Welcome from webspinner!");]]></text>
+                    </template>
+                </content>
+            </children>
+            <authorizations>
+                <authorize role="guests" permission="undefined"/>
+            </authorizations>
+        </page>
+    </webbase>
+</webspinner>

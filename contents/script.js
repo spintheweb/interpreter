@@ -14,7 +14,7 @@ module.exports = (webspinner) => {
 		
 		render(req, res) {
 			let fragment;
-			if (this.granted()) {
+			if (this.granted() & 0b01) {
 				this.data = []; // TODO: Retrieve data asynchronously
 				fragment = `<script>${this.template()}</script>`;
 			}

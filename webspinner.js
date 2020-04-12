@@ -68,7 +68,7 @@ module.exports = ((webspinner) => {
 				guest: {
 					name: 'Guest',
 					enabled: true,
-					roles: ['guests']
+					roles: ['guests', 'developers']
 				},
 				administrator: {
 					name: 'Administrator',
@@ -248,7 +248,8 @@ module.exports = ((webspinner) => {
 			let _route = (element, level) => {
 				for (let child of element.children)
 					if (child.slug() === levels[level]) {
-						if (++level !== levels.length) return _route(child, level);
+						if (++level !== levels.length) 
+							return _route(child, level);
 						return child;
 					}
 				return levels[level] === '' ? null : element.mainpage() || this.webo.mainpage();

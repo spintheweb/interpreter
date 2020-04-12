@@ -24,8 +24,8 @@ article.stwContent:hover {border-color: #000;}
 
 .stwCaption {color: var(--back); background-color: var(--special); margin:0.25em 0; padding: 0.25em 0.5em; border-radius: 0.25em;}
 .stwCaption .fa-times {float:right; line-height: 1.25em; cursor:pointer;}
-.stwHeader {display: block;}
-.stwFooter {display: block;}
+.stwHeader {display: block; margin:0.25em 0; padding: 0.25em 0.5em; }
+.stwFooter {display: block; margin:0.25em 0; padding: 0.25em 0.5em; }
 .stwPager {display: block;}
 
 .stwACnull {color: var(--faint);}
@@ -35,6 +35,9 @@ article.stwContent:hover {border-color: #000;}
 .stwAC3 {color: var(--fore); font-weight: normal;}
 
 .stwText {position:relative; padding:1em;}
+
+.stwList li {padding: 0.25em; margin: 0;}
+.stwList li:hover {background-color: var(--special); color: var(--back);}
 
 .stwTabs ul {list-style-type:none; margin:0; padding:0;}
 .stwTabLabel {display:inline-block; padding:0.5em 1em; border:1px solid #f0f0f0; border-bottom:0; border-radius:0.5em 0.5em 0 0; min-width:1em; margin:0 0 0 0.25em; text-align:center; cursor:pointer; background-color:#f0f0f0;}
@@ -74,23 +77,27 @@ article.stwContent:hover {border-color: #000;}
 .stwChart .axes {stroke-width: 1px; stroke: #000; shape-rendering: crispEdges; vector-effect: non-scaling-stroke;}
 .stwChart text {fill: #000;}
 
-li.stwWebo::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0ac";}
-li.stwArea::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f07b";}
-li.stwPage::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f15b";}
-li.stwContent::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c8";}
-li.stwReference::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c1";}
+li.stwWeboIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0ac";}
+li.stwAreaIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f07b";}
+li.stwPageIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f15b";}
+li.stwContentIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c8";}
+li.stwReferenceIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c1";}
 
-li.stwBreadcrumbsIcon::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f101";}
-li.stwCalendarIcon::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f073";}
-li.stwChartIcon::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f080";}
-li.stwFormIcon::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f2bb";}
-li.stwHyperimageIcon::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f2bb";}
-li.stwKeypadIcon::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f11c";}
-li.stwListIcon::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f03a";}
-li.stwMapIcon::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f279";}
-li.stwMenuIcon::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c9";}
-li.stwScriptIcon::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f121";}
-li.stwTableIcon::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0ce";}
-li.stwTabsIcon::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f24d";}
-li.stwTextIcon::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f031";}
-li.stwTreeIcon::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f1bb";}
+li.stwBreadcrumbsIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f101";}
+li.stwCalendarIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f073";}
+li.stwChartIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f080";}
+li.stwFormIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f2bb";}
+li.stwHyperimageIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f2bb";}
+li.stwKeypadIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f11c";}
+li.stwListIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f03a";}
+li.stwMapIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f279";}
+li.stwMenuIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c9";}
+li.stwScriptIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f121";}
+li.stwTableIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0ce";}
+li.stwTabsIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f24d";}
+li.stwTextIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f031";}
+li.stwTreeIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f1bb";}
+
+li.stwRbvnull::before {font-family: "Font Awesome 5 Free"; font-weight: 600; content: "\f0c8"; color: var(--faint);}
+li.stwRbv0::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c8";}
+li.stwRbv1::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f14a";}

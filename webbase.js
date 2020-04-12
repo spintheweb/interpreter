@@ -6,7 +6,7 @@
 'use strict';
 
 /// Create a webbase programmatically
-// Note: shared contents are contents that are children of areas
+// Note: shared contents are contents that are children of Areas
 module.exports = (webspinner, name) => {
 	let webo, area, page, mainmenu;
 
@@ -20,12 +20,24 @@ module.exports = (webspinner, name) => {
 
 	webo.add(mainmenu = new webspinner.Menu('Main menu')
 		.grant('guests', true)
-		.position('header')); // Shared content
+		.position('header'));
 	webo.add(new webspinner.Text('Copyright', `<span>&copy; ${new Date().getFullYear()} Giancarlo Trevisan</span><span style="float:right">Spin the Web&trade;</span>`)
 		.grant('guests', true)
 		.position('footer')
-		.cssClass('stwText')); // Shared content
-
+		.cssClass('stwText'));
+	webo.add(new webspinner.Tabs('Structure', `\\s('caption="Structure" header="User: <b>guest</b>"')`)
+		.grant('developers', true)
+		.position('sidebar').sequence(2)
+		.add(new webspinner.Tree('<i class="fa fa-globe" title="Webbase"></i><span> Webbase</span>'))
+		.add(new webspinner.Text('<i class="fa fa-database" title="Datasources"></i><span> Datasources</span>', 'Datasources'))
+		.add(new webspinner.Text('<i class="fa fa-users" title="Users"></i><span> Users</span>', 'Users'))
+		.add(new webspinner.Text('<i class="fa fa-folder" title="File system"></i><span> Files</span>', 'Files'))
+	);
+	webo.add(new webspinner.Tabs('Properties', `\\s('caption="Properties"')`)
+		.grant('developers', true)
+		.position('sidebar').sequence(3)
+		.add(new webspinner.Form('<i class="fa fa-cog" title="Properties"></i><span> General</span>', `l('Name')e\\nl('Position')e\\ne\\nl('Type')d('')\\nl('Datasource')e\\nl('Query')m\\nl('Parameters')e\\nl('Layout')m\\nb(';Save')`))
+		.add(new webspinner.List('<i class="fas fa-eye" title="Visibility"></i><span> Visibility</span>', `t('Visibility')`)));
 	webo.add(new webspinner.Breadcrumbs()
 		.grant('guests', true)
 		.sequence(1).position('main'));
@@ -34,20 +46,7 @@ module.exports = (webspinner, name) => {
 	page = new webspinner.Page('Home');
 	webo.mainpage(page);
 	page.add(new webspinner.Form('Form', `\\s('caption="This is the caption" header="This is the header" footer="This is the footer"')l('Label')\\te(';foo;default')\\nA('http://www.domain.com')pp('param1;uno&s')p('prot')f\nt('pippo')\\a('style="color: red"')\nt('pluto')\\a('style="color: green"')e`).sequence(2).position('main'))
-		.add(new webspinner.Tabs('Structure', `\\s('caption="Structure"')`)
-			.position('sidebar').sequence(2)
-			.add(new webspinner.Tree('<i class="fa fa-globe" title="Webbase"></i>'))
-			.add(new webspinner.Text('<i class="fa fa-folder" title="File system"></i>', 'Files'))
-			.add(new webspinner.Text('<i class="fa fa-database" title="Datasources"></i>', 'Datasources'))
-		)
-		.add(new webspinner.Tabs('Properties', `\\s('caption="Properties"')`)
-			.position('sidebar').sequence(3)
-			.add(new webspinner.Form('<i class="fa fa-cog" title="Properties"></i>', `l('Name')e\\nl('Position')e\\ne\\nl('Type')d('')\\nl('Datasource')e\\nl('Query')m\\nl('Parameters')e\\nl('Layout')m\\nb(';Save')`))
-			.add(new webspinner.List('<i class="fas fa-shield-alt" title="Authorizations"></i>', `t('Authorizations')`))
-		)
 		.add(new webspinner.Keypad().sequence(3).position('main')) // Alphabet keys
-		//		.add(new webspinner.Breadcrumbs()
-		//			.sequence(1).position('main'))
 		.add(new webspinner.Tabs('Tabs')
 			.sequence(5).position('main')
 			.add(new webspinner.Chart('Pie'))
@@ -70,7 +69,6 @@ module.exports = (webspinner, name) => {
 		);
 	mainmenu.add(new webspinner.Text('Logo', '<img src="/media/logo-bw_64x64.png" alt="Logo webspinner">'));
 	mainmenu.add(webo);
-	mainmenu.add(page);
 
 	return webo;
 };
