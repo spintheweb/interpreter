@@ -5,11 +5,6 @@
  */
 
 /* TODO: Should be CDN delivered, the content dependent selectors should be placed in separate css files, this file should be the result of a merge */
-
-@import "//use.fontawesome.com/releases/v5.0.9/css/solid.css";
-@import "//use.fontawesome.com/releases/v5.0.9/css/regular.css";
-@import "//use.fontawesome.com/releases/v5.0.9/css/fontawesome.css";
-
 :root { --special: #966535; --fore: #333333; --faint: #a0a0a0; --back: #ffffff; } 
 
 a {color:inherit; text-decoration:none;}
@@ -19,20 +14,19 @@ a {color:inherit; text-decoration:none;}
 
 section {position:relative; padding:0;}
 section:hover {opacity: 0.8;}
-article.stwContent {position:relative; padding:0.25em; border: thin dashed transparent;}
+article.stwContent {position:relative; padding:0.25em; border: thin dashed transparent; height:100%;}
 article.stwContent:hover {border-color: #000;}
 
 .stwCaption {color: var(--back); background-color: var(--special); margin:0.25em 0; padding: 0.25em 0.5em; border-radius: 0.25em;}
-.stwCaption .fa-times {float:right; line-height: 1.25em; cursor:pointer;}
+.stwCaption .fa-times {float:right; line-height: 1.25em; cursor:pointer; font-size: smaller;}
 .stwHeader {display: block; margin:0.25em 0; padding: 0.25em 0.5em; }
 .stwFooter {display: block; margin:0.25em 0; padding: 0.25em 0.5em; }
 .stwPager {display: block;}
 
-.stwACnull {color: var(--faint);}
-.stwAC0 {color: var(--faint); font-weight: normal;}
-.stwAC1 {color: var(--fore); font-weight: bold;}
-.stwAC2 {color: var(--faint); font-weight: normal;}
-.stwAC3 {color: var(--fore); font-weight: normal;}
+.stwRBV0 {color: var(--faint); font-weight: bold;}
+.stwRBV1 {color: var(--fore); font-weight: bold;}
+.stwRBV2 {color: var(--faint); font-weight: normal;}
+.stwRBV3 {color: var(--fore); font-weight: normal;}
 
 .stwText {position:relative; padding:1em;}
 
@@ -92,12 +86,12 @@ li.stwKeypadIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; c
 li.stwListIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f03a";}
 li.stwMapIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f279";}
 li.stwMenuIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c9";}
-li.stwScriptIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f121";}
+li.stwScriptIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f5fc";}
 li.stwTableIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0ce";}
-li.stwTabsIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f24d";}
+li.stwTabsIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f5fd";}
 li.stwTextIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f031";}
 li.stwTreeIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f1bb";}
 
-li.stwRbvnull::before {font-family: "Font Awesome 5 Free"; font-weight: 600; content: "\f0c8"; color: var(--faint);}
-li.stwRbv0::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c8";}
-li.stwRbv1::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f14a";}
+li.stwRBVIcn0::before, li.stwRBVIcn2::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c8";}
+li.stwRBVIcn1::before, li.stwRBVIcn3::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f14a";}
+.stwRBVIcn2, .stwRBVIcn3 {color:var(--faint);}

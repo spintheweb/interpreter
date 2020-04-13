@@ -5,6 +5,8 @@
  */
 'use strict';
 
+const querystring = require('querystring');
+
 module.exports = (webspinner) => {
 	webspinner.List = class List extends webspinner.Content {
 		constructor(name, template) {
@@ -15,26 +17,31 @@ module.exports = (webspinner) => {
 		render(req, res) {
 			return super.render(req, res, (req, template) => {
 				let fragment = '<ul>';
-				if (!this.datasource()) {
-					this.handler = function stwListRoles(event) {
-						let target = event.target.closest('li');
-//						target.classList.replace();
+
+				if (!this.datasource()) { // TODO: set the content datasource, query amd template
+					this.eventHandler = function stwListRoles(event) {
+						let target = event.target.closest('li'), article = target.closest('article');
+						stw.emit('content', { id: article.id, url: null, role: target.innerText, grant: [undefined, 0, 1, 1][parseInt(target.getAttribute('data-ref'), 10)] });
+					};
+					this.contentHandler = (req, res) => {
+						this.grant(qs.role, qs.grant);
+						req.emit('content', qs.id);
 					};
 
-					_visibilities(webspinner.webbase.roles, this.rbv); // Role based visibilities
+					let id = querystring.parse(req.url.query).id || webspinner.webbase.webo.id;
+					let el = webspinner.webbase.webo.getElementById(id); // Roled Based Visibility
+					for (let role in webspinner.webbase.roles) {
+						let granted = el.granted(role);
+						fragment += `<li class="stwRBVIcn${granted}" onclick="stwListRoles(event)" data-ref="${granted}"> ${role}</li>`;
+					}
 				} else {
 					this.data.forEach(function (row, i) {
 						// TODO: render template recursively
 						fragment += `<li>${row}</li>`;
 					});
 				}
-				return fragment + '</ul>';
 
-				function _visibilities(roles, rbv) {
-					// TODO: get element visibilities
-					for (let role in roles)
-						fragment += `<li class="stwRbv${rbv[role] || null} title="${role}" onclick="stwListRoles(event)" data-ref="${rbv[role] || null}"> ${role}</li>`;
-				}
+				return fragment + '</ul>';
 			});
 		}
 	};

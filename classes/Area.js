@@ -20,14 +20,14 @@ module.exports = (webspinner) => {
 		}
 		mainpage(value) {
 			if (typeof value === 'undefined') return this._mainpage;
-			if (value instanceof webspinner.Page && !(value instanceof webspinner.Content))
+			if (value instanceof webspinner.Page)
 				this._mainpage = value;
 			return this;
 		}
 
 		add(child, isMain) {
 			super.add(child);
-			if (child instanceof webspinner.Page && !(child instanceof webspinner.Content) && isMain || !this.mainpage())
+			if (child instanceof webspinner.Page && isMain || !this.mainpage())
 				this.mainpage(child);
 			return this;
 		}

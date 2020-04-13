@@ -40,7 +40,7 @@ module.exports = ((webspinner) => {
 
 	class WebSpinner {
 		constructor() {
-			this.id = uuid.v1();
+			//this.id = uuid.v1();
 			//this.cipher = crypto.createCipheriv(AES_METHOD, Buffer.from(ENCRYPTION_KEY), crypto.randomBytes(IV_LENGTH));
 
 			this.lang = 'en'; // WebSpinner default language, eg. en-US
@@ -169,41 +169,39 @@ module.exports = ((webspinner) => {
 					delete webspinner.webbase.sockets[socket.id];
 				});
 
-				// Rendering
-				socket.on('content', URL => {
-					if (typeof URL !== 'object')
-						URL = url.parse(URL);
+				socket.on('content', data => {
+					if (!data)
+						return;
 
 					webspinner.webbase.socket = socket;
-					socket.url = URL;
+					socket.url = data.url;
 
 					// Server restarted, emit page reload
 					if (this.webo.constructor.name === 'Object') {
-						socket.emit('reload', { url: URL });
+						socket.emit('reload', { url: data.url });
 						return;
 					}
 
-					let element = this.route(URL.pathname), emitted = [];
+					let element = this.route(data.url.pathname), emitted = [];
 					if (element instanceof webspinner.Content) {
-						if (URL.query === 'children')
+						if (data.children)
 							for (let content of element.children) {
 								content.position(content.permalink());
-								_emit(content, false);
+								_emit(content);
 							}
 						else
-							_emit(element, false);
+							_emit(element);
 					} else if (element instanceof webspinner.Page) {
 						socket.emit('page', { id: element.id, lang: webspinner.lang(), name: element.name() });
 						for (let content of element.children)
-							_emit(content, true);
+							_emit(content);
 
 						_recurse(element.parent); // Walk up the webbase and show "shared" contents, shared contents are children of areas and are shared by the underlying pages.
 
 						socket.emit('wrapup', { emitted: emitted });
 					}
 
-					// TODO: Render syblings if requested, syblings are contents in the same position and with the same integer sequence (see rendering paradigm)
-					function _emit(content, syblings) {
+					function _emit(content) {
 						// Avoid re-emitting the content if a content with the same position and integer sequence has already been emitted in the current request
 						if (emitted.indexOf(content.position() + Math.floor(content.sequence())) !== -1)
 							return false;
@@ -214,17 +212,20 @@ module.exports = ((webspinner) => {
 							emitted.push(content.position().toString() + Math.floor(content.sequence()));
 
 							socket.emit(content instanceof webspinner.Script ? 'script' : 'content', {
-								id: content.permalink(), // content.id
+								id: content.id,
+								url: url.parse(content.permalink()),
 								position: content.position(),
 								sequence: content.sequence(),
 								cssClass: content.cssClass(),
 								children: (content.children.length > 0),
+								query: socket.url.query,
 								body: fragment.toString()
 							});
-							if (typeof content.handler === 'function') {
+							if (typeof content.eventHandler === 'function') {
 								socket.emit('script', {
-									id: content.constructor.name,
-									body: content.handler.toString()
+									id: content.id,
+									name: content.constructor.name,
+									body: content.eventHandler.toString()
 								});
 							}
 						}
@@ -248,7 +249,7 @@ module.exports = ((webspinner) => {
 			let _route = (element, level) => {
 				for (let child of element.children)
 					if (child.slug() === levels[level]) {
-						if (++level !== levels.length) 
+						if (++level !== levels.length)
 							return _route(child, level);
 						return child;
 					}
@@ -299,7 +300,7 @@ module.exports = ((webspinner) => {
 			function _url(element) {
 				if (element instanceof webspinner.Area && element.children.length > 0)
 					element.children.forEach(child => _url(child));
-				else if (element instanceof webspinner.Page && !(element instanceof webspinner.Content) && element.granted())
+				else if (element instanceof webspinner.Page && element.granted())
 					fragment += `<url><loc>${webspinner.webbase.webo.protocol()}://${webspinner.webbase.webo.name()}${element.slug(true)}</loc><lastmod>${element.lastmod}</lastmod><priority>0.5</priority></url>\n`;
 			}
 		}

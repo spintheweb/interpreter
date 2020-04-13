@@ -1,13 +1,10 @@
 /*!
- * Content
+ * WBLL - Webbabse Layout Language
  * Copyright(c) 2020 Giancarlo Trevisan
  * MIT Licensed
  */
 'use strict';
 
-const querystring = require('querystring');
-
-// WBLL - Webbabse Layout Language
 module.exports = {
     lexer: lexer,
     renderer: renderer

@@ -33,7 +33,7 @@ module.exports = (webspinner) => {
 								options += `<li class="stwMenuOption"><a href="/${option.slug()}">${option.name()}</a></li>`;
 						} else if (option.ref instanceof webspinner.Area) {
 							option.ref.children.forEach(suboption => {
-								if (!(suboption instanceof webspinner.Content) && suboption instanceof webspinner.Page && suboption.granted() & 0b01)
+								if (suboption instanceof webspinner.Page && suboption.granted() & 0b01)
 									options += `<li class="stwMenuOption"><a href="/${suboption.slug()}">${suboption.name()}</a></li>`;
 							});
 						}

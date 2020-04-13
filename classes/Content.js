@@ -10,10 +10,10 @@ const url = require('url'),
 	io = require('socket.io'),
 	xmldom = require('xmldom').DOMParser, // Persist webbase in XML
 	util = require('../utilities'),
-	layout = require('./Layout');
+	layout = require('./WBLL');
 
 module.exports = (webspinner) => {
-	webspinner.Content = class Content extends webspinner.Page {
+	webspinner.Content = class Content extends webspinner.Base {
 		constructor(name, template, wbll = false) {
 			super(name, null);
 			this._category = webspinner.stwContentCategory.PRESENTATIONAL;
@@ -27,7 +27,9 @@ module.exports = (webspinner) => {
 
 			this.data = [];
 			this.template(wbll, template); // NOTE: text or layout functions
-			this.handler = null; // Client side code that manages content
+			
+			this.eventHandler = null; // Client side code
+			this.contentHandler = null; // Server side code
 		}
 
 		cssClass(value) {
@@ -89,7 +91,7 @@ module.exports = (webspinner) => {
 				child = new webspinner.Reference(child);
 
 			if (this.children.indexOf(child) === -1) {
-				if (child.parent) 
+				if (child.parent)
 					child = new webspinner.Reference(child);
 				child.parent = this;
 				this.children.push(child);
@@ -109,6 +111,9 @@ module.exports = (webspinner) => {
 				template = this._template[webspinner.lang()];
 
 				if (typeof template === 'object') {
+					if (template.settings.visible !== undefined && !template.settings.visible)
+						return '';
+
 					if (template.settings.caption)
 						fragment += `<h1 class="stwCaption">${template.settings.caption}<i class="fas fa-fw fa-times"></i></h1>`;
 					if (template.settings.header)

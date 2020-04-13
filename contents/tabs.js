@@ -12,7 +12,7 @@ module.exports = (webspinner) => {
 			this._category = webspinner.stwContentCategory.ORGANIZATIONAL;
 
 			// Code executed by the client to handle the content
-			this.handler = function stwTabs(event) {
+			this.eventHandler = function stwTabs(event) {
 				let target = event.target.closest('li'); tabs = target.closest('ul').children;
 				for (let i = 0; i < tabs.length / 2; ++i) {
 					let tab = tabs[i];

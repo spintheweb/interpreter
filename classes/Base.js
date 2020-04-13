@@ -16,7 +16,7 @@ module.exports = (webspinner) => {
 			this.children = [];
 			this.cultures = null; // TODO: International vs Multinational concern
 			this._name = {}; // lang: string
-			this.rbv = {}; // role: { false | true } Role based visibilities
+			this.rbv = {}; // role: { false | true } Role Based Visibilities
 			this.lastmod = (new Date()).toISOString();
 
 			this.name(name || this.constructor.name); // NOTE: siblings may have identical names, however, the router will select the first
@@ -32,7 +32,7 @@ module.exports = (webspinner) => {
 			return (webspinner.webbase.users[user].roles || []).includes(role);
 		}
 
-		// Grant a role an access control, if no access control is specified remove the role from the RBAC list.
+		// Grant a role an access control, if no access control is specified remove the role from the RBVC list.
 		grant(role, ac) {
 			if (webspinner.webbase.roles[role]) {
 				if (this.rbv[role] && !ac)
@@ -45,23 +45,28 @@ module.exports = (webspinner) => {
 		}
 
 		// Return the highest access control associated to the given roles
-		granted(recurse = false) {
+		granted(role = null, recurse = false) {
+			let ac = null;
+
 			let roles = webspinner.webbase.users[webspinner.user()].roles;
 			if (this instanceof webspinner.Page && webspinner.webbase.webo.mainpage() === this)
-				return recurse ? 0b11 : 0b01; // Main web page always visible
+				ac = recurse ? 0b11 : 0b01; // Main web page always visible
 
-			let ac = null;
-			for (let i = 0; ac != 0b01 && i < roles.length; ++i)
-				if (this.rbv.hasOwnProperty(roles[i]))
-					ac |= this.rbv[roles[i]] ? 0b01 : 0b00;
+			if (role) {
+				if (this.rbv[role] !== undefined)
+					ac = this.rbv[role] ? 0b01 : 0b00;
+			} else
+				for (let i = 0; ac != 0b01 && i < roles.length; ++i)
+					if (this.rbv.hasOwnProperty(roles[i]))
+						ac |= this.rbv[roles[i]] ? 0b01 : 0b00;
 
 			if (ac === null)
 				if (this.parent)
-					ac = 0b10 | this.parent.granted(true);
+					ac = 0b10 | this.parent.granted(role, true);
 				else if (this instanceof webspinner.Content)
-					ac = 0b10; // NOTE: this is a content without a parent nor a RBAC, it's in limbo! Contents referenced by Copycats
+					ac = 0b10; // NOTE: this is a content without a parent nor a RBVC, it's in limbo! Contents referenced by Copycats
 
-			return ac;
+			return ac || 0b00;
 		}
 
 		// Add child to element, note, we are adding a child not moving it
@@ -124,6 +129,17 @@ module.exports = (webspinner) => {
 			if (this.parent)
 				return this.parent.permalink() + '/' + this.slug();
 			return '';
+		}
+
+		getElementById(id) { // TODO: Make index to speed-up
+			if (this.id === id)
+				return this;
+			for (let child of this.children) {
+				let el = child.getElementById(id);
+				if (el)
+					return el;
+			}
+			return null;
 		}
 
 		write() {

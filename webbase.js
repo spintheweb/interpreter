@@ -33,11 +33,13 @@ module.exports = (webspinner, name) => {
 		.add(new webspinner.Text('<i class="fa fa-users" title="Users"></i><span> Users</span>', 'Users'))
 		.add(new webspinner.Text('<i class="fa fa-folder" title="File system"></i><span> Files</span>', 'Files'))
 	);
-	webo.add(new webspinner.Tabs('Properties', `\\s('caption="Properties"')`)
+	webo.add(new webspinner.Tabs('Properties', `\\s('caption="Properties" visible="@id"')`)
 		.grant('developers', true)
 		.position('sidebar').sequence(3)
 		.add(new webspinner.Form('<i class="fa fa-cog" title="Properties"></i><span> General</span>', `l('Name')e\\nl('Position')e\\ne\\nl('Type')d('')\\nl('Datasource')e\\nl('Query')m\\nl('Parameters')e\\nl('Layout')m\\nb(';Save')`))
-		.add(new webspinner.List('<i class="fas fa-eye" title="Visibility"></i><span> Visibility</span>', `t('Visibility')`)));
+		.add(new webspinner.List('<i class="fas fa-eye" title="Visibility"></i><span> Visibility</span>', `t('Visibility')`))
+		.add(new webspinner.Form('<i class="fas fa-code" title="Code behind"></i><span> Code behind</span>', `m\\a('style="width:100%; height:100%"')`))
+	);
 	webo.add(new webspinner.Breadcrumbs()
 		.grant('guests', true)
 		.sequence(1).position('main'));
