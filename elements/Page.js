@@ -5,12 +5,11 @@
  */
 'use strict';
 
-const fs = require('fs');
 const path = require('path');
 const Base = require('./Base');
 
 module.exports = class Page extends Base {
-	constructor(name, template) { // TODO: How is the page template handled? Reloading a page breaks the socket connection! Can the connection be reestablished?
+	constructor(name, template) {
 		super(name);
 		this._contentType = 'text/html';
 		this._template = template || 'index.htm';
@@ -30,20 +29,9 @@ module.exports = class Page extends Base {
 	}
 
 	render(req, res) {
-		let filename = path.join(process.mainModule.path, 'public', this.template());
-
-		fs.readFile(filename, (err, data) => {
-			if (res && res.constructor.name === 'ServerResponse') {
-				if (err) {
-					res.writeHead(302); // Not found
-				} else {
-					res.writeHead(200, { 'Content-Type': this.contentType() }); // OK
-					res.write(data);
-				}
-				res.end();
-			} else
-				req.emit('page', { url: this.slug(), contentType: this.contentType(), body: data.toString() });
-		});
+		if (this.granted(req.user))
+			return path.join(process.mainModule.path, 'public', this.template());
+		return '';
 	}
 	write() {
 		let fragment = '';

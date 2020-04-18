@@ -24,7 +24,7 @@ module.exports = class Breadcrumbs extends Content {
 			for (let element = parent; element.parent; path.unshift(element), element = element.parent);
 			return '<nav>' + path.map(element => {
 				slug += `/${element.slug()}`;
-				return `<a href="${slug}">${element.name()}</a>`;
+				return `<a href="${slug}" onclick="stwHref(event)">${element.name()}</a>`;
 			}).join('/') + '</nav>';
 		});
 	}

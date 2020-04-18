@@ -14,7 +14,7 @@ module.exports = class Base {
 		this.webbase = this.constructor.name === 'Webbase' ? this : {};
 		this.parent = null;
 		this.children = [];
-		this.authorizations = {}; // role: { false | true } Role Based Visibilities
+		this.authorizations = {}; // [role: { false | true }] Role Based Visibilities
 		this.lastmod = (new Date()).toISOString();
 	}
 	name(value) {
@@ -29,7 +29,7 @@ module.exports = class Base {
 		return (this.webbase.users[user].roles || []).includes(role);
 	}
 
-	// Grant a role an access control, if no access control is specified remove the role from the RBV list.
+	// Grant a role access control, if no access control is specified remove the role from the RBV list (Role Based Visibility).
 	grant(role, ac) {
 		if (this.authorizations[role] && !ac)
 			delete this.authorizations[role];
@@ -39,7 +39,7 @@ module.exports = class Base {
 		return this;
 	}
 
-	// Return the highest access control associated to the given roles
+	// Return the highest access control associated to the given user
 	granted(user = 'guest', role = null, recurse = false) {
 		let ac = null;
 
@@ -59,7 +59,7 @@ module.exports = class Base {
 			if (this.parent)
 				ac = 0b10 | this.parent.granted(user, role, true);
 			else if (['Webbase', 'Area', 'Page'].indexOf(this.constructor.name) === -1) // Content
-				ac = 0b10; // NOTE: this is a content without a parent nor a RBVC, it's in limbo! Contents referenced by Copycats
+				ac = 0b10; // NOTE: this covers a content without a parent nor a RBV, it's in limbo!
 
 		return ac || 0b00;
 	}
@@ -86,7 +86,7 @@ module.exports = class Base {
 		}
 	}
 
-	// Deep copy element, note, the webbase is not clonable, use write() instead
+	// Deep copy element, note, the webbase cannot be copied, use write() instead
 	copy() {
 		let obj;
 		if (this.constructor.name !== 'Webbase')

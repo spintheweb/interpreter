@@ -28,6 +28,13 @@ module.exports = class Area extends Base {
 		return this;
 	}
 
+	render(req, res) {
+		if (this._mainpage)
+			return this._mainpage.render(req, res);
+		else
+			return this.webbase._mainpage.render(req, res);
+	}
+
 	write() {
 		let fragment = '';
 

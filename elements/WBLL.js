@@ -138,10 +138,12 @@ function renderer(req, layout) {
             switch (token.symbol) {
                 case 'a':
                     str = token.args ? token.args[0] : '@@';
+                    // TODO: Web socket call
                     html += `<a href="${renderParameters(req, str, token.params)}"${renderAttributes(req, token.attrs)}>${renderer(req, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [str] }] })}</a>`;
                     break;
                 case 'b':
                     str = token.args ? token.args[0] : '@@';
+                    // TODO: Web socket call
                     html += `<button type="submit" formaction="${renderParameters(req, str, token.params)}"${renderAttributes(req, token.attrs)}>${renderer(req, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [''] }] } || str)}</button>`;
                     break;
                 case 'c':

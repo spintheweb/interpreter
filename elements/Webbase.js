@@ -5,10 +5,9 @@
  */
 'use strict';
 
-const url = require('url');
 const fs = require('fs');
-const mime = require('mime-types');
-
+const url = require('url');
+const path = require('path');
 const Area = require('./Area');
 
 class Webbase extends Area {
@@ -154,44 +153,18 @@ class Webbase extends Area {
 
     render(req, res) {
         if (req.method === 'GET') {
-            let path = url.parse(req.url).pathname;
+            let _path = url.parse(req.url).pathname;
 
-            switch (path) {
-                case '/sitemap.xml':
-                    res.writeHead(200, { 'Content-Type': 'text/xml' }); // OK
-                    res.end(this.sitemap());
-                    return;
-                case '/webbase.xml':
-                    res.writeHead(200, { 'Content-Type': 'text/xml' }); // OK
-                    res.end(this.write());
-                    return;
-            }
+            if (_path === '/sitemap.xml')
+                return this.sitemap();
+            else if (_path === '/webbase.xml')
+                return this.write();
+            else if (_path.search(/\.[a-z0-9]{1,4}$/i) !== -1)
+                return path.join(process.mainModule.path, 'public', req.url);
 
-            fs.readFile(`${process.mainModule.path}/public${path}`, (err, data) => {
-                if (err) { // If the request is not a file than it must be a webbase element, if not return the mainpage
-                    let element = this.route(path);
-                    if (!element || element.constructor === 'Webbase')
-                        this.mainpage.render(req, res);
-                    else if (element.constructor === 'Page' && element.granted(req.user))
-                        element.render(req, res);
-                    else if (element.constructor.name === 'Area') {
-                        if (element.mainpage && element.mainpage.granted(req.user))
-                            element.mainpage.render(req, res);
-                        else
-                            this.mainpage.render(req.res);
-                    } else if (element.granted(req.user))
-                        element.render(req, res);
-                    else
-                        this.mainpage.render(req, res);
-                } else {
-                    res.writeHead(200, { 'content-type': mime.lookup(path) });
-                    res.end(data);
-                }
-            });
-        } else {
-            res.writeHead(405); // Method Not Allowed
-            res.end();
+            return (this.route(_path) || this._mainpage).render(req, res);
         }
+        return null;
     }
 
     // Build a site map (see sitemaps.org) that includes the urls of the visible pages in the webbase 
@@ -240,7 +213,7 @@ class Webbase extends Area {
     }
 
     // TODO: Load XML
-    // TODO: createElement(), append()
+    // TODO: createElement()
     load(pathname) {
         //        this.add(new Page('Hello World')
         //            .add(new Text('Greating', 'Hello World from Spin the Web')));

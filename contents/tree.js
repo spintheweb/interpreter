@@ -17,7 +17,7 @@ module.exports = class Tree extends Content {
 		return super.render(req, res, (req, template) => {
 			let fragment = '<ul>';
 
-			if (!this.datasource()) { // TODO: set the content datasource, query amd template
+			if (!this.datasource()) { // TODO: set the content datasource, query and template
 				this.eventHandler = function stwTreeWebbase(event) {
 					let target = event.target.closest('li').firstChild;
 

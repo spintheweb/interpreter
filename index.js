@@ -7,18 +7,29 @@
 
 const fs = require('fs');
 const path = require('path');
-//const url = require('url');
 const mime = require('mime-types');
-
 const Content = require('./elements/Content');
+
+// TODO: Load settings
+const hostname = process.env.IP || '127.0.0.1';
+const port = process.env.PORT || 3000;
 
 const webspinner = require('http').createServer();
 const wsspinner = new (require('ws')).Server({ server: webspinner });
 require('./elements/Webbase')(webspinner, path.join(__dirname, 'public', 'data', 'webbase.js'));
 
 webspinner.on('request', (req, res) => {
-    webspinner.webbase.render(req, res);
-//    res.setHeader('socket', req.headers.socket || null);
+    let rendered = webspinner.webbase.render(req, res);
+
+    fs.readFile(rendered, (err, data) => {
+        if (err) // If the request is not a file than it must be a webbase element
+            res.end(rendered);
+        else {
+            res.writeHead(200, { 'content-type': mime.lookup(rendered) });
+            res.end(data);
+        }
+    })
+    console.log(`${(new Date()).toISOString()} http ${rendered.substring(0, 100)}...`);
 });
 
 wsspinner.on('connection', (socket, req) => {
@@ -26,21 +37,15 @@ wsspinner.on('connection', (socket, req) => {
         req.headers.socket = req.headers['sec-websocket-key'];
 
     socket.onmessage = (socket, req) => {
+        console.log(`${(new Date()).toISOString()} ws ${socket.data.substring(0, 100)}...`);
+
         let data = JSON.parse(socket.data);
         if (stwHandlers.hasOwnProperty(data.message) && data.body) // Disregard undefined handlers and empty bodies
             stwHandlers[data.message](socket.target, req, data.body);
         else
-            console.log('Unhandled: ', data);
+            console.log(`${(new Date()).toISOString()} ws Unhandled ${socket.data.substring(0, 100)}...`);
     };
 });
-
-wsspinner.on('disconnect', () => {
-    console.log('connect');
-});
-
-// TODO: settings
-const hostname = process.env.IP || '127.0.0.1';
-const port = process.env.PORT || 3000;
 
 webspinner.listen(port, hostname, () => {
     console.log(`Web spinner listening at http://${hostname}:${port}/`);
@@ -127,8 +132,5 @@ let stwHandlers = {
             if (element.parent)
                 _recurse(element.parent, true);
         }
-    },
-    authenticate: (socket, req, data) => {
-        console.log('authenticate');
     }
 }

@@ -76,7 +76,7 @@ article.stwContent {position:relative; padding:0.25em; border: thin dashed trans
 .stwAreaIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f07b";}
 .stwPageIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f15b";}
 .stwContentIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c8";}
-.stwReferenceIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c1";}
+.stwReferenceIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f064";}
 
 .stwBreadcrumbsIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f101";}
 .stwCalendarIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f073";}

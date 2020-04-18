@@ -32,11 +32,11 @@ module.exports = class Menu extends Content {
 				if (option.constructor.name === 'Reference') {
 					if (option.ref.constructor.name === 'Page') {
 						if (option.granted(req.user) & 0b01)
-							options += `<li class="stwMenuOption"><a href="/${option.slug()}">${option.name()}</a></li>`;
+							options += `<li class="stwMenuOption"><a href="/${option.slug()}" onclick="stwHref(event)">${option.name()}</a></li>`;
 					} else if (['Webbase', 'Area'].indexOf(option.ref.constructor.name) !== -1) {
 						option.ref.children.forEach(suboption => {
 							if (suboption.constructor.name === 'Page' && suboption.granted(req.user) & 0b01)
-								options += `<li class="stwMenuOption"><a href="/${suboption.slug()}">${suboption.name()}</a></li>`;
+								options += `<li class="stwMenuOption"><a href="/${suboption.slug()}" onclick="stwHref(event)">${suboption.name()}</a></li>`;
 						});
 					}
 				} else if (option instanceof Content) {
