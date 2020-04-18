@@ -10,12 +10,13 @@
 a {color:inherit; text-decoration:none;}
 
 .stwError {background-color:#ff0000; color:#ffffff;}
-.stwSelected {background-color:var(--special) !important; color:#ffffff !important; border-color:var(--special) !important;}
+.stwSelected, .stwHover {background-color:var(--special) !important; color:#ffffff !important; border-color:var(--special) !important;}
+.stwHover {opacity:0.8;}
 
 section {position:relative; padding:0;}
-section:hover {opacity: 0.8;}
-article.stwContent {position:relative; padding:0.25em; border: thin dashed transparent; height:100%;}
-article.stwContent:hover {border-color: #000;}
+/* section:hover {opacity: 0.8;} */
+article.stwContent {position:relative; padding:0.25em; border: thin dashed transparent; overflow:auto;}
+/* article.stwContent:hover {border-color: #000;} */
 
 .stwCaption {color: var(--back); background-color: var(--special); margin:0.25em 0; padding: 0.25em 0.5em; border-radius: 0.25em;}
 .stwCaption .fa-times {float:right; line-height: 1.25em; cursor:pointer; font-size: smaller;}
@@ -51,9 +52,9 @@ article.stwContent:hover {border-color: #000;}
 .stwMenuOption a {width:100%; padding:0.5em; margin:0.25em; cursor:pointer; border-radius:0.5em;}
 .stwMenuOption a:hover {background-color:#f0f0f0; color:#000000;}
 
-.stwTree ul ul {list-style-type:none; margin-left:1em; padding:0;}
+.stwTree ul ul {list-style-type:none; margin:0;}
 .stwTree .stwBody>ul {margin:0;}
-.stwTree li {padding:0.5em 0 0 0; cursor:pointer;}
+.stwTree li>div {padding:0.25em; cursor:pointer;}
 
 .stwCalendar ul {list-style-type:none; margin:0em; padding:0;}
 .stwCalendar li {display:inline-block; padding:0.5em; min-width:3em; text-align:center;}
@@ -71,27 +72,27 @@ article.stwContent:hover {border-color: #000;}
 .stwChart .axes {stroke-width: 1px; stroke: #000; shape-rendering: crispEdges; vector-effect: non-scaling-stroke;}
 .stwChart text {fill: #000;}
 
-li.stwWeboIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0ac";}
-li.stwAreaIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f07b";}
-li.stwPageIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f15b";}
-li.stwContentIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c8";}
-li.stwReferenceIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c1";}
+.stwWebbaseIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0ac";}
+.stwAreaIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f07b";}
+.stwPageIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f15b";}
+.stwContentIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c8";}
+.stwReferenceIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c1";}
 
-li.stwBreadcrumbsIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f101";}
-li.stwCalendarIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f073";}
-li.stwChartIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f080";}
-li.stwFormIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f2bb";}
-li.stwHyperimageIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f2bb";}
-li.stwKeypadIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f11c";}
-li.stwListIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f03a";}
-li.stwMapIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f279";}
-li.stwMenuIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c9";}
-li.stwScriptIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f5fc";}
-li.stwTableIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0ce";}
-li.stwTabsIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f5fd";}
-li.stwTextIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f031";}
-li.stwTreeIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f1bb";}
+.stwBreadcrumbsIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f101";}
+.stwCalendarIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f073";}
+.stwChartIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f080";}
+.stwFormIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f2bb";}
+.stwHyperimageIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f2bb";}
+.stwKeypadIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f11c";}
+.stwListIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f03a";}
+.stwMapIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f279";}
+.stwMenuIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c9";}
+.stwScriptIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f5fc";}
+.stwTableIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0ce";}
+.stwTabsIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f5fd";}
+.stwTextIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f031";}
+.stwTreeIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f1bb";}
 
-li.stwRBVIcn0::before, li.stwRBVIcn2::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c8";}
-li.stwRBVIcn1::before, li.stwRBVIcn3::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f14a";}
+.stwRBVIcn0::before, .stwRBVIcn2::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c8";}
+.stwRBVIcn1::before, .stwRBVIcn3::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f14a";}
 .stwRBVIcn2, .stwRBVIcn3 {color:var(--faint);}

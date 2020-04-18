@@ -5,11 +5,10 @@
  */
 'use strict';
 
-module.exports = (webspinner) => {
-	webspinner.HyperImage = class HyperImage extends webspinner.Content {
-		constructor(name, template) {
-			super(name, template, true);
-			this._category = webspinner.stwContentCategory.NAVIGATIONAL;
-		}
-	};
-};
+const Content = require('../elements/Content');
+
+module.exports = class HyperImage extends Content {
+	constructor(name, template, lang) {
+		super(name, template, lang, true);
+	}
+}

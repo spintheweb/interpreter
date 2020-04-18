@@ -4,47 +4,35 @@
  * MIT Licensed
  */
 
-// TODO: Should be CDN delivered
 let stw;
+window.onload = function () {
+    stw = new WebSocket('ws://' + window.location.host);
 
-(function () {
-    // Load remote script then call callback
-    function loadScript(url, callback) {
-        let script = document.createElement('script');
-        script.onload = callback;
-        script.src = url;
-        document.getElementsByTagName('head')[0].appendChild(script);
-    }
-
-    loadScript('/socket.io/socket.io.js', () => {
-        stw = io.connect();
-
-        stw.on('connect', function (data) { });
-        stw.on('disconnect', function (data) { });
-        stw.on('reload', function (data) {
-            window.location = data.url;
-        });
-
-        stw.on('page', function (page) {
+    let stwHandlers = {
+        reload: function (url) {
+            window.location = url;
+        },
+        page: function (page) {
             document.querySelector('html').setAttribute('id', page.id);
             document.querySelector('html').setAttribute('lang', page.lang);
             document.querySelector('title').innerHTML = page.name;
-        });
-        stw.on('content', function (content) {
+        },
+        content: function (content) {
             let sequence = Math.floor(content.sequence).toString();
-            let article = document.querySelector('article[data-ref="' + content.position.toString() + sequence + '"]');
+            let article = document.querySelector('article[data-ref="' + content.section.toString() + sequence + '"]');
+            
             if (article)
                 article.parentElement.removeChild(article);
             else
-                article = document.querySelector('[data-ref="' + content.position.toString() + sequence + '"]');
+                article = document.querySelector('[data-ref="' + content.section.toString() + sequence + '"]');
 
-            let section = document.getElementById(content.position);
+            let section = document.getElementById(content.section);
             if (section && content.body) {
                 article = document.createElement('article');
                 article.setAttribute('id', content.id);
                 if (content.cssClass) article.setAttribute('class', content.cssClass);
                 article.setAttribute('data-seq', content.sequence);
-                article.setAttribute('data-ref', content.position + sequence);
+                article.setAttribute('data-ref', content.section + sequence);
                 article.innerHTML = content.body;
 
                 let i = 0;
@@ -53,25 +41,44 @@ let stw;
             }
 
             if (content.children) {
-                stw.emit('content', content);
+                stw.send(JSON.stringify({ message: 'content', body: content }));
             }
-        });
-        stw.on('script', function (content) {
+        },
+        script: function (content) {
             if (!document.getElementById('stw' + content.id)) {
                 let script = document.createElement('script');
                 script.setAttribute('id', 'stw' + content.id);
                 script.text = content.body;
                 document.body.appendChild(script);
             }
-        });
-        stw.on('wrapup', function (data) {
+        },
+        wrapup: function (data) {
             let articles = document.querySelectorAll('article[data-ref]');
             for (let i = 0; i < articles.length; ++i) {
-                if (data.emitted.indexOf(articles[i].getAttribute('data-ref')) === -1)
+                if (data.emitted.indexOf(articles[i].dataset.ref) === -1)
                     articles[i].parentElement.removeChild(articles[i]);
             }
-        });
+        }
+    }
 
-        stw.emit('content', { url: window.location }); // Initial request of page contents
-    });
-})();
+    stw.onerror = function (socket) {
+        console.log('WebSocket Error: ' + socket);
+    };
+
+    stw.onopen = function (socket) {
+        console.log('Connected to websocket');
+        stw.send(JSON.stringify({ message: 'content', body: { url: window.location.href } })); // Initial request of page contents
+    };
+
+    stw.onmessage = function (socket) {
+        let data = JSON.parse(socket.data);
+        if (stwHandlers.hasOwnProperty(data.message)) // Disregard undefined handlers
+            stwHandlers[data.message](data.body);
+        else
+            console.log('Unknow handler: ' + data.message);
+    }
+
+    stw.onclose = function (socket) {
+        console.log('Disconnected from WebSocket');
+    };
+}

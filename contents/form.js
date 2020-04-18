@@ -5,14 +5,14 @@
  */
 'use strict';
 
-module.exports = (webspinner) => {
-	webspinner.Form = class Form extends webspinner.Content {
-		constructor(name, template) {
-			super(name, template, true);
-		}
+const Content = require('../elements/Content');
 
-		render(req, res) {
-			return super.render(req, res, this.renderRow);
-		}
-	};
-};
+module.exports = class Form extends Content {
+	constructor(name, template, lang) {
+		super(name, template, lang, true);
+	}
+
+	render(req, res) {
+		return super.render(req, res, this.renderRow);
+	}
+}

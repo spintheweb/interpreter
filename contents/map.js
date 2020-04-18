@@ -5,11 +5,11 @@
  */
 'use strict';
 
-module.exports = (webspinner) => {
-	webspinner.Map = class Map extends webspinner.Content {
-		constructor(name, template) {
-			super(name, template, true);
-			this._category = webspinner.stwContentCategory.NAVIGATIONAL;
-		}
-	}; // GIS
-};
+const Content = require('../elements/Content');
+
+module.exports = class Map extends Content {
+	constructor(name, template, lang) {
+		super(name, template, lang, true);
+	}
+} // GIS
+

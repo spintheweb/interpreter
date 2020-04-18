@@ -6,52 +6,68 @@
 'use strict';
 
 const fs = require('fs');
+const Content = require('../elements/Content');
 
-module.exports = (webspinner) => {
-	webspinner.Tree = class Tree extends webspinner.Content {
-		constructor(name, template) {
-			super(name, template, true);
-			this._category = webspinner.stwContentCategory.ORGANIZATIONAL;
-		}
+module.exports = class Tree extends Content {
+	constructor(name, template, lang) {
+		super(name, template, lang, true);
+	}
 
-		render(req, res) {
-			return super.render(req, res, (req, template) => {
-				let fragment = '<ul>';
+	render(req, res) {
+		return super.render(req, res, (req, template) => {
+			let fragment = '<ul>';
 
-				if (!this.datasource()) { // TODO: set the content datasource, query amd template
-					this.eventHandler = function stwTreeWebbase(event) {
-						debugger;
-						let target = event.target.closest('li'), url = new URL('/properties', window.location.origin);
-						stw.emit('content', { url: url, id: target.id });
-					};
+			if (!this.datasource()) { // TODO: set the content datasource, query amd template
+				this.eventHandler = function stwTreeWebbase(event) {
+					let target = event.target.closest('li').firstChild;
 
-					fragment = '<ul onclick="stwTreeWebbase(event)">';
-					_webbase(webspinner.webbase.webo);
-
-					function _webbase(element) {
-						if (element.children.length > 0) {
-							fragment += `<li class="stw${element.constructor.name}Icn stwRBV${element.granted()}" id="${element.id}" data-ref="${element.permalink()}" title="${element.slug(true)}"> ${element.name()}<ul>`;
-							element.children.forEach(child => _webbase(child));
-							fragment += '</ul></li>';
-						} else {
-							if (element.constructor.name == 'Content')
-								fragment += `<li class="stwTextIcn stwRBV${element.granted()}" id="${element.id}" data-ref="${element.permalink()}" title="${element.slug(true)}"> ${element.name()}</li>`;
-							else
-								fragment += `<li class="stw${element.constructor.name}Icn stwRBV${element.granted()}" id="${element.id}" data-ref="${element.permalink()}" title="${element.slug(true)}"> ${element.name()}</li>`;
+					if (event.type === 'click') {
+						if (event.target.className.indexOf('fa-angle') !== -1) {
+							if (event.target.classList.contains('fa-angle-right')) {
+								target.parentElement.lastElementChild.style.display = 'block';
+								event.target.classList.replace('fa-angle-right', 'fa-angle-down');
+							} else {
+								target.parentElement.lastElementChild.style.display = 'none';
+								event.target.classList.replace('fa-angle-down', 'fa-angle-right');
+							}
 						}
-					}
-				} else {
-					this.data.forEach(function (row, i) {
-						// TODO: render template recursively
-						fragment += `<li>${row}</li>`;
-					});
-				}
-				return fragment + '</ul>';
 
-				function _dir() {
-					// TODO: Directory structure
+						(event.currentTarget.querySelector('div.stwSelected') || event.currentTarget).classList.remove('stwSelected');
+						target.classList.add('stwSelected');
+						stw.send(JSON.stringify({
+							message: 'content',
+							body: { url: event.ctrlKey ? target.dataset.ref : '/properties', id: target.id }
+						}));
+					} else {
+						(event.currentTarget.querySelector('div.stwHover') || event.currentTarget).classList.remove('stwHover');
+						if (event.type !== 'mouseleave')
+							target.classList.add('stwHover');
+					}
+				};
+
+				fragment = '<ul onclick="stwTreeWebbase(event)" onmousemove="stwTreeWebbase(event)" onmouseleave="stwTreeWebbase(event)">';
+				_webbase(this.webbase);
+
+				function _webbase(element, level = 0) {
+					if (element.children.length > 0) {
+						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(req.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fas fa-fw fa-angle-${level === 0 ? 'down' : 'right'}"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.name()}</div><ul ${level > 0 ? 'style="display: none"' : ''}>`;
+						element.children.forEach(child => _webbase(child, level + 1));
+						fragment += '</ul></li>';
+					} else {
+						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(req.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fas fa-fw"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.name()}</div></li>`;
+					}
 				}
-			});
-		}
-	};
-};
+			} else {
+				this.data.forEach(function (row, i) {
+					// TODO: render template recursively
+					fragment += `<li>${row}</li>`;
+				});
+			}
+			return fragment + '</ul>';
+
+			function _dir() {
+				// TODO: Directory structure
+			}
+		});
+	}
+}

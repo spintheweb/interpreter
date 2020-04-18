@@ -5,7 +5,9 @@
  */
 'use strict';
 
-// TODO: this is a line connected graph
-module.exports = (webspinner) => {
-	webspinner.Graph = class Graph extends webspinner.Content { }; // SVG or canvas
-};
+const Content = require('../elements/Content');
+
+// TODO: this is a line connected graph (see tree)
+module.exports = class Graph extends Content { 
+
+} // SVG or canvas

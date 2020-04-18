@@ -5,41 +5,40 @@
  */
 'use strict';
 
-module.exports = (webspinner) => {
-	webspinner.Calendar = class Calendar extends webspinner.Content {
-		constructor(name, template) {
-			super(name, template, true);
-			this._category = webspinner.stwContentCategory.ORGANIZATIONAL;
-		}
+const Content = require('../elements/Content');
 
-		render(req, res) {
-			return super.render(req, res, (req, template) => {
-				let fragment = '';
+module.exports = class Calendar extends Content {
+	constructor(name, template, lang) {
+		super(name, template, lang, true);
+	}
 
-				let today = new Date(), date = new Date();
+	render(req, res) {
+		return super.render(req, res, (req, template) => {
+			let fragment = '';
 
-				// TODO: Start on the proper day and localized
-				fragment += `<li class="stwMonth">${new Intl.DateTimeFormat(webspinner.lang(), { month: 'long', year: 'numeric' }).format(date)}</li><br>`;
+			let today = new Date(), date = new Date();
 
-				date = new Date(date.setDate(1));
-				date = new Date(date.setDate(1 - date.getDay())); // First day alignment monthly view
-				let weekday = new Date(date);
-				for (let d = 0; d < 7; ++d, weekday.setDate(weekday.getDate() + 1)) {
-					fragment += `<li class="stwWeekday"><div>${new Intl.DateTimeFormat(webspinner.lang(), { weekday: 'short' }).format(weekday)}</div></li>`;
-				}
-				fragment += '<br>';
-				
-				for (let d = 0; d < 42; ++d) {
-					let cssDay = date.toDateString() === today.toDateString() ? 'stwToday' : '';
-						
-					fragment += `<li class="stwDay ${cssDay}" data-ref="${new Date(date.setHours(0, 0, 0, 0)).toISOString().substr(0, 10)}"><div>${date.getDate()}</div></li>${date.getDay() !== 6 ? '' : '<br>'}`;
-					
-					let newDate = date.setDate(date.getDate() + 1);
-					date = new Date(newDate);
-				}
-				
-				return `<ul class="stwBody">${fragment}</ul>`;
-			});
-		}
-	};
-};
+			// TODO: Start on the proper day and localized
+			fragment += `<li class="stwMonth">${new Intl.DateTimeFormat(this.webbase.lang(), { month: 'long', year: 'numeric' }).format(date)}</li><br>`;
+
+			date = new Date(date.setDate(1));
+			date = new Date(date.setDate(1 - date.getDay())); // First day alignment monthly view
+			let weekday = new Date(date);
+			for (let d = 0; d < 7; ++d, weekday.setDate(weekday.getDate() + 1)) {
+				fragment += `<li class="stwWeekday"><div>${new Intl.DateTimeFormat(this.webbase.lang(), { weekday: 'short' }).format(weekday)}</div></li>`;
+			}
+			fragment += '<br>';
+
+			for (let d = 0; d < 42; ++d) {
+				let cssDay = date.toDateString() === today.toDateString() ? 'stwToday' : '';
+
+				fragment += `<li class="stwDay ${cssDay}" data-ref="${new Date(date.setHours(0, 0, 0, 0)).toISOString().substr(0, 10)}"><div>${date.getDate()}</div></li>${date.getDay() !== 6 ? '' : '<br>'}`;
+
+				let newDate = date.setDate(date.getDate() + 1);
+				date = new Date(newDate);
+			}
+
+			return `<ul class="stwBody">${fragment}</ul>`;
+		});
+	}
+}

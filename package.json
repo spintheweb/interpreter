@@ -2,13 +2,12 @@
   "name": "spintheweb",
   "version": "0.1.0",
   "description": "Spin the Web deals with the Webbase Ontology Language (WBOL)—pronounced like wobble /ˈwɒbəl/. Simply put, HTML describes a web page, WBOL, a web site; and, while HTML is interpreted by a client side web browser, WBOL, by a server side web spinner.",
-  "main": "wbol.js",
+  "main": "index.js",
   "dependencies": {
     "mime-types": "^2.1.26",
-    "mongodb": "^2.2.36",
-    "socket.io": "^0.9.17",
+    "mongodb": "^3.5.5",
     "uuid": "^7.0.3",
-    "websocket": "^1.0.31",
+    "ws": "^7.2.3",
     "xmldom": "^0.1.31"
   },
   "devDependencies": {
@@ -21,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/spintheweb/spintheweb.git"
+    "url": "https://github.com/spintheweb/spintheweb.git"
   },
   "keywords": [
     "wbol",
@@ -30,10 +29,14 @@
     "webo",
     "wboler"
   ],
-  "author": "Giancarlo Trevisan <g.trevisan@keyvisions.it> (https://www.spintheweb.org)",
+  "author": "Giancarlo Trevisan <g.trevisan@keyvisions.it>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/spintheweb/spintheweb/issues"
   },
-  "homepage": "https://www.spintheweb.org"
+  "homepage": "https://www.spintheweb.org",
+  "optionalDependencies": {
+    "bufferutil": "^4.0.1",
+    "utf-8-validate": "^5.0.2"
+  }
 }
