@@ -13,19 +13,20 @@ module.exports = class List extends Content {
 		super(name, template, lang, true);
 	}
 
-	render(req, res) {
-		return super.render(req, res, (req, template) => {
+	render(req) {
+		return super.render(req, (req, template) => {
 			let fragment = '<ul>';
 
 			if (!this.datasource()) { // TODO: set the content datasource, query amd template
 				this.eventHandler = function stwListRoles(event) {
+					event.stopPropagation();
+					event.preventDefault();
 					let target = event.target.closest('li'), article = target.closest('article');
 					stw.send(JSON.stringify({
-						message: 'content',
-						body: { id: article.id, url: null, role: target.innerText, grant: [undefined, 0, 1, 1][parseInt(target.dataset.ref, 10)] }
+						id: article.id, url: null, role: target.innerText, grant: [undefined, 0, 1, 1][parseInt(target.dataset.ref, 10)]
 					}));
 				};
-				this.contentHandler = (req, res) => {
+				this.contentHandler = (req) => {
 					this.grant(qs.role, qs.grant);
 					req.emit('content', qs.id);
 				};

@@ -13,12 +13,14 @@ module.exports = class Tree extends Content {
 		super(name, template, lang, true);
 	}
 
-	render(req, res) {
-		return super.render(req, res, (req, template) => {
+	render(req) {
+		return super.render(req, (req, template) => {
 			let fragment = '<ul>';
 
 			if (!this.datasource()) { // TODO: set the content datasource, query and template
 				this.eventHandler = function stwTreeWebbase(event) {
+					event.stopPropagation();
+					event.preventDefault();
 					let target = event.target.closest('li').firstChild;
 
 					if (event.type === 'click') {
@@ -30,13 +32,13 @@ module.exports = class Tree extends Content {
 								target.parentElement.lastElementChild.style.display = 'none';
 								event.target.classList.replace('fa-angle-down', 'fa-angle-right');
 							}
+							return;
 						}
 
 						(event.currentTarget.querySelector('div.stwSelected') || event.currentTarget).classList.remove('stwSelected');
 						target.classList.add('stwSelected');
 						stw.send(JSON.stringify({
-							message: 'content',
-							body: { url: event.ctrlKey ? target.dataset.ref : '/properties', id: target.id }
+							url: event.ctrlKey ? target.dataset.ref : '/wboler/properties', id: target.id
 						}));
 					} else {
 						(event.currentTarget.querySelector('div.stwHover') || event.currentTarget).classList.remove('stwHover');

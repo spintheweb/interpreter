@@ -9,6 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const mime = require('mime-types');
 const Content = require('./elements/Content');
+const Group = require('./elements/Group');
 
 // TODO: Load settings
 const hostname = process.env.IP || '127.0.0.1';
@@ -19,7 +20,7 @@ const wsspinner = new (require('ws')).Server({ server: webspinner });
 require('./elements/Webbase')(webspinner, path.join(__dirname, 'public', 'data', 'webbase.js'));
 
 webspinner.on('request', (req, res) => {
-    let rendered = webspinner.webbase.render(req, res);
+    let rendered = webspinner.webbase.render(req);
 
     fs.readFile(rendered, (err, data) => {
         if (err) // If the request is not a file than it must be a webbase element
@@ -39,21 +40,9 @@ wsspinner.on('connection', (socket, req) => {
     socket.onmessage = (socket, req) => {
         console.log(`${(new Date()).toISOString()} ws ${socket.data.substring(0, 100)}...`);
 
-        let data = JSON.parse(socket.data);
-        if (stwHandlers.hasOwnProperty(data.message) && data.body) // Disregard undefined handlers and empty bodies
-            stwHandlers[data.message](socket.target, req, data.body);
-        else
-            console.log(`${(new Date()).toISOString()} ws Unhandled ${socket.data.substring(0, 100)}...`);
-    };
-});
+        let data = JSON.parse(socket.data), url;
 
-webspinner.listen(port, hostname, () => {
-    console.log(`Web spinner listening at http://${hostname}:${port}/`);
-});
-
-let stwHandlers = {
-    content: (socket, req, data) => {
-        let url;
+        socket = socket.target;
         try {
             url = new URL(data.url).pathname;
         } catch {
@@ -81,7 +70,7 @@ let stwHandlers = {
             for (let content of element.children)
                 _emit(content);
 
-            _recurse(element.parent); // Walk up the webbase and show "shared" contents, shared contents are children of areas and are shared by the underlying pages.
+            _recurse(element.parent); // Walk up the webbase and show "shared" contents, shared contents are children of areas o groups and are shared by the underlying pages.
 
             socket.send(JSON.stringify({
                 message: 'wrapup',
@@ -91,23 +80,23 @@ let stwHandlers = {
             }));
         }
 
-        function _emit(content) {
+        function _emit(content, section = '', subsequence = 0) {
             // Avoid re-emitting the content if a content with the same section and integer sequence has already been emitted in the current request
-            if (emitted.indexOf(content.section() + Math.floor(content.sequence())) !== -1)
+            if (emitted.indexOf((content.section() || section).toString() + (Math.floor(content.sequence())) + subsequence * 1000) !== -1)
                 return;
 
             // Render content
             let fragment = content.render(socket, null);
             if (fragment != undefined && fragment !== '') {
-                emitted.push(content.section().toString() + Math.floor(content.sequence()));
+                emitted.push((content.section() || section).toString() + (Math.floor(content.sequence()) + subsequence * 1000));
 
                 socket.send(JSON.stringify({
                     message: content.constructor.name === 'Script' ? 'script' : 'content',
                     body: {
                         id: content.id,
                         url: content.permalink(),
-                        section: content.section(),
-                        sequence: content.sequence(),
+                        section: content.section() || section,
+                        sequence: content.sequence() + subsequence * 1000,
                         cssClass: content.cssClass(),
                         children: (content.children.length > 0),
                         query: data.url.query || '',
@@ -126,11 +115,20 @@ let stwHandlers = {
             }
         }
         function _recurse(element) {
-            for (let content of element.children)
-                if (content instanceof Content)
-                    _emit(content, true);
+            for (let child of element.children) {
+                if (child instanceof Content)
+                    _emit(child);
+                else if (child instanceof Group) {
+                    for (let nephew of child.children)
+                        _emit(nephew, child.section(), child.sequence());
+                }
+            }
             if (element.parent)
-                _recurse(element.parent, true);
+                _recurse(element.parent);
         }
     }
-}
+});
+
+webspinner.listen(port, hostname, () => {
+    console.log(`Web spinner listening at http://${hostname}:${port}/`);
+});

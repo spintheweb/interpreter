@@ -12,8 +12,8 @@ module.exports = class Breadcrumbs extends Content {
 		super(name, template, lang, true);
 	}
 
-	render(req, res) {
-		return super.render(req, res, (req, template) => {
+	render(req) {
+		return super.render(req, (req, template) => {
 			let path = [], slug = '', parent = this.parent;
 
 			// Shared content, parent refers to the session pathname

@@ -6,8 +6,12 @@
 let stw;
 
 function stwHref(event) {
-    stw.send(JSON.stringify({ message: 'content', body: { url: event.target.getAttribute('href') } }));
-    return false;
+    event.stopPropagation();
+    event.preventDefault();
+    document.querySelectorAll('article[id], script[id]').forEach(function (content) {
+        content.remove();
+    });
+    stw.send(JSON.stringify({ url: event.target.getAttribute('href') }));
 }
 
 let stwHandlers = {
@@ -43,7 +47,7 @@ let stwHandlers = {
         }
 
         if (content.children) {
-            stw.send(JSON.stringify({ message: 'content', body: content }));
+            stw.send(JSON.stringify(content));
         }
     },
     script: function (content) {
@@ -72,7 +76,7 @@ window.onload = function () {
 
     stw.onopen = function (socket) {
         console.log('Connected to web socket');
-        stw.send(JSON.stringify({ message: 'content', body: { url: '\\' } })); // Initial request of page contents
+        stw.send(JSON.stringify({ url: '/' })); // Initial request of page contents
     };
 
     stw.onmessage = function (socket) {

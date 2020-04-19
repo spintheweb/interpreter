@@ -20,13 +20,12 @@ module.exports = class Menu extends Content {
 			child.parent = this;
 			child.webbase = this.webbase;
 			this.children.push(child);
-			this.lastmod = (new Date()).toISOString();
 		}
 		return this;
 	}
 
-	render(req, res) {
-		return super.render(req, res, (req, template) => {
+	render(req) {
+		return super.render(req, (req, template) => {
 			let options = '';
 			this.children.forEach(option => {
 				if (option.constructor.name === 'Reference') {

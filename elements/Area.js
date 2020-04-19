@@ -9,8 +9,8 @@ const Base = require('./Base');
 const Page = require('./Page');
 
 module.exports = class Area extends Base {
-	constructor(name) {
-		super(name);
+	constructor(name, lang) {
+		super(name, lang);
 		this._mainpage = null;
 	}
 	mainpage(value) {
@@ -28,27 +28,23 @@ module.exports = class Area extends Base {
 		return this;
 	}
 
-	render(req, res) {
+	render(req) {
 		if (this._mainpage)
-			return this._mainpage.render(req, res);
+			return this._mainpage.render(req);
 		else
-			return this.webbase._mainpage.render(req, res);
+			return this.webbase._mainpage.render(req);
 	}
 
 	write() {
-		let fragment = '';
+		if (this.constructor.name === 'Webbase')
+			return super.write();
 
-		if (this.constructor.name !== 'Webbase')
-			fragment = `<area id="${this.id}" lastmod="${this.lastmod}"`;
-
-		if (this._mainpage) 
+		let fragment = `<area id="${this.id}"`;
+		if (this._mainpage)
 			fragment += ` mainpage="${this._mainpage.id}"`;
-
 		fragment += '>';
 		fragment += super.write();
-
-		if (this.constructor.name !== 'Webbase')
-			fragment += '</area>';
+		fragment += '</area>';
 
 		return fragment;
 	}

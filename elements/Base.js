@@ -8,20 +8,21 @@
 const uuid = require('uuid');
 
 module.exports = class Base {
-	constructor(name) {
-		this._name = { 'en': name || this.constructor.name };
+	constructor(name, lang = 'en') {
 		this.id = uuid.v1();
+		this._name = {};
+		this._name[lang] = name || this.constructor.name;
 		this.webbase = this.constructor.name === 'Webbase' ? this : {};
 		this.parent = null;
 		this.children = [];
 		this.authorizations = {}; // [role: { false | true }] Role Based Visibilities
-		this.lastmod = (new Date()).toISOString();
 	}
-	name(value) {
+	name(value, lang) {
 		if (typeof value === 'undefined')
-			return this.webbase.localize(this.webbase.lang(), this._name);
-		this._name[this.webbase.lang()] = value;
-		this.lastmod = (new Date()).toISOString();
+			return this.webbase.localize(lang || this.webbase.lang(), this._name);
+		this._name[lang || this.webbase.lang()] = value;
+		if (typeof this.webbase.changed === 'function')
+			this.webbase.changed(this);
 		return this;
 	}
 
@@ -35,7 +36,9 @@ module.exports = class Base {
 			delete this.authorizations[role];
 		else
 			this.authorizations[role] = ac ? 1 : 0;
-		this.lastmod = (new Date()).toISOString();
+
+		if (typeof this.webbase.changed === 'function')
+			this.webbase.changed(this);
 		return this;
 	}
 
@@ -67,14 +70,15 @@ module.exports = class Base {
 	// Add child to element, note, we are adding a child not moving it
 	add(child) {
 		if (child && child.constructor.name !== 'Webbase' && child !== this && this.children.indexOf(child) === -1) {
-			if (child.parent) 
+			if (child.parent)
 				child = new Reference(child);
 			child.parent = this;
 			child.webbase = this.webbase;
 			_setWebbase(child);
 			this.children.push(child);
 
-			this.lastmod = (new Date()).toISOString();
+			if (typeof this.webbase.changed === 'function')
+				this.webbase.changed(this);
 		}
 		return this;
 
@@ -113,7 +117,7 @@ module.exports = class Base {
 		this.move();
 	}
 
-	// Semantic URL based on element name and active language
+	// Semantic URL based on element name
 	slug(full) {
 		if (full)
 			return _slug(this);
@@ -144,18 +148,10 @@ module.exports = class Base {
 	}
 
 	write() {
-		let fragment;
-
-		fragment = '<name>';
+		let fragment = '<name>';
 		for (let name in this._name)
 			fragment += `<text lang="${name}"><![CDATA[${this._name[name]}]]></text>`;
 		fragment += '</name>';
-
-		if (this.children.length > 0) {
-			fragment += '<children>';
-			this.children.forEach(child => fragment += child.write());
-			fragment += '</children>';
-		}
 
 		if (Object.keys(this.authorizations).length > 0) {
 			fragment += '<authorizations>';
@@ -164,6 +160,11 @@ module.exports = class Base {
 			fragment += '</authorizations>';
 		}
 
+		if (this.children.length > 0) {
+			fragment += '<children>';
+			this.children.forEach(child => fragment += child.write());
+			fragment += '</children>';
+		}
 		return fragment;
 	}
 }

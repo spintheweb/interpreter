@@ -12,8 +12,8 @@ module.exports = class Table extends Content {
 		super(name, template, lang, true);
 	}
 
-	render(req, res) {
-		return super.render(req, res, (req, template) => {
+	render(req) {
+		return super.render(req, (req, template) => {
 			let fragment = '<table>';
 			fragment += '<thead><tr></tr></thead><tbody>'; // TODO: Special handling of l, \t and \n symbols
 			this.data.forEach(function (row, i) {

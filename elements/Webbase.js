@@ -11,11 +11,10 @@ const path = require('path');
 const Area = require('./Area');
 
 class Webbase extends Area {
-    constructor(domain) {
-        super();
-        this._protocol = 'http';
-        this._domain = domain || 'localhost';
-        this._lang = 'en';
+    constructor(domain = '//domain.com', lang = 'en') {
+        super(domain, lang);
+        this._lang = lang || 'en';
+        this._langs = ['en', 'it'];
         // this.cultures = null; // TODO: International vs Multinational concern
 
         this.roles = { // Predefined roles
@@ -54,21 +53,19 @@ class Webbase extends Area {
         this.datasources = {};
     }
 
-    protocol(value) {
-        if (typeof value === 'undefined')
-            return this._protocol;
-        if (value.search(/^https?$/i) !== -1)
-            this._protocol = value.toLowerCase();
-        this.lastmod = (new Date()).toISOString();
-        return this;
-    }
-
     lang(code) {
         if (typeof code === 'undefined')
             return this._lang;
         if (value.search(/^[a-z][a-z](-[a-z][a-z])?$/i) !== -1)
             this._lang = code.toLowerCase();
-        this.lastmod = (new Date()).toISOString();
+        return this;
+    }
+
+    langs(code) {
+        if (typeof code === 'undefined')
+            return this._langs;
+        if (value.search(/^[a-z][a-z](-[a-z][a-z])?$/i) !== -1)
+            this._langs.push(code.toLowerCase());
         return this;
     }
 
@@ -151,33 +148,46 @@ class Webbase extends Area {
         return _route(this, 1);
     }
 
-    render(req, res) {
+    changed(element) {
+        // TODO: Broadcast change
+    }
+
+    render(req) {
         if (req.method === 'GET') {
             let _path = url.parse(req.url).pathname;
 
-            if (_path === '/sitemap.xml')
-                return this.sitemap();
-            else if (_path === '/webbase.xml')
+            if (_path === '/webbase.xml')
                 return this.write();
+            else if (_path === '/sitemap.xml')
+                return this.sitemap(req);
             else if (_path.search(/\.[a-z0-9]{1,4}$/i) !== -1)
                 return path.join(process.mainModule.path, 'public', req.url);
 
-            return (this.route(_path) || this._mainpage).render(req, res);
+            return (this.route(_path) || this._mainpage).render(req);
         }
         return null;
     }
 
-    // Build a site map (see sitemaps.org) that includes the urls of the visible pages in the webbase 
-    sitemap() {
-        let fragment = '';
-        _url(this);
-        return `<?xml version="1.0" encoding="utf-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${fragment}</urlset>`;
+    // Build a site map (https://www.sitemaps.org/index.html) that includes the urls of the visible pages in the webbase, if no language is specified in the url return the sitemap index
+    sitemap(req) {
+        let lang = url.parse(req.url).query, fragment = '';
+
+        if (lang) {
+            if (!this._langs.includes(lang))
+                lang = this._lang;
+            _url(this);
+            return `<?xml version="1.0" encoding="utf-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${fragment}</urlset>`;
+        }
+
+        for (lang of this.langs())
+            fragment += `<sitemap><loc>${this.name(undefined, lang)}?${lang}</loc></sitemap>`;
+        return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${fragment}</sitemapindex>`;
 
         function _url(element) {
-            if (element.contructor.name === 'Area' && element.children.length > 0)
+            if (['Webbase', 'Area'].indexOf(element.constructor.name) !== -1 && element.children.length > 0)
                 element.children.forEach(child => _url(child));
-            else if (element.contructor.name === 'Page' && element.granted(req.user))
-                fragment += `<url><loc>${this.protocol()}://${this.name()}${element.slug(true)}</loc><lastmod>${element.lastmod}</lastmod><priority>0.5</priority></url>`;
+            else if (element.constructor.name === 'Page' && element.granted(req.user) & 0b01 === 0b01)
+                fragment += `<url><loc>${element.webbase.name(undefined, lang)}${element.slug(true)}</loc><changefreq>always</changefreq><priority>0.5</priority></url>`;
         }
     }
 
@@ -186,7 +196,7 @@ class Webbase extends Area {
         fragment += `<webspinner version="${process.env.npm_package_version || 'debugger'}" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://webspinner.org" xsi:schemaLocation="https://webspinner.org/schemas wbol.xsd">`;
         fragment += `<!--Spin the Web (TM) webbase generated ${(new Date()).toISOString()}-->`;
 
-        fragment += `<webbase id="${this.id}" protocol="${this._protocol}" domain="${this._domain}" language="${this.lang()}" key="${this.key}" homepage="${this._mainpage.id}">`;
+        fragment += `<webbase id="${this.id}" language="${this.lang()}" key="${this.key}" homepage="${this._mainpage.id}">`;
 
         fragment += '<security>';
         fragment += '<roles>';
@@ -204,7 +214,7 @@ class Webbase extends Area {
             fragment += `<datasource name="${datasource}"><![CDATA[${JSON.stringify(this.datasources[datasource])}]]></datasource>`;
         fragment += '</datasources>';
 
-        this.children.forEach(child => fragment += child.write());
+        fragment += super.write();
 
         fragment += '</webbase>';
         fragment += '</webspinner>';

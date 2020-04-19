@@ -61,4 +61,14 @@ module.exports = (webbase) => {
 		);
 	mainmenu.add(new stw.Text('Logo', '<img src="/media/logo-bw_64x64.png" alt="Logo webspinner">'));
 	mainmenu.add(webbase);
+
+	// https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+	let select = '<select>'
+	for (let lang of ['en', 'it'])
+		select += `<option>${lang}</option>`;
+	select += '</select>';
+	webbase.add(new stw.Text('Languages', `&nbsp;<i class='fas fa-fw fa-language'></i> ${select}`)
+		.grant('guests', true)
+		.section('header', 2)
+	);
 };

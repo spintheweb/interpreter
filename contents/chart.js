@@ -13,13 +13,13 @@ module.exports = class Chart extends Content {
         super(name, template, lang, true);
     }
 
-    render(req, res) {
+    render(req) {
         let document;
 
         // Safe colors
         const colors = ['#5DA5DA', '#4D4D4D', '#FAA43A', '#60BD68', '#F17CB0', '#B2912F', '#B276B2', '#DECF3F', '#F15854'];
 
-        return super.render(req, res, () => {
+        return super.render(req, () => {
             let fragment = donut(100, [{
                 "label": "FIAT",
                 "value": [10]

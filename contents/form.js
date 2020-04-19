@@ -12,7 +12,7 @@ module.exports = class Form extends Content {
 		super(name, template, lang, true);
 	}
 
-	render(req, res) {
-		return super.render(req, res, this.renderRow);
+	render(req) {
+		return super.render(req, this.renderRow);
 	}
 }

@@ -12,7 +12,7 @@ module.exports = class Script extends Content {
 		super(name, template || '', lang);
 	}
 
-	render(req, res) {
+	render(req) {
 		let fragment;
 		if (this.granted(req.user) & 0b01) {
 			fragment = this.template();

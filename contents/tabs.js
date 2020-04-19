@@ -27,8 +27,8 @@ module.exports = class Tabs extends Content {
 		};
 	}
 
-	render(req, res) {
-		return super.render(req, res, (req, template) => {
+	render(req) {
+		return super.render(req, (req, template) => {
 			let labels = '', tabs = '';
 			this.children.forEach((tab, i) => {
 				if (tab.granted(req.user) & 0b1) {

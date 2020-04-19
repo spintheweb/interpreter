@@ -1,0 +1,32 @@
+/*!
+ * wboler.css
+ * Copyright(c) 2020 Giancarlo Trevisan
+ * MIT Licensed
+ */
+ :root { --special: #966535; --fore: #333333; --faint: #a0a0a0; --back: #ffffff; }
+
+ .stwWebbaseIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0ac";}
+ .stwAreaIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f07b";}
+ .stwGroupIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f247";}
+ .stwPageIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f15b";}
+ .stwContentIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c8";}
+ .stwReferenceIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f064";}
+ 
+ .stwBreadcrumbsIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f101";}
+ .stwCalendarIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f073";}
+ .stwChartIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f080";}
+ .stwFormIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f2bb";}
+ .stwHyperimageIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f2bb";}
+ .stwKeypadIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f11c";}
+ .stwListIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f03a";}
+ .stwMapIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f279";}
+ .stwMenuIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c9";}
+ .stwScriptIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f5fc";}
+ .stwTableIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0ce";}
+ .stwTabsIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f5fd";}
+ .stwTextIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f031";}
+ .stwTreeIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f1bb";}
+ 
+ .stwRBVIcn0::before, .stwRBVIcn2::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c8";}
+ .stwRBVIcn1::before, .stwRBVIcn3::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f14a";}
+ .stwRBVIcn2, .stwRBVIcn3 {color:var(--faint);}

@@ -10,7 +10,7 @@ const layout = require(`./WBLL`);
 
 module.exports = class Content extends Base {
 	constructor(name, template, lang = 'en', wbll = false) {
-		super(name, null);
+		super(name, lang);
 		this._cssClass = 'stwContent stw' + this.constructor.name;
 		this._section = '';
 		this._sequence = 1;
@@ -31,41 +31,47 @@ module.exports = class Content extends Base {
 	cssClass(value) {
 		if (typeof value === 'undefined') return this._cssClass;
 		this._cssClass = value.toString();
-		this.lastmod = (new Date()).toISOString();
+		if (typeof this.webbase.changed === 'function')
+			this.webbase.changed(this);
 		return this;
 	}
 	section(value, sequence) {
 		if (typeof value === 'undefined') return this._section;
 		this._section = value.toString();
-		this.lastmod = (new Date()).toISOString();
 		if (sequence) this.sequence(sequence);
+		if (typeof this.webbase.changed === 'function')
+			this.webbase.changed(this);
 		return this;
 	}
 	sequence(value) {
 		if (typeof value === 'undefined') return this._sequence;
 		this._sequence = isNaN(value) || value < 1 ? 1 : value;
-		this.lastmod = (new Date()).toISOString();
 		if (this.parent) // Order by section, sequence
 			this.parent.children.sort((a, b) =>
 				a._section + ('0000' + a._sequence.toFixed(2)).slice(-5) > b._section + ('0000' + b._sequence.toFixed(2)).slice(-5));
+		if (typeof this.webbase.changed === 'function')
+			this.webbase.changed(this);
 		return this;
 	}
 	datasource(value) {
 		if (typeof value === 'undefined') return this._datasource;
 		this._datasource = value;
-		this.lastmod = (new Date()).toISOString();
+		if (typeof this.webbase.changed === 'function')
+			this.webbase.changed(this);
 		return this;
 	}
 	query(value) {
 		if (typeof value === 'undefined') return this._query;
 		this._query = value;
-		this.lastmod = (new Date()).toISOString();
+		if (typeof this.webbase.changed === 'function')
+			this.webbase.changed(this);
 		return this;
 	}
 	params(value) {
 		if (typeof value === 'undefined') return this._params;
 		this._params = value;
-		this.lastmod = (new Date()).toISOString();
+		if (typeof this.webbase.changed === 'function')
+			this.webbase.changed(this);
 		return this;
 	}
 	template(wbll, value, lang) {
@@ -75,7 +81,8 @@ module.exports = class Content extends Base {
 			this._template[lang || this.webbase.lang()] = layout.lexer(value);
 		else
 			this._template[lang || this.webbase.lang()] = value;
-		this.lastmod = (new Date()).toISOString();
+		if (typeof this.webbase.changed === 'function')
+			this.webbase.changed(this);
 		return this;
 	}
 	add(child) {
@@ -92,21 +99,22 @@ module.exports = class Content extends Base {
 				child = new Reference(child);
 			child.parent = this;
 			this.children.push(child);
-			this.lastmod = (new Date()).toISOString();
+			if (typeof this.webbase.changed === 'function')
+				this.webbase.changed(this);
 		}
 		return this;
 	}
 	getData(callback) { // TODO: Request data
 		return [];
 	}
-	render(req, res, renderBody) {
+	render(req, renderBody) {
 		let fragment = '', template;
 		if (this.section !== '' && this.granted(req.user) & 0b01) {
-/*
-			this.getData((data) => {
-
-			});
-*/
+			/*
+						this.getData((data) => {
+			
+						});
+			*/
 			this.data = this.getData(); // TODO: Retrieve data asynchronously
 
 			template = this._template[this.webbase.lang()];
@@ -137,7 +145,7 @@ module.exports = class Content extends Base {
 	write() {
 		let fragment = '';
 		if (this.constructor.name !== 'Reference')
-			fragment = `<content id="${this.id}" lastmod="${this.lastmod}" type="${this.constructor.name}"`;
+			fragment = `<content id="${this.id}" type="${this.constructor.name}"`;
 
 		if (this._cssClass) fragment += ` cssClass="${this._cssClass}"`;
 		if (this._section) fragment += ` section="${this._section}"`;

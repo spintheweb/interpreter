@@ -14,8 +14,8 @@ module.exports = class Text extends Content {
 		this._cssClass = null;
 	}
 
-	render(req, res) {
-		return super.render(req, res, (req, template) => {
+	render(req) {
+		return super.render(req, (req, template) => {
 			return this.template();
 		});
 	}

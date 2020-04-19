@@ -3,9 +3,7 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-
-/* TODO: Should be CDN delivered, the content dependent selectors should be placed in separate css files, this file should be the result of a merge */
-:root { --special: #966535; --fore: #333333; --faint: #a0a0a0; --back: #ffffff; } 
+:root { --special: #966535; --fore: #333333; --faint: #a0a0a0; --back: #ffffff; }
 
 a {color:inherit; text-decoration:none;}
 
@@ -71,28 +69,3 @@ article.stwContent {position:relative; padding:0.25em; border: thin dashed trans
 .stwChart .grid {stroke: #DDD; stroke-dasharray: 1 1; shape-rendering: crispEdges; vector-effect: non-scaling-stroke;}
 .stwChart .axes {stroke-width: 1px; stroke: #000; shape-rendering: crispEdges; vector-effect: non-scaling-stroke;}
 .stwChart text {fill: #000;}
-
-.stwWebbaseIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0ac";}
-.stwAreaIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f07b";}
-.stwPageIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f15b";}
-.stwContentIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c8";}
-.stwReferenceIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f064";}
-
-.stwBreadcrumbsIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f101";}
-.stwCalendarIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f073";}
-.stwChartIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f080";}
-.stwFormIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f2bb";}
-.stwHyperimageIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f2bb";}
-.stwKeypadIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f11c";}
-.stwListIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f03a";}
-.stwMapIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f279";}
-.stwMenuIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c9";}
-.stwScriptIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f5fc";}
-.stwTableIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0ce";}
-.stwTabsIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f5fd";}
-.stwTextIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f031";}
-.stwTreeIcn::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f1bb";}
-
-.stwRBVIcn0::before, .stwRBVIcn2::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f0c8";}
-.stwRBVIcn1::before, .stwRBVIcn3::before {font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f14a";}
-.stwRBVIcn2, .stwRBVIcn3 {color:var(--faint);}
