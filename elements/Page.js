@@ -30,8 +30,8 @@ module.exports = class Page extends Base {
 		return this;
 	}
 
-	render(req) {
-		if (this.granted(req.user))
+	render(socket) {
+		if (this.granted(socket.target ? socket.target.user : 'guest'))
 			return path.join(process.mainModule.path, 'public', this.template());
 		return '';
 	}

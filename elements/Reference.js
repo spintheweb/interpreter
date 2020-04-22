@@ -14,9 +14,9 @@ module.exports = class Reference extends Content {
 		this.ref = related;
 	}
 
-	render(req) {
-		if (this.ref.constructor.name !== 'Webbase' && this.granted(req.user) & 0b01)
-			return this.ref.render(req);
+	render(socket) {
+		if (this.ref.constructor.name !== 'Webbase' && this.granted(socket.target.user) & 0b01)
+			return this.ref.render(socket);
 	}
 	write() {
 		let fragment = `<content id="${this.id}" type="${this.constructor.name}" ref="${this.ref.id}"`;

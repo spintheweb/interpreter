@@ -13,12 +13,12 @@ module.exports = class Tree extends Content {
 		super(name, template, lang, true);
 	}
 
-	render(req) {
-		return super.render(req, (req, template) => {
+	render(socket) {
+		return super.render(socket, (socket, template) => {
 			let fragment = '<ul>';
 
 			if (!this.datasource()) { // TODO: set the content datasource, query and template
-				this.eventHandler = function stwTreeWebbase(event) {
+				this._clientHandler = function stwTreeWebbase(event) {
 					event.stopPropagation();
 					event.preventDefault();
 					let target = event.target.closest('li').firstChild;
@@ -38,7 +38,7 @@ module.exports = class Tree extends Content {
 						(event.currentTarget.querySelector('div.stwSelected') || event.currentTarget).classList.remove('stwSelected');
 						target.classList.add('stwSelected');
 						stw.send(JSON.stringify({
-							url: event.ctrlKey ? target.dataset.ref : '/wboler/properties', id: target.id
+							url: event.ctrlKey ? target.dataset.ref : `/wboler/properties?id=${target.id}`
 						}));
 					} else {
 						(event.currentTarget.querySelector('div.stwHover') || event.currentTarget).classList.remove('stwHover');
@@ -47,16 +47,20 @@ module.exports = class Tree extends Content {
 					}
 				};
 
+				this._serverHandler = (socket) => {
+					
+				}
+
 				fragment = '<ul onclick="stwTreeWebbase(event)" onmousemove="stwTreeWebbase(event)" onmouseleave="stwTreeWebbase(event)">';
 				_webbase(this.webbase);
 
 				function _webbase(element, level = 0) {
 					if (element.children.length > 0) {
-						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(req.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fas fa-fw fa-angle-${level === 0 ? 'down' : 'right'}"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.name()}</div><ul ${level > 0 ? 'style="display: none"' : ''}>`;
+						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(socket.target.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fas fa-fw fa-angle-${level === 0 ? 'down' : 'right'}"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.name()}</div><ul ${level > 0 ? 'style="display: none"' : ''}>`;
 						element.children.forEach(child => _webbase(child, level + 1));
 						fragment += '</ul></li>';
 					} else {
-						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(req.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fas fa-fw"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.name()}</div></li>`;
+						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(socket.target.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fas fa-fw"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.name()}</div></li>`;
 					}
 				}
 			} else {

@@ -28,11 +28,11 @@ module.exports = class Area extends Base {
 		return this;
 	}
 
-	render(req) {
+	render(socket) {
 		if (this._mainpage)
-			return this._mainpage.render(req);
+			return this._mainpage.render(socket);
 		else
-			return this.webbase._mainpage.render(req);
+			return this.webbase._mainpage.render(socket);
 	}
 
 	write() {

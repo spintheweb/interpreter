@@ -12,9 +12,9 @@ module.exports = class Script extends Content {
 		super(name, template || '', lang);
 	}
 
-	render(req) {
+	render(socket) {
 		let fragment;
-		if (this.granted(req.user) & 0b01) {
+		if (this.granted(socket.target.user) & 0b01) {
 			fragment = this.template();
 		}
 		return fragment;

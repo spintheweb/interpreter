@@ -6,18 +6,20 @@
 'use strict';
 
 const Content = require('../elements/Content');
+const layout = require(`../elements/WBLL`);
 
 module.exports = class Table extends Content {
 	constructor(name, template, lang) {
 		super(name, template, lang, true);
 	}
 
-	render(req) {
-		return super.render(req, (req, template) => {
+	render(socket) {
+		return super.render(socket, (socket, template) => {
 			let fragment = '<table>';
 			fragment += '<thead><tr></tr></thead><tbody>'; // TODO: Special handling of l, \t and \n symbols
-			this.data.forEach(function (row, i) {
-				fragment += `<tr>${this.renderRow()}</tr>`;
+			socket.dataset.forEach(function (row, i) {
+				socket.row = i;
+				fragment += `<tr>${layout.renderer(socket, this, template)}</tr>`;
 			});
 			fragment += '</tbody><tfoot><tr>';
 			fragment += 'This is pager space'; // TODO: Paging

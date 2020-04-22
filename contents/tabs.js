@@ -12,7 +12,7 @@ module.exports = class Tabs extends Content {
 		super(name, template, lang, true);
 
 		// Code executed by the client to handle the content
-		this.eventHandler = function stwTabs(event) {
+		this._clientHandler = function stwTabs(event) {
 			let target = event.target.closest('li'); tabs = target.closest('ul').children;
 			for (let i = 0; i < tabs.length / 2; ++i) {
 				let tab = tabs[i];
@@ -27,11 +27,11 @@ module.exports = class Tabs extends Content {
 		};
 	}
 
-	render(req) {
-		return super.render(req, (req, template) => {
+	render(socket) {
+		return super.render(socket, (socket, template) => {
 			let labels = '', tabs = '';
 			this.children.forEach((tab, i) => {
-				if (tab.granted(req.user) & 0b1) {
+				if (tab.granted(socket.target.user) & 0b1) {
 					labels += `<li class="stwTabLabel${i === 0 ? ' stwSelected' : ''}" onclick="stwTabs(event)">${tab.name()}</li>`;
 					tabs += `<li id="${tab.permalink()}" class="stwTab"${i !== 0 ? ' hidden' : ''} data-ref="${tab.permalink()}1"></li>`;
 				}

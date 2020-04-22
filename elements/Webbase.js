@@ -13,9 +13,8 @@ const Area = require('./Area');
 class Webbase extends Area {
     constructor(domain = '//domain.com', lang = 'en') {
         super(domain, lang);
-        this._lang = lang || 'en';
-        this._langs = ['en', 'it'];
-        // this.cultures = null; // TODO: International vs Multinational concern
+        this._langs = [lang];
+        // this.cultures = null; // TODO: Multilingual vs Multinational concern
 
         this.roles = { // Predefined roles
             administrators: {
@@ -55,16 +54,16 @@ class Webbase extends Area {
 
     lang(code) {
         if (typeof code === 'undefined')
-            return this._lang;
+            return this._langs[0];
         if (value.search(/^[a-z][a-z](-[a-z][a-z])?$/i) !== -1)
-            this._lang = code.toLowerCase();
+            this._langs[0] = code.toLowerCase();
         return this;
     }
 
-    langs(code) {
-        if (typeof code === 'undefined')
+    langs(codes) {
+        if (typeof codes === 'undefined')
             return this._langs;
-        if (value.search(/^[a-z][a-z](-[a-z][a-z])?$/i) !== -1)
+        if (value.search(/^[a-z][a-z](-[a-z][a-z])?$/i) !== -1 && !this.langs.includes(code))
             this._langs.push(code.toLowerCase());
         return this;
     }
@@ -135,6 +134,9 @@ class Webbase extends Area {
     route(pathname) {
         if (!pathname || pathname === '/')
             return this.mainpage();
+
+        pathname = pathname.replace(/(\?.*)/, '');
+
         let levels = pathname.split('/');
         let _route = (element, level) => {
             for (let child of element.children)
@@ -143,7 +145,7 @@ class Webbase extends Area {
                         return _route(child, level);
                     return child;
                 }
-            return levels[level] === '' ? null : element.mainpage() || this.mainpage();
+            return (levels[level] === '' || element.constructor.name !== 'Page') ? null : element.mainpage() || this.mainpage();
         };
         return _route(this, 1);
     }
@@ -174,7 +176,7 @@ class Webbase extends Area {
 
         if (lang) {
             if (!this._langs.includes(lang))
-                lang = this._lang;
+                lang = this.lang();
             _url(this);
             return `<?xml version="1.0" encoding="utf-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${fragment}</urlset>`;
         }
@@ -196,7 +198,7 @@ class Webbase extends Area {
         fragment += `<webspinner version="${process.env.npm_package_version || 'debugger'}" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://webspinner.org" xsi:schemaLocation="https://webspinner.org/schemas wbol.xsd">`;
         fragment += `<!--Spin the Web (TM) webbase generated ${(new Date()).toISOString()}-->`;
 
-        fragment += `<webbase id="${this.id}" language="${this.lang()}" key="${this.key}" homepage="${this._mainpage.id}">`;
+        fragment += `<webbase id="${this.id}" languages="${this.langs()}" key="${this.key}" homepage="${this._mainpage.id}">`;
 
         fragment += '<security>';
         fragment += '<roles>';

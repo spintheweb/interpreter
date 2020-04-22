@@ -19,17 +19,28 @@ module.exports = class Content extends Base {
 		this._params = null;
 		this._template = {};
 
-		this.data = [];
-
 		if (template)
 			this.template(wbll, template, lang); // NOTE: text or layout functions
 
-		this.eventHandler = null; // Client side code
-		this.contentHandler = null; // Server side code
+		this._clientHandler = null; // Client side code
+		this._serverHandler = null; // Server side code
 	}
 
-	cssClass(value) {
-		if (typeof value === 'undefined') return this._cssClass;
+	cssClass(value, lang) {
+		if (typeof value === 'undefined') {
+			let layout = this.template(undefined, undefined, lang);
+			if (layout && layout.attrs) {
+				let attrs = '';
+				Object.keys(layout.attrs).forEach(key => {
+					if (key === 'class' && this._cssClass)
+						attrs += `class="${this._cssClass} ${layout.attrs.class}" `;
+					else
+						attrs += `${key}="${layout.attrs[key]}" `;
+				});
+				return attrs;
+			}
+			return `class="${this._cssClass}"`;
+		}
 		this._cssClass = value.toString();
 		if (typeof this.webbase.changed === 'function')
 			this.webbase.changed(this);
@@ -85,6 +96,16 @@ module.exports = class Content extends Base {
 			this.webbase.changed(this);
 		return this;
 	}
+	clientHandler(callback) {
+		if (typeof callback === 'function')
+			this._clientHandler = callback;
+		return this;
+	}
+	serverHandler(callback) {
+		if (typeof callback === 'function')
+			this._serverHandler = callback;
+		return this;
+	}
 	add(child) {
 		if (!child || child == this || child.constructor.name === 'Webbase')
 			return this;
@@ -105,17 +126,12 @@ module.exports = class Content extends Base {
 		return this;
 	}
 	getData(callback) { // TODO: Request data
-		return [];
+		return [{}];
 	}
-	render(req, renderBody) {
+	render(socket, renderBody) {
 		let fragment = '', template;
-		if (this.section !== '' && this.granted(req.user) & 0b01) {
-			/*
-						this.getData((data) => {
-			
-						});
-			*/
-			this.data = this.getData(); // TODO: Retrieve data asynchronously
+		if (this.section !== '' && this.granted(socket.target.user) & 0b01) {
+			socket.dataset = this.getData(); // TODO: Retrieve data asynchronously
 
 			template = this._template[this.webbase.lang()];
 
@@ -127,17 +143,17 @@ module.exports = class Content extends Base {
 					fragment += `<h1 class="stwCaption">${template.settings.caption}</h1>`;
 				if (template.settings.header)
 					fragment += `<header class="stwHeader">${template.settings.header}</header>`;
-				fragment += `<div class="stwBody">${renderBody(req, template)}</div>`;
+				fragment += `<div class="stwBody">${renderBody(socket, this.id, template)}</div>`;
 				if (template.settings.footer)
 					fragment += `<footer class="stwFooter">${template.settings.footer}</footer>`;
 			} else
-				fragment = renderBody(req, template);
+				fragment = renderBody(socket, template);
 		}
 		return fragment;
 	}
-	renderRow(req, template) {
+	renderRow(socket, contentId, template) {
 		if (typeof template === 'object')
-			return layout.renderer(req, template);
+			return layout.renderer(socket, contentId, template);
 		else
 			return template;
 	}

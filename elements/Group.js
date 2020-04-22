@@ -41,7 +41,7 @@ module.exports = class Group extends Base {
         return this;
     }
 
-    render(req) {
+    render(socket) {
     }
 
     write() {

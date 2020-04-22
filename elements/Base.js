@@ -137,12 +137,14 @@ module.exports = class Base {
 	}
 
 	getElementById(id) { // TODO: Make index to speed-up
-		if (this.id === id)
-			return this;
-		for (let child of this.children) {
-			let el = child.getElementById(id);
-			if (el)
-				return el;
+		if (id) {
+			if (this.id === id)
+				return this;
+			for (let child of this.children) {
+				let el = child.getElementById(id);
+				if (el)
+					return el;
+			}
 		}
 		return null;
 	}

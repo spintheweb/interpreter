@@ -10,7 +10,7 @@ require('../../elements')(stw);
 require('../../contents')(stw);
 
 // Create a webbase programmatically
-module.exports = (webbase) => {
+module.exports = webbase => {
 	let area, page, mainmenu;
 
 	// TODO: Test
@@ -31,11 +31,20 @@ module.exports = (webbase) => {
 	webbase.add(new stw.Breadcrumbs()
 		.grant('guests', true)
 		.section('main', 1));
-	area = new stw.Area('Private');
+	area = new stw.Area('Private')
+		.add(new stw.Page('Profile')
+			.add(new stw.Text('My profile', 'Should be able to change profile')
+				.section('main')
+			));
 	webbase.add(area);
 	page = new stw.Page('Home');
 	webbase.mainpage(page);
-	page.add(new stw.Form('Form', `\\s('caption="This is the caption" header="This is the header" footer="This is the footer"')l('Label')\\te(';foo;default')\\nA('http://www.domain.com')pp('param1;uno&s')p('prot')f\nt('pippo')\\a('style="color: red"')\nt('pluto')\\a('style="color: green"')e`)
+	page.add(new stw.Form('Form', `
+			\\s('caption="A form with an embedded element" header="This is the header" footer="This is the footer"')
+			l('Label')\\te(';foo;default')\\n
+			A('http://www.domain.com')pp('param1;uno&s')p('prot')f\nt('pippo')\\a('style="color: red"')\\n
+			t('pluto')\\a('style="color: green"')e\\n
+			o('/home/keypad')p('pluto;foo')`)
 		.section('main', 2))
 		.add(new stw.Keypad().section('main', 3)) // Alphabet keys
 		.add(new stw.Tabs('Tabs')
@@ -46,28 +55,20 @@ module.exports = (webbase) => {
 				.grant('guests', false))
 			.add(new stw.Keypad('Keypad', '123\n456\n789\n*0#')))
 		.add(new stw.Table('Table', `\\s('caption="This is the caption" header="People" footer="This is the footer"')`)
-			.section('main', 6))
+			.section('main', 6));
 	webbase.add(page)
-		.add(new stw.Page('About us'))
+		.add(new stw.Page('About us')
+			.grant('guests', true))
 		.add(new stw.Page('Products')
 			.grant('guests', true)
 			.add(new stw.Text('Override shared', 'This content overrides the shared footer')
 				.section('footer', 1)))
-		.add(new stw.Page('Profile')
-			.grant('guests', false))
 		.add(new stw.Page('Contact us')
 			.grant('guests', true)
-			.add(new stw.Script('Code', 'alert("Welcome from webspinner!");'))
-		);
+			.add(new stw.Script('Code', 'alert("Welcome from webspinner!");')));
 	mainmenu.add(new stw.Text('Logo', '<img src="/media/logo-bw_64x64.png" alt="Logo webspinner">'));
 	mainmenu.add(webbase);
-
-	// https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
-	let select = '<select>'
-	for (let lang of ['en', 'it'])
-		select += `<option>${lang}</option>`;
-	select += '</select>';
-	webbase.add(new stw.Text('Languages', `&nbsp;<i class='fas fa-fw fa-language'></i> ${select}`)
+	webbase.add(new stw.Languages('Languages')
 		.grant('guests', true)
 		.section('header', 2)
 	);

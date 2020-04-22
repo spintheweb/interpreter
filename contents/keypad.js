@@ -12,8 +12,8 @@ module.exports = class Keypad extends Content {
 		super(name, template || 'abcdefghijklmnopqrstuvwxyz', lang);
 	}
 
-	render(req) {
-		return super.render(req, (req, template) => {
+	render(socket) {
+		return super.render(socket, (socket, template) => {
 			let fragment = '';
 			this.template().split('').forEach((c, i) => {
 				if (c === '\n')

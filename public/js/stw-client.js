@@ -6,12 +6,19 @@
 let stw;
 
 function stwHref(event) {
-    event.stopPropagation();
     event.preventDefault();
-    document.querySelectorAll('article[id], script[id]').forEach(function (content) {
-        content.remove();
-    });
+    event.stopPropagation();
     stw.send(JSON.stringify({ url: event.target.getAttribute('href') }));
+}
+
+function stwSubmit(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    let data = { serverHandler: (event.target.closest('article') || {}).id };
+    event.target.closest('article').querySelectorAll('[name]').forEach(function (input) {
+        data[input.getAttribute('name')] = input.value; // TODO: validate and file upload
+    });
+    stw.send(JSON.stringify(data));
 }
 
 let stwHandlers = {
@@ -22,6 +29,9 @@ let stwHandlers = {
         document.querySelector('html').setAttribute('id', page.id);
         document.querySelector('html').setAttribute('lang', page.lang);
         document.querySelector('title').innerHTML = page.name;
+    },
+    request: function (data) {
+        stw.send(JSON.stringify(data));
     },
     content: function (content) {
         let sequence = Math.floor(content.sequence).toString();
@@ -34,16 +44,17 @@ let stwHandlers = {
 
         let section = document.getElementById(content.section);
         if (section && content.body) {
-            article = document.createElement('article');
-            article.setAttribute('id', content.id);
-            if (content.cssClass) article.setAttribute('class', content.cssClass);
-            article.setAttribute('data-seq', content.sequence);
-            article.setAttribute('data-ref', content.section + sequence);
-            article.innerHTML = content.body;
+            article = document.createElement('div');
+            article.innerHTML = '<article id="' + content.id + '"' +
+                content.attrs +
+                ' data-seq="' + content.sequence + '"' +
+                ' data-ref="' + content.section + sequence + '">' +
+                content.body +
+                '</article>';
 
             let i = 0;
             for (; i < section.children.length && Math.floor(section.children[i].dataset.seq) < content.sequence; ++i);
-            section.insertBefore(article, section.children[i] || null);
+            section.insertBefore(article.firstElementChild, section.children[i] || null);
         }
 
         if (content.children) {

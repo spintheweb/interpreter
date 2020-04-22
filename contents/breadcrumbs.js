@@ -12,20 +12,22 @@ module.exports = class Breadcrumbs extends Content {
 		super(name, template, lang, true);
 	}
 
-	render(req) {
-		return super.render(req, (req, template) => {
-			let path = [], slug = '', parent = this.parent;
+	render(socket) {
+		return super.render(socket, socket => {
+			let path = [], slug = '', element = this.webbase.route(socket.data.url.pathname);
 
-			// Shared content, parent refers to the session pathname
-			if (parent.constructor.name === 'Area')
-				parent = webbase.route(req.url.pathname);
+			// Walk up to the webbase
+			for (; element.parent; path.unshift(element), element = element.parent);
 
-			// Walk up to top element
-			for (let element = parent; element.parent; path.unshift(element), element = element.parent);
-			return '<nav>' + path.map(element => {
+			let fragment = '<nav><i class="far fa-fw fa-compass"></i> ';
+			fragment += path.map((element, i) => {
+				if (!i)
+					return `<a href="/" onclick="stwHref(event)">${element.name()}</a>`;
 				slug += `/${element.slug()}`;
 				return `<a href="${slug}" onclick="stwHref(event)">${element.name()}</a>`;
-			}).join('/') + '</nav>';
+			}).join(' <i class="fas fa-fw fa-angle-right"></i> ');
+			fragment += '</nav>';
+			return fragment;
 		});
 	}
 }

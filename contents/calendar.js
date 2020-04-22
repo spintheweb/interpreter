@@ -12,8 +12,8 @@ module.exports = class Calendar extends Content {
 		super(name, template, lang, true);
 	}
 
-	render(req) {
-		return super.render(req, (req, template) => {
+	render(socket) {
+		return super.render(socket, socket => {
 			let fragment = '';
 
 			let today = new Date(), date = new Date();

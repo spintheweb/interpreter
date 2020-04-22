@@ -35,15 +35,15 @@ article.stwContent {position:relative; padding:0.25em; border: thin dashed trans
 .stwTabs ul {list-style-type:none; margin:0; padding:0;}
 .stwTabLabel {display:inline-block; padding:0.5em 1em; border:1px solid #f0f0f0; border-bottom:0; border-radius:0.5em 0.5em 0 0; min-width:1em; margin:0 0 0 0.25em; text-align:center; cursor:pointer; background-color:#f0f0f0;}
 .stwTabLabel:hover {background-color:#ffffff; color:#000000;}
-.stwTab {position:relative; border:1px solid #f0f0f0; padding:0.5em;}
+.stwTab {position:relative; border:1px solid #f0f0f0;}
 
 .stwKeypad ul {list-style-type:none; margin:0; padding:0;}
 .stwKeypad li {display:inline-block; padding:0.5em; border:1px solid #f0f0f0; border-radius:0.5em; min-width:2em; margin:0.25em; text-align:center; cursor:pointer;}
 .stwKeypad li:hover {background-color:#f0f0f0; color:#000000;}
 
 .stwBreadcrumbs nav {margin:0.5em 0;}
-.stwBreadcrumbs a {text-transform:lowercase; padding:0.25em 0.5em; border-radius:0.25em; cursor:pointer;}
-.stwBreadcrumbs a:hover {background-color:#f0f0f0; color:#000000;}
+.stwBreadcrumbs a {text-transform:lowercase; padding:0.25em 0; cursor:pointer; }
+.stwBreadcrumbs a:hover {color:var(--special);}
 
 .stwMenu ul {display:flex; align-items:center; list-style-type:none; margin:0; padding:0;}
 .stwMenuOption {display:inline-block; text-align:center;}
@@ -69,3 +69,6 @@ article.stwContent {position:relative; padding:0.25em; border: thin dashed trans
 .stwChart .grid {stroke: #DDD; stroke-dasharray: 1 1; shape-rendering: crispEdges; vector-effect: non-scaling-stroke;}
 .stwChart .axes {stroke-width: 1px; stroke: #000; shape-rendering: crispEdges; vector-effect: non-scaling-stroke;}
 .stwChart text {fill: #000;}
+
+.stwLanguages a {display:inline-block; width: 2em; text-align: center; padding:0.25em; margin:0.25em; cursor:pointer; border-radius:0.5em; border:thin solid transparent; font-size: smaller; text-transform: uppercase;}
+.stwLanguages a:hover {border:thin solid #f0f0f0;}
