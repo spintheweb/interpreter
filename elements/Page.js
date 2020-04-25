@@ -23,7 +23,8 @@ module.exports = class Page extends Base {
 		return this;
 	}
 	template(value) {
-		if (typeof value === 'undefined') return this._template;
+		if (typeof value === 'undefined') 
+			return this._template;
 		this._template = value;
 		if (typeof this.webbase.changed === 'function')
 			this.webbase.changed(this);
@@ -36,6 +37,9 @@ module.exports = class Page extends Base {
 		return '';
 	}
 	write() {
+		if (this._private)
+			return '';
+
 		let fragment = `<page id="${this.id}" template="${this._template}">`;
 		fragment += super.write();
 		fragment += '</page>';

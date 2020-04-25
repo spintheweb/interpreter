@@ -14,9 +14,9 @@ function stwHref(event) {
 function stwSubmit(event) {
     event.preventDefault();
     event.stopPropagation();
-    let data = { serverHandler: (event.target.closest('article') || {}).id };
+    let data = { url: event.target.formAction, payload: {} };
     event.target.closest('article').querySelectorAll('[name]').forEach(function (input) {
-        data[input.getAttribute('name')] = input.value; // TODO: validate and file upload
+        data.payload[input.getAttribute('name')] = input.value; // TODO: validate and file upload
     });
     stw.send(JSON.stringify(data));
 }

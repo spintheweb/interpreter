@@ -5,7 +5,6 @@
  */
 'use strict';
 
-const querystring = require('querystring');
 const Content = require('../elements/Content');
 
 module.exports = class List extends Content {
@@ -31,11 +30,11 @@ module.exports = class List extends Content {
 					socket.emit('content', element.id);
 				};
 
-				let id = querystring.parse(socket.data.query).id || this.webbase.id;
+				let id = socket.data.searchParams.id || this.webbase.id;
 				let el = this.webbase.getElementById(id); // Roled Based Visibility
 				for (let role in this.webbase.roles) {
 					let granted = el.granted(socket.target.user, role);
-					fragment += `<li class="stwRBVIcn${granted}" onclick="stwListRoles(event)" data-ref="${granted}"> ${role}</li>`;
+					fragment += `<li class="stwRBVIcn${granted}" onclick="stwListRoles(event)" data-ref="${granted}" tabindex="0"> ${role}</li>`;
 				}
 			} else {
 				socket.dataset.forEach(function (row, i) {

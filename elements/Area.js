@@ -39,7 +39,10 @@ module.exports = class Area extends Base {
 		if (this.constructor.name === 'Webbase')
 			return super.write();
 
-		let fragment = `<area id="${this.id}"`;
+		if (this._private)
+			return '';
+
+			let fragment = `<area id="${this.id}"`;
 		if (this._mainpage)
 			fragment += ` mainpage="${this._mainpage.id}"`;
 		fragment += '>';

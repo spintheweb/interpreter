@@ -15,7 +15,7 @@ module.exports = class Script extends Content {
 	render(socket) {
 		let fragment;
 		if (this.granted(socket.target.user) & 0b01) {
-			fragment = this.template();
+			fragment = this.template(socket.target.lang);
 		}
 		return fragment;
 	}

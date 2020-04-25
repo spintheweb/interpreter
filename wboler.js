@@ -13,6 +13,7 @@ module.exports = webbase => {
     let wboler, select;
 
     wboler = new stw.Group('wboler')
+        .private(true)
         .grant('developers', true)
         .section('sidebar');
 
@@ -30,20 +31,40 @@ module.exports = webbase => {
     wboler.add(new stw.Tabs('Properties', `\\s('caption="Properties" visible="@id"')`)
         .sequence(2)
         .add(new stw.Form('<i class="fa fa-cog" title="Properties"></i><span> General</span>',
-            `l('Name')e(';name')\\n
+            `h('id;@id')
+            l('Name')e(';name')\\n
             l('Position')e(';section')e(';sequence')\\n
-            l('Type')d('type')\\n
-            l('Datasource')d('datasource')\\n
+            l('Datasource')d('datasource;;webbase')\\n
             l('Query')m('query')\\n
-            l('Parameters')e(';parametrs')\\n
-            l('Layout')m('layout')\\n
-            b('.;action')p('id;@id')t('Save')`
-        ).serverHandler((element, socket) => {
+            l('Parameters')e(';params')\\n
+            l('Layout')m('template')\\n
+            b('/wboler')p('id;@id')t('Save')`
+        ).datasource('webbase', socket => {
+            if (socket.data) {
+                let element = webbase.getElementById(socket.data.searchParams.id) || webbase;
+                if (element instanceof stw.Content)
+                    return [{
+                        id: element.id,
+                        name: element.name(),
+                        section: element.section(),
+                        sequence: element.sequence(),
+                        datasource: element.datasource(),
+                        query: element.query(),
+                        params: element.params(),
+                        template: element.template(socket.target.lang)
+                    }];
+            }
+            return null;
+        }).serverHandler(socket => {
+            let element = webbase.getElementById(socket.data.id);
             element.name(socket.data.name, socket.target.lang);
             element.section(socket.data.section, socket.data.sequence);
-            element.parameters = socket.data.parameters;
-            element.template(socket.data.template, socket.lang);
-        }))
+            element.datasource(socket.data.datasource);
+            element.query = socket.data.query;
+            element.params(socket.data.params);
+            element.template(socket.target.lang, socket.data.template);
+        })
+        )
         .add(new stw.List('<i class="fas fa-eye" title="Visibility"></i><span> Visibility</span>', `t('Visibility')`))
         .add(new stw.Form('<i class="fas fa-code" title="Code behind"></i><span> Code behind</span>', `m\\a('style="width:100%; height:100%"')`))
     );

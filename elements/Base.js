@@ -12,6 +12,7 @@ module.exports = class Base {
 		this.id = uuid.v1();
 		this._name = {};
 		this._name[lang] = name || this.constructor.name;
+        this._private = false; // If private it will not be exported
 		this.webbase = this.constructor.name === 'Webbase' ? this : {};
 		this.parent = null;
 		this.children = [];
@@ -25,6 +26,12 @@ module.exports = class Base {
 			this.webbase.changed(this);
 		return this;
 	}
+    private(bool) {
+        if (typeof bool === 'undefined')
+            return this._private;
+        this._private = bool ? true : false;
+        return this;
+    }
 
 	inRole(user, role) {
 		return (this.webbase.users[user].roles || []).includes(role);
@@ -136,7 +143,7 @@ module.exports = class Base {
 		return '';
 	}
 
-	getElementById(id) { // TODO: Make index to speed-up
+	getElementById(id) { // TODO: Make indexed array to speed-up
 		if (id) {
 			if (this.id === id)
 				return this;

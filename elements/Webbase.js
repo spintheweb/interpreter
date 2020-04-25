@@ -49,7 +49,12 @@ class Webbase extends Area {
                 roles: ['administrators']
             }
         };
-        this.datasources = {};
+        this.datasources = {
+            'xml': '',
+            'json': '',
+            'webservice': '',
+            'webbase': this
+        };
     }
 
     lang(code) {
@@ -213,7 +218,8 @@ class Webbase extends Area {
 
         fragment += '<datasources>';
         for (let datasource in this.datasources)
-            fragment += `<datasource name="${datasource}"><![CDATA[${JSON.stringify(this.datasources[datasource])}]]></datasource>`;
+            if (typeof this.datasources[datasource] !== 'object')
+                fragment += `<datasource name="${datasource}"><![CDATA[${this.datasources[datasource]}]]></datasource>`;
         fragment += '</datasources>';
 
         fragment += super.write();

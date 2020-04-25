@@ -19,6 +19,9 @@ module.exports = class Reference extends Content {
 			return this.ref.render(socket);
 	}
 	write() {
+		if (this._private)
+			return '';
+
 		let fragment = `<content id="${this.id}" type="${this.constructor.name}" ref="${this.ref.id}"`;
 		fragment += super.write();
 		fragment += '</content>';

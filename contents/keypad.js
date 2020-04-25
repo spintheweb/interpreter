@@ -15,7 +15,7 @@ module.exports = class Keypad extends Content {
 	render(socket) {
 		return super.render(socket, (socket, template) => {
 			let fragment = '';
-			this.template().split('').forEach((c, i) => {
+			this.template(socket.target.lang).split('').forEach((c, i) => {
 				if (c === '\n')
 					return fragment += '<br>';
 				return fragment += `<li data-ref="${c}">${c}</a></li>`;

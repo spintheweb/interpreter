@@ -15,8 +15,8 @@ module.exports = class Text extends Content {
 	}
 
 	render(socket) {
-		return super.render(socket, (socket, template) => {
-			return this.template();
+		return super.render(socket, socket => {
+			return this.template(socket.target.lang);
 		});
 	}
 }

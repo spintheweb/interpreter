@@ -5,9 +5,13 @@
  */
 'use strict';
 
+const Entities = require('html-entities').AllHtmlEntities;
+const HTML = new Entities();
+
 module.exports = {
     lexer: lexer,
-    renderer: renderer
+    renderer: renderer,
+    getValue: getValue
 }
 
 const SYNTAX = new RegExp([
@@ -95,17 +99,27 @@ function evaluate(socket, expression) {
     return getValue(socket, expression);
 }
 
+function getName(socket, name) {
+    try {
+        return name || socket.dataset[socket.row][socket.col] || `Field${socket.col}`;
+    } catch {
+        return `Field${socket.col}`;
+    }
+}
+
 function getValue(socket, key) {
     try {
         if (key === '@@')
-            return socket.dataset[socket.row][socket.col++] || '';
+            return socket.dataset[socket.row][Object.keys(socket.dataset[socket.row])[socket.col++]] || '';
         if (key.startsWith('@@')) // datarow, session, application, server
             return socket.dataset[socket.row][key.replace('@@', '')] || '';
         if (key.startsWith('@')) // data
-            return socket.data[key.replace('@', '')] || '';
-        return key;
+            return socket.data.url.searchParams.get(key.replace('@', '')) || '';
+        if (typeof socket.dataset[socket.row][key] === 'function')
+            return socket.dataset[socket.row][key].toString();
+        return socket.dataset[socket.row][key] || key;
     } catch {
-        return undefined;
+        return key;
     }
 }
 
@@ -113,7 +127,7 @@ function renderAttributes(socket, attrs) {
     let html = '';
     if (attrs)
         for (let attr of Object.keys(attrs))
-            html += ` ${attr}="${getValue(socket, attrs[attr])}"`;
+            html += ` ${attr}="${attr === 'name' ? attrs[attr] : HTML.encode(getValue(socket, attrs[attr]))}"`;
     return html;
 }
 
@@ -149,21 +163,22 @@ function renderer(socket, contentId, layout) {
             switch (token.symbol) {
                 case 'a':
                     str = token.args ? token.args[0] : '@@';
-                    // TODO: Web socket call
-                    html += `<a href="${renderParameters(socket, str, token.params)}" onclick="stwHref(event)"${renderAttributes(socket, token.attrs)}>${renderer(socket, contentId, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [str] }] })}</a>`;
+                    html += `<a href="${renderParameters(socket, str, token.params)}" onclick="stwHref(event)"${renderAttributes(socket, token.attrs)}>
+                        ${renderer(socket, contentId, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [str] }] })}</a>`;
                     break;
                 case 'b':
                     if (token.args)
                         str = token.args[0] == '.' ? socket.data.url.pathname : token.args[0];
                     else
                         str = '@@';
-                    // TODO: Web socket call
-                    html += `<button formaction="${renderParameters(socket, str, token.params)}" onclick="stwSubmit(event)"${renderAttributes(socket, token.attrs)}>${renderer(socket, contentId, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [''] }] } || str)}</button>`;
+                    token.params.stwHandler = contentId;
+                    html += `<button formaction="${renderParameters(socket, str, token.params)}" onclick="stwSubmit(event)"${renderAttributes(socket, token.attrs)}>
+                        ${renderer(socket, contentId, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [''] }] } || str)}</button>`;
                     break;
                 case 'c':
                     token.attrs = token.attrs || {};
                     token.attrs.type = 'checkbox'
-                    token.attrs.name = token.args[0] || socket.dataset[socket.row][socket.col];
+                    token.attrs.name = getName(socket, token.args[0]);
                     token.attrs.value = token.args[1] || '@@';
                     for (let i = 3; i < token.args.length; i += (token.args[2] == 2 ? 2 : 1)) {
                         html += `<label><input${renderAttributes(socket, token.attrs)}>`;
@@ -171,8 +186,8 @@ function renderer(socket, contentId, layout) {
                     break;
                 case 'd':
                     token.attrs = token.attrs || {};
-                    token.attrs.name = token.args[0] || socket.dataset[socket.row][socket.col];
-                    token.attrs.value = token.args[1] || '@@';
+                    token.attrs.name = getName(socket, token.args[0]);
+                    token.attrs.value = token.args[0] || '@@';
                     html += `<select${renderAttributes(socket, token.attrs)}><option></option></select>`;
                     break;
                 case 'h':
@@ -180,8 +195,8 @@ function renderer(socket, contentId, layout) {
                     token.attrs.type = 'hidden';
                 case 'e':
                     token.attrs = token.attrs || {};
-                    token.attrs.name = token.args[1] || socket.dataset[socket.row][socket.col];
-                    token.attrs.value = token.args[2] || '@@';
+                    token.attrs.name = getName(socket, token.args[1]);
+                    token.attrs.value = token.args[1] || '@@';
                     html += `<input${renderAttributes(socket, token.attrs)}>`;
                     break;
                 case 'f':
@@ -200,14 +215,13 @@ function renderer(socket, contentId, layout) {
                     html += `<script${renderAttributes(socket, token.attrs)}>${token.args[2]}</script>`;
                     break;
                 case 'l':
-                    str = token.args[0] || socket.dataset[socket.row][socket.col];
+                    str = getName(socket, token.args[0]);
                     html += `<label${renderAttributes(socket, token.attrs)}>${str}</label>`;
                     break;
                 case 'm':
                     token.attrs = token.attrs || {};
-                    token.attrs.name = token.args[0] || socket.dataset[socket.row][socket.col];
-                    token.attrs.value = token.args[1] || '@@';
-                    html += `<textarea${renderAttributes(socket, token.attrs)}>${socket.dataset[socket.row][socket.col]}</textarea>`;
+                    token.attrs.name = getName(socket, token.args[0]);
+                    html += `<textarea${renderAttributes(socket, token.attrs)}>${HTML.encode(getValue(socket, token.args[0] || '@@'))}</textarea>`;
                     break;
                 case 'n':
                     break;
@@ -215,7 +229,7 @@ function renderer(socket, contentId, layout) {
                     token.args.forEach(child => {
                         socket.target.send(JSON.stringify({
                             message: 'request',
-                            body: { 
+                            body: {
                                 url: renderParameters(socket, 'http://localhost' + getValue(socket, child), token.params),
                                 section: `_${contentId}`
                             }

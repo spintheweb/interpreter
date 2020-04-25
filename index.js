@@ -7,6 +7,8 @@
 
 const fs = require('fs');
 const mime = require('mime-types');
+const querystring = require('querystring');
+
 const Content = require('./elements/Content');
 const Group = require('./elements/Group');
 
@@ -27,7 +29,7 @@ webspinner.on('request', (req, res) => {
             res.end(data);
         }
     })
-    console.log(`${(new Date()).toISOString()} http ${requested.substring(0, 100)}...`);
+    // console.log(`${(new Date()).toISOString()} http ${requested.substring(0, 100)}...`);
 });
 
 wsspinner.on('connection', socket => {
@@ -41,24 +43,26 @@ wsspinner.on('connection', socket => {
 
         socket.data = JSON.parse(socket.data);
 
-        // Execute serverHandler
-        element = webspinner.webbase.getElementById(socket.data.serverHandler);
-        if (element && element.granted(socket.target.user) & 0b01 == 0b01 && typeof element._serverHandler == 'function')
-            try {
-                element._serverHandler(element, socket);
-            } catch (err) {
-                console.log(`${(new Date()).toISOString()} err  ${err}`);
-            }
-
         try {
             socket.data.url = new URL(socket.data.url);
         } catch (err) {
             socket.data.url = new URL('http://localhost' + (socket.data.url || '/'));
         }
 
+        // Execute serverHandler
+        if (typeof socket.data.payload !== 'undefined' && socket.data.url.searchParams.get('stwHandler')) {
+            element = webspinner.webbase.getElementById(socket.data.url.searchParams.get('stwHandler'));
+            if (element && element.granted(socket.target.user) & 0b01 == 0b01 && typeof element._serverHandler === 'function')
+                try {
+                    element._serverHandler(socket);
+                } catch (err) {
+                    console.log(`${(new Date()).toISOString()} err  ${err}`);
+                }
+        }
+
         element = webspinner.webbase.route(socket.data.url.pathname);
         if (!element)
-            return; // Abort, nothing to render
+            return; // Abort, nothing to handle
 
         if (element instanceof Content) {
             if (socket.data.children)
@@ -90,26 +94,27 @@ wsspinner.on('connection', socket => {
             }));
         }
 
-        // Send content to client
-        function _emit(content, section = '', subsequence = 0) {
-            // Avoid re-emitting the content if a content with the same section and integer sequence has already been emitted in the current request
-            if (emitted.indexOf((content.section() || section).toString() + (Math.floor(content.sequence())) + subsequence * 1000) !== -1)
+        // Send content or group to client
+        function _emit(content, section = '') {
+            // Avoid re-emitting the content or group if an element with the same section and integer sequence has already been emitted in the current request
+            if (emitted.indexOf((content.section() || section).toString() + (Math.floor(content.sequence()))) !== -1)
                 return;
 
-            let fragment = content.render(socket, null);
+            let fragment = content.render(socket);
             if (fragment) {
-                emitted.push((content.section() || section).toString() + (Math.floor(content.sequence()) + subsequence * 1000));
+                emitted.push((content.section() || section).toString() + (Math.floor(content.sequence())));
 
                 socket.target.send(JSON.stringify({
                     message: content.constructor.name === 'Script' ? 'script' : 'content',
                     body: {
                         id: content.id,
                         url: content.permalink(),
+                        search: socket.data.url.search, 
+                        searchParams: querystring.parse(socket.data.url.search.substring(1)), // Skip ?
                         section: content.section() || section,
-                        sequence: content.sequence() + subsequence * 1000,
+                        sequence: content.sequence(),
                         attrs: content.cssClass(undefined, socket.target.lang),
                         children: (content.children.length > 0),
-                        query: socket.data.url.search.substring(1) || '',
                         body: fragment.toString()
                     }
                 }));
@@ -129,8 +134,9 @@ wsspinner.on('connection', socket => {
                 if (child instanceof Content)
                     _emit(child);
                 else if (child instanceof Group) {
+                    _emit(child);
                     for (let nephew of child.children)
-                        _emit(nephew, child.section(), child.sequence());
+                        _emit(nephew);
                 }
             }
             if (element.parent)

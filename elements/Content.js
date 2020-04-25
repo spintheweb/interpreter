@@ -18,17 +18,18 @@ module.exports = class Content extends Base {
 		this._query = null;
 		this._params = null;
 		this._template = {};
+		this._wbll = wbll ? {} : undefined; // The template is WBLL
 
 		if (template)
-			this.template(wbll, template, lang); // NOTE: text or layout functions
+			this.template(lang, template);
 
 		this._clientHandler = null; // Client side code
-		this._serverHandler = null; // Server side code
+		this._serverHandler = null; // Server side code (TODO: Predefined CRUD handlers)
 	}
 
 	cssClass(value, lang) {
 		if (typeof value === 'undefined') {
-			let layout = this.template(undefined, undefined, lang);
+			let layout = this.template(lang);
 			if (layout && layout.attrs) {
 				let attrs = '';
 				Object.keys(layout.attrs).forEach(key => {
@@ -64,14 +65,18 @@ module.exports = class Content extends Base {
 			this.webbase.changed(this);
 		return this;
 	}
-	datasource(value) {
-		if (typeof value === 'undefined') return this._datasource;
-		this._datasource = value;
+	datasource(name, query, params) {
+		this.query(query);
+		this.params(params);
+		if (typeof name === 'undefined')
+			return this._datasource;
+		this._datasource = name;
 		if (typeof this.webbase.changed === 'function')
 			this.webbase.changed(this);
 		return this;
 	}
-	query(value) {
+	query(value, params) {
+		this.params(params);
 		if (typeof value === 'undefined') return this._query;
 		this._query = value;
 		if (typeof this.webbase.changed === 'function')
@@ -85,13 +90,13 @@ module.exports = class Content extends Base {
 			this.webbase.changed(this);
 		return this;
 	}
-	template(wbll, value, lang) {
+	template(lang, value) {
 		if (typeof value === 'undefined')
-			return this.webbase.localize(lang || this.webbase.lang(), this._template);
-		if (wbll)
-			this._template[lang || this.webbase.lang()] = layout.lexer(value);
+			return this.webbase.localize(lang, typeof this._wbll === 'undefined' ? this._template : this._wbll);
+		if (typeof this._wbll !== 'undefined')
+			this._wbll[lang] = layout.lexer(value);
 		else
-			this._template[lang || this.webbase.lang()] = value;
+			this._template[lang] = value;
 		if (typeof this.webbase.changed === 'function')
 			this.webbase.changed(this);
 		return this;
@@ -111,7 +116,7 @@ module.exports = class Content extends Base {
 			return this;
 
 		if (child instanceof Content)
-			child.section(this.permalink());
+			child.section(this.id); //this.permalink());
 		else
 			child = new Reference(child);
 
@@ -120,23 +125,31 @@ module.exports = class Content extends Base {
 				child = new Reference(child);
 			child.parent = this;
 			this.children.push(child);
-			if (typeof this.webbase.changed === 'function')
+			if (typeof this.webbase.changed == 'function')
 				this.webbase.changed(this);
 		}
 		return this;
 	}
-	getData(callback) { // TODO: Request data
-		return [{}];
+	getData(socket, callback) { // TODO: Request data asynchronously
+		if (typeof this._query == 'function')
+			return this._query(socket);
+		return JSON.parse(this._query || '[{}]');
 	}
 	render(socket, renderBody) {
-		let fragment = '', template;
+		if (!renderBody)
+			renderBody = this.renderRow;
+
+		let fragment = '';
 		if (this.section !== '' && this.granted(socket.target.user) & 0b01) {
-			socket.dataset = this.getData(); // TODO: Retrieve data asynchronously
+			socket.dataset = this.getData(socket); // TODO: Retrieve data asynchronously
 
-			template = this._template[this.webbase.lang()];
+			let template = this.template(this.webbase.lang());
 
-			if (typeof template === 'object') {
-				if (template.settings.visible !== undefined && !template.settings.visible) // TODO: template.settings.invisible
+			if (template && typeof template === 'object') {
+				// TODO: Evaluate template.settings
+
+				if (typeof template.settings.visible != 'undefined' &&
+					(layout.getValue(socket, template.settings.visible) ? false : true)) // TODO: template.settings.invisible
 					return '';
 
 				if (template.settings.caption)
@@ -159,6 +172,9 @@ module.exports = class Content extends Base {
 	}
 
 	write() {
+		if (this._private)
+			return '';
+
 		let fragment = '';
 		if (this.constructor.name !== 'Reference')
 			fragment = `<content id="${this.id}" type="${this.constructor.name}"`;
@@ -173,10 +189,8 @@ module.exports = class Content extends Base {
 			fragment += `<datasource name="${this._datasource}" params="${this._params}"><![CDATA[${this._query}]]></datasource>`;
 
 		fragment += '<template>';
-		for (let template in this._template) {
-			if (typeof this._template[template] === 'string')
-				fragment += `<text lang="${template}"><![CDATA[${this._template[template]}]]></text>`;
-		}
+		for (let template in this._template)
+			fragment += `<text lang="${template}"><![CDATA[${this._template[template]}]]></text>`;
 		fragment += '</template>';
 
 		if (this.constructor.name !== 'Reference')
@@ -186,7 +200,7 @@ module.exports = class Content extends Base {
 	}
 
 	/*
-	// TODO: If debug show content info and rendering time
+	// TODO: If developer show content info and rendering time
 	log((new Date) - stopwatch, "time");
 	log(new Date, "time");
 	*/

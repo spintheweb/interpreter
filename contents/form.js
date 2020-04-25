@@ -13,6 +13,6 @@ module.exports = class Form extends Content {
 	}
 
 	render(socket) {
-		return super.render(socket, this.renderRow);
+		return super.render(socket);
 	}
 }
