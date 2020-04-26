@@ -32,7 +32,7 @@ module.exports = class Tabs extends Content {
 			let labels = '', tabs = '';
 			this.children.forEach((tab, i) => {
 				if (tab.granted(socket.target.user) & 0b1) {
-					labels += `<li class="stwTabLabel${i === 0 ? ' stwSelected' : ''}" onclick="stwTabs(event)" tabindex="0">${tab.name()}</li>`;
+					labels += `<li class="stwTabLabel${i === 0 ? ' stwSelected' : ''}" onclick="stwTabs(event)">${tab.name()}</li>`;
 					tabs += `<li id="${tab.permalink()}" class="stwTab"${i !== 0 ? ' hidden' : ''} data-ref="${tab.permalink()}1"></li>`;
 				}
 			});

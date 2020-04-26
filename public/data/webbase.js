@@ -13,7 +13,7 @@ require('../../contents')(stw);
 module.exports = webbase => {
 	let area, page, mainmenu;
 
-	// TODO: Test
+	// TEST: Static data source
 	webbase.datasource('somedata', {
 		id: 12,
 		name: 'webo',

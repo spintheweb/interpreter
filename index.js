@@ -39,14 +39,14 @@ wsspinner.on('connection', socket => {
     socket.onmessage = socket => {
         let element, emitted = [];
 
-        console.log(`${(new Date()).toISOString()} ws   ${socket.data.substring(0, 100)}...`);
+//        console.log(`${(new Date()).toISOString()} ws   ${socket.data.substring(0, 100)}...`);
 
         socket.data = JSON.parse(socket.data);
 
         try {
             socket.data.url = new URL(socket.data.url);
         } catch (err) {
-            socket.data.url = new URL('http://localhost' + (socket.data.url || '/'));
+            socket.data.url = new URL('http://stw.local' + (socket.data.url || '/'));
         }
 
         // Execute serverHandler
@@ -54,9 +54,9 @@ wsspinner.on('connection', socket => {
             element = webspinner.webbase.getElementById(socket.data.url.searchParams.get('stwHandler'));
             if (element && element.granted(socket.target.user) & 0b01 == 0b01 && typeof element._serverHandler === 'function')
                 try {
-                    element._serverHandler(socket);
+                    element._serverHandler(socket.data.payload, socket);
                 } catch (err) {
-                    console.log(`${(new Date()).toISOString()} err  ${err}`);
+                    console.log(`${(new Date()).toISOString()} err  serverHandler(${element.permalink()}) ${err}`);
                 }
         }
 
@@ -96,6 +96,8 @@ wsspinner.on('connection', socket => {
 
         // Send content or group to client
         function _emit(content, section = '') {
+            console.log(`${(new Date()).toISOString()} ws   ${content.id} ${content.permalink()} ${section} ${socket.data.url}`);
+
             // Avoid re-emitting the content or group if an element with the same section and integer sequence has already been emitted in the current request
             if (emitted.indexOf((content.section() || section).toString() + (Math.floor(content.sequence()))) !== -1)
                 return;
@@ -108,7 +110,7 @@ wsspinner.on('connection', socket => {
                     message: content.constructor.name === 'Script' ? 'script' : 'content',
                     body: {
                         id: content.id,
-                        url: content.permalink(),
+                        url: content.permalink() + socket.data.url.search,
                         search: socket.data.url.search, 
                         searchParams: querystring.parse(socket.data.url.search.substring(1)), // Skip ?
                         section: content.section() || section,

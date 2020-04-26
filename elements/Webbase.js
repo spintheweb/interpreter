@@ -50,10 +50,11 @@ class Webbase extends Area {
             }
         };
         this.datasources = {
-            'xml': '',
-            'json': '',
+            'xml': 'text/xml',
+            'json': 'application/json',
+            'javascript': 'text/javascript',
             'webservice': '',
-            'webbase': this
+            'webbase': this // [Object]
         };
     }
 

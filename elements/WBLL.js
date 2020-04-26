@@ -111,7 +111,7 @@ function getValue(socket, key) {
     try {
         if (key === '@@')
             return socket.dataset[socket.row][Object.keys(socket.dataset[socket.row])[socket.col++]] || '';
-        if (key.startsWith('@@')) // datarow, session, application, server
+        if (key.startsWith('@@')) // dataset, socket
             return socket.dataset[socket.row][key.replace('@@', '')] || '';
         if (key.startsWith('@')) // data
             return socket.data.url.searchParams.get(key.replace('@', '')) || '';
@@ -230,7 +230,7 @@ function renderer(socket, contentId, layout) {
                         socket.target.send(JSON.stringify({
                             message: 'request',
                             body: {
-                                url: renderParameters(socket, 'http://localhost' + getValue(socket, child), token.params),
+                                url: renderParameters(socket, 'http://stw.local' + getValue(socket, child), token.params),
                                 section: `_${contentId}`
                             }
                         }));

@@ -34,7 +34,7 @@ module.exports = class List extends Content {
 				let el = this.webbase.getElementById(id); // Roled Based Visibility
 				for (let role in this.webbase.roles) {
 					let granted = el.granted(socket.target.user, role);
-					fragment += `<li class="stwRBVIcn${granted}" onclick="stwListRoles(event)" data-ref="${granted}" tabindex="0"> ${role}</li>`;
+					fragment += `<li class="stwRBVIcn${granted}" onclick="stwListRoles(event)" data-ref="${granted}"> ${role}</li>`;
 				}
 			} else {
 				socket.dataset.forEach(function (row, i) {

@@ -10,63 +10,63 @@ require('./elements')(stw);
 require('./contents')(stw);
 
 module.exports = webbase => {
-    let wboler, select;
+    let wboler, options;
 
     wboler = new stw.Group('wboler')
         .private(true)
         .grant('developers', true)
         .section('sidebar');
 
-    select = '<select>';
+    options = '<select>';
     for (let user in webbase.users)
-        select += `<option>${user}</option>`;
-    select += '</select>';
-    wboler.add(new stw.Tabs('Structure', `\\s('caption="Wboler" header="<i class='fas fa-fw fa-eye'></i> ${select}"')`)
+        options += `<option>${user}</option>`;
+    options += '</select>';
+    wboler.add(new stw.Tabs('Structure', `\\s('caption="Wboler" header="<i class='fas fa-fw fa-eye'></i> ${options}"')`)
         .sequence(1)
-        .add(new stw.Tree('<i class="fa fa-globe" title="Webbase"></i><span> Webbase</span>'))
-        .add(new stw.Text('<i class="fa fa-database" title="Datasources"></i><span> Datasources</span>', 'Datasources'))
-        .add(new stw.Text('<i class="fa fa-folder" title="File system"></i><span> Files</span>', 'Files'))
-        .add(new stw.Text('<i class="fa fa-shield" title="Security"></i><span> Security</span>', 'Security'))
+        .add(new stw.Tree('Webbase'))
+        .add(new stw.Text('Datasources', 'Datasources'))
+        .add(new stw.Text('Files', 'Files'))
+        .add(new stw.Text('Security', 'Security'))
     );
     wboler.add(new stw.Tabs('Properties', `\\s('caption="Properties" visible="@id"')`)
         .sequence(2)
-        .add(new stw.Form('<i class="fa fa-cog" title="Properties"></i><span> General</span>',
+        .add(new stw.Form('General',
             `h('id;@id')
             l('Name')e(';name')\\n
-            l('Position')e(';section')e(';sequence')\\n
-            l('Datasource')d('datasource;;webbase')\\n
+            l('Position')e(';section')\\a('style="width:75%"')e(';sequence')\\a('style="width:25%"')\\n
+            l('Datasource')d('datasource;;webbase;')\\n
             l('Query')m('query')\\n
             l('Parameters')e(';params')\\n
             l('Layout')m('template')\\n
             b('/wboler')p('id;@id')t('Save')`
         ).datasource('webbase', socket => {
             if (socket.data) {
-                let element = webbase.getElementById(socket.data.searchParams.id) || webbase;
-                if (element instanceof stw.Content)
+                let el = webbase.getElementById(socket.data.searchParams.id);
+                if (el instanceof stw.Content)
                     return [{
-                        id: element.id,
-                        name: element.name(),
-                        section: element.section(),
-                        sequence: element.sequence(),
-                        datasource: element.datasource(),
-                        query: element.query(),
-                        params: element.params(),
-                        template: element.template(socket.target.lang)
+                        type: el.constructor.name,
+                        id: el.id,
+                        name: el.name(),
+                        section: el.section(),
+                        sequence: el.sequence(),
+                        datasource: el.datasource(),
+                        query: el.query(),
+                        params: el.params(),
+                        template: el.template(socket.target.lang)
                     }];
             }
-            return null;
-        }).serverHandler(socket => {
-            let element = webbase.getElementById(socket.data.id);
-            element.name(socket.data.name, socket.target.lang);
-            element.section(socket.data.section, socket.data.sequence);
-            element.datasource(socket.data.datasource);
-            element.query = socket.data.query;
-            element.params(socket.data.params);
-            element.template(socket.target.lang, socket.data.template);
+        }).serverHandler((data, socket) => {
+            let el = webbase.getElementById(data.id);
+            el.name(data.name, socket.target.lang);
+            el.section(data.section, data.sequence);
+            el.datasource(data.datasource);
+            el.query(data.query);
+            el.params(data.params);
+            el.template(socket.target.lang, data.template);
         })
         )
-        .add(new stw.List('<i class="fas fa-eye" title="Visibility"></i><span> Visibility</span>', `t('Visibility')`))
-        .add(new stw.Form('<i class="fas fa-code" title="Code behind"></i><span> Code behind</span>', `m\\a('style="width:100%; height:100%"')`))
+        .add(new stw.List('Visibility'))
+        .add(new stw.Form('Code behind', `m\\a('style="width:100%; height:100%"')`))
     );
 
     webbase.add(wboler);

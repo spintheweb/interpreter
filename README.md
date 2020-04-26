@@ -1,3 +1,5 @@
+[logo]: https://avatars0.githubusercontent.com/u/16848901?s=460&u=acaf05c1e801337a7f6a87676ec886ccba9c641e&v=4
+
 # Spin the Web
 
 Spin the Web deals with the Webbase Ontology Language (WBOL)—pronounced like wobble /ˈwɒbəl/. Simply put, HTML describes a web page, WBOL, a web site; and, while HTML is interpreted by a client side web browser, WBOL, by a server side _web spinner_. It is this project opinion that WBOL is a missing component in the World Wide Web space.
