@@ -1,4 +1,4 @@
-[logo]: https://avatars0.githubusercontent.com/u/16848901?s=460&u=acaf05c1e801337a7f6a87676ec886ccba9c641e&v=4
+<img src="https://avatars0.githubusercontent.com/u/16848901?s=460&u=acaf05c1e801337a7f6a87676ec886ccba9c641e&v=4" width="100p">
 
 # Spin the Web
 
