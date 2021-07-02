@@ -107,8 +107,21 @@ module.exports = class Content extends Base {
 		return this;
 	}
 	serverHandler(callback) {
-		if (typeof callback === 'function')
-			this._serverHandler = callback;
+		switch (typeof callback) {
+			case 'undefined':
+				return (this._serverHandler || '').toString();
+			case 'string':
+				try {
+					let fn = new Function(callback);
+					this._serverHandler = fn;
+				} catch (err) {
+					console.log(err);
+				}
+				break;
+			case 'function':
+				this._serverHandler = callback;
+				break;
+		}
 		return this;
 	}
 	add(child) {

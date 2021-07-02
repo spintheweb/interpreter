@@ -31,8 +31,7 @@ module.exports = class Area extends Base {
 	render(socket) {
 		if (this._mainpage)
 			return this._mainpage.render(socket);
-		else
-			return this.webbase._mainpage.render(socket);
+		return this.webbase._mainpage.render(socket);
 	}
 
 	write() {
@@ -42,7 +41,7 @@ module.exports = class Area extends Base {
 		if (this._private)
 			return '';
 
-			let fragment = `<area id="${this.id}"`;
+		let fragment = `<area id="${this.id}"`;
 		if (this._mainpage)
 			fragment += ` mainpage="${this._mainpage.id}"`;
 		fragment += '>';

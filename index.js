@@ -39,7 +39,7 @@ wsspinner.on('connection', socket => {
     socket.onmessage = socket => {
         let element, emitted = [];
 
-//        console.log(`${(new Date()).toISOString()} ws   ${socket.data.substring(0, 100)}...`);
+        //        console.log(`${(new Date()).toISOString()} ws   ${socket.data.substring(0, 100)}...`);
 
         socket.data = JSON.parse(socket.data);
 
@@ -111,7 +111,7 @@ wsspinner.on('connection', socket => {
                     body: {
                         id: content.id,
                         url: content.permalink() + socket.data.url.search,
-                        search: socket.data.url.search, 
+                        search: socket.data.url.search,
                         searchParams: querystring.parse(socket.data.url.search.substring(1)), // Skip ?
                         section: content.section() || section,
                         sequence: content.sequence(),

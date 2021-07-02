@@ -29,11 +29,11 @@ module.exports = webbase => {
         .add(new stw.Text('Security', 'Security'))
     );
     wboler.add(new stw.Tabs('Properties', `\\s('caption="Properties" visible="@id"')`)
-        .sequence(2)
-        .add(new stw.Form('General',
-            `h('id;@id')
+        .sequence(2.1)
+        .add(new stw.Form('General', `\\s('visible="@type=='Content"')
+            h('id;@id')
             l('Name')e(';name')\\n
-            l('Position')e(';section')\\a('style="width:75%"')e(';sequence')\\a('style="width:25%"')\\n
+            l('Position')e(';section')\\a('style="width:calc(100% - 5em)"')t('&emsp;')e(';sequence')\\a('style="width:4em"')\\n
             l('Datasource')d('datasource;;webbase;')\\n
             l('Query')m('query')\\n
             l('Parameters')e(';params')\\n
@@ -64,9 +64,22 @@ module.exports = webbase => {
             el.params(data.params);
             el.template(socket.target.lang, data.template);
         })
-        )
-        .add(new stw.List('Visibility'))
-        .add(new stw.Form('Code behind', `m\\a('style="width:100%; height:100%"')`))
+        ).add(new stw.List('Visibility'))
+        .add(new stw.Form('Code behind',
+            `m('serverHandler')\\a('style="width:100%; height:100%"')\\n
+            b('/wboler')p('id;@id')t('Save')`
+        ).datasource('webbase', socket => {
+            let el = webbase.getElementById(socket.data.searchParams.id);
+            return [{
+                type: el.constructor.name,
+                id: el.id,
+                serverHandler: typeof el.serverHandler === 'function' ? el.serverHandler() : null
+            }];
+
+        }).serverHandler((data, socket) => {
+            let el = webbase.getElementById(data.id);
+            el.template(socket.target.lang, data.template);
+        }))
     );
 
     webbase.add(wboler);

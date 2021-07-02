@@ -4,14 +4,14 @@
   "description": "Spin the Web deals with the Webbase Ontology Language (WBOL)—pronounced like wobble /ˈwɒbəl/. Simply put, HTML describes a web page, WBOL, a web site; and, while HTML is interpreted by a client side web browser, WBOL, by a server side web spinner.",
   "main": "index.js",
   "dependencies": {
-    "html-entities": "^1.3.1",
-    "mime-types": "^2.1.26",
+    "html-entities": "^1.4.0",
+    "mime-types": "^2.1.31",
     "uuid": "^7.0.3",
-    "ws": "^7.2.3",
-    "xmldom": "^0.1.31"
+    "ws": "^7.5.1",
+    "xmldom": "^0.6.0"
   },
   "devDependencies": {
-    "minify": "^5.1.1",
+    "minify": "^5.2.0",
     "nodemon": "^1.19.4"
   },
   "scripts": {

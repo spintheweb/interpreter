@@ -1,6 +1,6 @@
 /*!
  * stw-client.js
- * Copyright(c) 2017 Giancarlo Trevisan
+ * Copyright(c) 2017- Giancarlo Trevisan
  * MIT Licensed
  */
 let stw;
@@ -37,9 +37,10 @@ let stwHandlers = {
         let sequence = Math.floor(content.sequence).toString();
         let article = document.querySelector('article[data-ref="' + content.section.toString() + sequence + '"]');
 
-        if (article)
-            article.parentElement.removeChild(article);
-        else
+        if (article) {
+            // TODO: set content.body based on diff see https://gomakethings.com/dom-diffing-with-vanilla-js-part-1/
+            article.parentElement.removeChild(article); 
+        } else
             article = document.querySelector('[data-ref="' + content.section.toString() + sequence + '"]');
 
         let section = document.getElementById(content.section);
