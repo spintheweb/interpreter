@@ -6,7 +6,7 @@
 'use strict';
 
 const Content = require('../elements/Content');
-const xmldom = require('xmldom').DOMParser;
+const xmldom = require('@xmldom/xmldom').DOMParser;
 
 module.exports = class Chart extends Content {
     constructor(name, template, lang) {
