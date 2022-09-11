@@ -13,13 +13,24 @@ The term _webbase_ was first used in 1998, a name given to a relational database
 ## Elements 
 Spin the Web addresses three issues to ease web develpments: describe, interpret and build. It is based on pillars of web development, HTML (SVG), CSS, Javascript, to name a few, it is not for the faint of heart, a good dose of knowhow is necessary, full stack development knowhow.
 
-A _webbase_ is an hierachically organized structure of three base elements, plus one: _areas_, _pages_ and _contents_, the additional element is _reference_, it points to any of the three base elements; at the root of the hierarchy there is always a fifth element named _webo_. The file system analogy may be of help: the _webo_ is the drive, _areas_ are folders, _pages_ are files, _contents_ and _references_, well, they are something else! Like the file system, a webbase also addresses security, role level security, based on a simple inherited visibility paradigm.
+A _webbase_ is an hierachically organized structure of three base elements, plus one: _areas_, _pages_ and _contents_, the additional element is _reference_, it points to any of the three base elements; at the root of the hierarchy there is always a fifth element, the _webo_. The file system analogy may be of help: the _webo_ is the drive, _areas_ are folders, _pages_ are files, _contents_ and _references_, are something else! Like the file system, a webbase also addresses security, role level security, based on a simple inherited visibility paradigm.
 
-_Contents_ are special, they come in four flavors: _navigational_, _organizational_, _presentational_ and _special_. The purpose of contents is to allow _interaction_ with data of any kind, they request data, provide data, they can be simple microservices, dashbords that are described macroscopically by (WBOL) Webbase Ontology Language and microscopically (WBLL) Webbase Layout Language
+_Contents_ are special, they come in four flavors: _navigational_, _organizational_, _presentational_ and _special_. The purpose of contents is to allow _interaction_ with data of any kind, they request data, provide data, they can be simple microservices, dashbords that are described macroscopically by (WBML) Webbase Markup Language and microscopically (WBLL) Webbase Layout Language
+
+### Contents
+* navigational -- these content render as menubar, menus, links
+* organizational -- 
 
 ## Features
 * Content centered
 * Role Based Access Control
-* Multilingual & Multinational
+* Multilingual & Multinational (localized)
 * Templated
 
+## Paradigm
+A web spinner receives a REST request from a client, these are the logical steps that follow: 
+* If the request is the first request sent by the client, a socket based session is established thus defining the _session context_
+* The web spinner, subject to the session context, consults the WBOL file and responds with either: a list of REST calls the client should make or a resource
+* If the client receives a list of REST calls, it sends requests for each of them asynchronously
+* Else it receives a resource
+* The _session context_ holds the 

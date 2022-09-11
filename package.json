@@ -1,43 +1,44 @@
 {
-  "name": "spintheweb",
-  "version": "0.1.1",
-  "description": "Spin the Web deals with the Webbase Ontology Language (WBOL)—pronounced like wobble /ˈwɒbəl/. Simply put, HTML describes a web page, WBOL, a web site; and, while HTML is interpreted by a client side web browser, WBOL, by a server side web spinner.",
-  "main": "index.js",
-  "dependencies": {
-    "html-entities": "^1.4.0",
-    "mime-types": "^2.1.31",
-    "uuid": "^7.0.3",
-    "ws": "^7.5.1",
-    "xmldom": "^0.6.0"
-  },
-  "devDependencies": {
-    "minify": "^5.2.0",
-    "nodemon": "^1.19.4"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "dev": "nodemon index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/spintheweb/project.git"
-  },
-  "keywords": [
-    "wbol",
-    "wbll",
-    "webspinner",
-    "webo",
-    "wboler"
-  ],
-  "author": "Giancarlo Trevisan <g.trevisan@keyvisions.it>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/spintheweb/project/issues"
-  },
-  "homepage": "https://www.spintheweb.org",
-  "optionalDependencies": {
-    "bufferutil": "^4.0.1",
-    "utf-8-validate": "^5.0.2"
-  }
+    "name": "spintheweb",
+    "version": "0.1.1",
+    "description": "Spin the Web deals with the Webbase Ontology Language (WBOL)—pronounced like wobble /ˈwɒbəl/. Simply put, HTML describes a web page, WBOL, a web site; and, while HTML is interpreted by a client side web browser, WBOL, by a server side web spinner.",
+    "main": "index.js",
+    "dependencies": {
+        "@xmldom/xmldom": "^0.8.2",
+        "html-entities": "^1.4.0",
+        "mime-types": "^2.1.31",
+        "mssql": "^9.0.1",
+        "uuid": "^7.0.3",
+        "ws": "^7.5.3"
+    },
+    "devDependencies": {
+        "minify": "^5.2.0",
+        "nodemon": "^2.0.12"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node index.js",
+        "dev": "nodemon index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/spintheweb/project.git"
+    },
+    "keywords": [
+        "wbol",
+        "wbll",
+        "webspinner",
+        "webo",
+        "wboler"
+    ],
+    "author": "Giancarlo Trevisan <g.trevisan@keyvisions.it>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/spintheweb/project/issues"
+    },
+    "homepage": "https://www.spintheweb.org",
+    "optionalDependencies": {
+        "bufferutil": "^4.0.1",
+        "utf-8-validate": "^5.0.2"
+    }
 }
