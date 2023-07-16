@@ -1,19 +1,21 @@
 {
     "name": "spintheweb",
     "version": "0.1.1",
-    "description": "Spin the Web deals with the Webbase Ontology Language (WBOL)—pronounced like wobble /ˈwɒbəl/. Simply put, HTML describes a web page, WBOL, a web site; and, while HTML is interpreted by a client side web browser, WBOL, by a server side web spinner.",
-    "main": "spinner.js",
+    "description": "Spin the Web deals with the Webbase Descriptioon Language (WBDL). Simply put, HTML describes a web page, WBDL, a web site; and, while HTML is interpreted by a client side web browser, WBDL, by a server side web spinner.",
+    "type": "module",
+    "main": "index.js",
     "dependencies": {
-        "@xmldom/xmldom": "^0.8.2",
-        "html-entities": "^1.4.0",
-        "mime-types": "^2.1.31",
-        "mssql": "^9.0.1",
-        "uuid": "^7.0.3",
-        "ws": "^7.5.3"
+        "express": "^4.18.2",
+        "express-session": "^1.17.3",
+        "express-ws": "^5.0.2",
+        "html-entities": "^2.4.0",
+        "mime-types": "^2.1.35",
+        "simple-git": "^3.19.1",
+        "uuid": "^9.0.0"
     },
     "devDependencies": {
         "minify": "^5.2.0",
-        "nodemon": "^2.0.12"
+        "nodemon": "^3.0.1"
     },
     "scripts": {
         "start": "node .",
@@ -25,9 +27,11 @@
         "url": "https://github.com/spintheweb/project.git"
     },
     "keywords": [
-        "wbol",
+        "stw",
+        "wbdl",
         "wbll",
-        "web spinner"
+        "stw spinner",
+        "stw studio"
     ],
     "author": "Giancarlo Trevisan <g.trevisan@keyvisions.it> (https://www.keyvisions.it/)",
     "license": "MIT",

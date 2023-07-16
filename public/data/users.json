@@ -1,0 +1,10 @@
+[
+    {
+        "user": "administrator",
+        "password": "hash",
+        "enabled": true,
+        "roles": [
+            "administrators"
+        ]
+    }
+]

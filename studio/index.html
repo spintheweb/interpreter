@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STW Studio</title>
+    <link rel="shortcut icon" href="/studio/favicon.ico">
+    <link rel="stylesheet" href="/studio/css/studio.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+        integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="/studio/js/studio.js"></script>
+</head>
+
+<body class="stwDark">
+    <section class="stwPanels" onclick="stwStudio.managePanels(event)">
+        <i tabindex="0" role="link" class="fa fa-fw fa-bars" title="Menu" data-panel="stwMenu"></i>
+        <i tabindex="0" role="link" class="fa fa-fw fa-sitemap" title="Webbase" data-panel="/studio/panels/webbase.html"></i>
+        <i tabindex="0" role="link" class="fa fa-fw fa-search" title="Search webbase" data-panel="/studio/panels/search.html"></i>
+        <i tabindex="0" role="link" class="fa fa-fw fa-folder" title="Explorer" data-panel="/studio/panels/explorer.html"></i>
+        <i tabindex="0" role="link" class="fa fa-fw fa-code-branch" title="Source control"
+            data-panel="/studio/panels/sourcecontrol.html"></i>
+        <i tabindex="0" role="link" class="fa fa-fw fa-database" title="Datasources"
+            data-panel="/studio/panels/datasources.html"></i>
+        <i tabindex="0" role="link" class="fa fa-fw fa-users" title="Groups" data-panel="/studio/panels/groups.html"></i>
+        <span></span>
+        <i tabindex="0" role="link" class="fa fa-fw fa-cog" title="Settings" data-panel="/studio/panels/settings.html"></i>
+    </section>
+    <section class="stwPanel"></section>
+    <section class="stwTabs">
+        <div onclick="stwStudio.manageTab(event)">
+            <span tabindex="0" role="link" class="stwTabLabel" title="Browse" selected>Browse</span>
+        </div>
+        <div class="stwTab" selected>
+            <div class="stwBrowsebar" onclick="stwStudio.manageBrowse(event)">
+                <i tabindex="0" role="link" class="fa-solid fa-file-lines" title="Locate page in webbase"
+                    data-action="locate"></i>
+                <i tabindex="0" role="link" class="fa fa-fw fa-arrow-left" title="Back" data-action="back"></i>
+                <i tabindex="0" role="link" class="fa fa-fw fa-arrow-rotate-right" title="Refresh"
+                    data-action="refresh"></i>
+                <i tabindex="0" role="link" class="fa fa-fw fa-house" title="Home" data-action="home"></i>
+                <input type="url" name="url" placeholder="URL" onchange="stwStudio.setURL(event)" pattern="(http|https)://*" require>
+            </div>
+            <iframe id="Browse" title="Site" src="" onload="stwStudio.setURL(event)"></iframe>
+        </div>
+    </section>
+    <section class="stwStatusbar"><span></span><span><i class="fa fa-fw fa-triangle-exclamation"></i> This site is under
+            development</span><span></span></section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.0/ace.min.js"
+        integrity="sha512-e1Y1L6lY7YKDe+zseybZUG8MYUMLA1jxMQAPJqRYiA4L8NPaXfW+h52QQTLurHW4w3b21LxH/u1sZYMBtoB70w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.0/ext-modelist.min.js"
+        integrity="sha512-eLnWwyo8+10FUmWGbZviLMhmvevH45+572B3Bf1gwullCjtgZff1yAXtM17v6F5e4zNw+8v7VbdQQa097xHpBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!--[TODO] https://medium.com/@jackub/writing-custom-ace-editor-mode-5a7aa83dbe50-->
+</body>
+
+</html>

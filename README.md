@@ -15,11 +15,13 @@ Spin the Web addresses three issues to ease web develpments: describe, interpret
 
 A _webbase_ is an hierachically organized structure of three base elements, plus one: _areas_, _pages_ and _contents_, the additional element is _reference_, it points to any of the three base elements; at the root of the hierarchy there is always a fifth element, the _webo_. The file system analogy may be of help: the _webo_ is the drive, _areas_ are folders, _pages_ are files, _contents_ and _references_, are something else! Like the file system, a webbase also addresses security, role level security, based on a simple inherited visibility paradigm.
 
-_Contents_ are special, they come in four flavors: _navigational_, _organizational_, _presentational_ and _special_. The purpose of contents is to allow _interaction_ with data of any kind, they request data, provide data, they can be simple microservices, dashbords that are described macroscopically by (WBML) Webbase Markup Language and microscopically (WBLL) Webbase Layout Language
+_Contents_ are special, they come in four flavors: _navigational_, _organizational_, _presentational_ and _special_. The purpose of contents is to allow _interaction_ with data of any kind, they request data, provide data, they can be simple microservices, dashbords that are described macroscopically by (WBDL) Webbase Description Language and microscopically (WBLL) Webbase Layout Language
 
 ### Contents
-* navigational -- these content render as menubar, menus, links
-* organizational -- 
+* navigational &mdash; these content render as menubars, links, breadcrumbs, image maps
+* organizational &mdash; these contents render as calendars, tabs
+* presentational &mdash; these contents render as forms, lists, tables, graphs 
+* special &mdash; these contents client side scripts
 
 ## Features
 * Content centered

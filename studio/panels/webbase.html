@@ -1,0 +1,106 @@
+<article class="stwTree" id="webbase" onclick="stwStudio.manageWebbase(event)">
+    <h1><i class="fa fa-fw fa-nothing"></i> webbase
+        <span>
+            <i class="fa fa-fw fa-arrow-rotate-right" title="Refresh" data-action="refresh"></i>
+            <i class="fa-regular fa-fw fa-folder" title="New area" data-action="area"></i>
+            <i class="fa-regular fa-fw fa-file" title="New page" data-action="page"></i>
+            <i class="fa-regular fa-fw fa-square" title="New content" data-action="content"></i>
+            <i class="fa-regular fa-fw fa-trash-can" title="Show/Hide trashed nodes" data-action="trashed"></i>
+        </span>
+    </h1>
+    <div class="stwLoading">
+        <i class="fa fa-sync fa-spin fa-2x"></i>
+    </div>
+</article>
+<article class="stwForm" id="properties" onclick="stwStudio.manageProperties(event, 'webbase')">
+    <h1><i class="fa fa-fw fa-angle-right"></i> properties
+        <span>
+            <i class="fa-regular fa-fw fa-clone" title="Clone" data-action="clone"></i>
+            <i class="fa-regular fa-fw fa-trash-can" title="Trash (Ctrl+Delete)" data-action="trash"></i>
+            <i class="fa-solid fa-fw fa-expand" title="Expand (Ctrl+E)" data-action="expand"></i>
+        </span>
+    </h1>
+    <form class="stwHideLabels" onchange="stwStudio.submitForm(event)">
+        <input type="hidden" name="_id">
+        <input type="hidden" name="_idParent">
+        <input type="hidden" name="type">
+        <input type="hidden" name="status">
+        <ul>
+            <li><label>Name</label><input type="text" name="name" placeholder="Name" title="Name" required></li>
+            <li><label>Slug</label><input type="text" name="slug" placeholder="Slug" title="Slug" style="font-style: italic;"></li>
+
+            <li><label>URL</label><input type="url" name="url" placeholder="URL" title="URL" style="font-style: italic;" required></li>
+            <li><label>Icon</label><input type="text" name="icon" placeholder="icon" title="Icon"></li>
+            <li><label>Image</label><input type="text" name="image" placeholder="image" title="Image"></li>
+
+            <li><label>Template</label><input type="text" name="template" placeholder="Template" title="Template"
+                    required></li>
+            <li><label></label><input type="text" name="visible" placeholder="callback():Boolean"
+                    title="Programmatic visibility"></li>
+
+            <li><label>Main page</label>
+                <div style="display: flex; align-items: center;">
+                    <input type="node" name="mainpage" placeholder="mainpage" title="Main page" readonly>
+                    <i class="fa fa-fw fa-bars" style="margin-left: 0.25em; cursor: pointer;"></i>
+                </div>
+            </li>
+
+            <li><label>Default language</label><select name="lang" title="Default language">
+                    <option value="en">English</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                    <option value="it">Italian</option>
+                    <option value="es">Spanish</option>
+                </select></li>
+            <li><label>Documentation</label>
+                <textarea name="description" placeholder="description" title="Description"></textarea>
+                <input type="text" name="keywords" placeholder="keywords" title="Keywords">
+            </li>
+
+            <li>
+                <label>Position</label>
+                <div style="display: grid; grid-template-columns: 1fr auto 5em;">
+                    <input type="text" name="section" placeholder="Section" title="Section">&nbsp;
+                    <input type="number" name="sequence" placeholder="Seq." step="0.1" title="Sequence">
+                </div>
+            </li>
+
+            <li><label>CSS class</label><input type="text" name="cssclass" placeholder="CSS class" title="CSS class">
+            </li>
+            <li><label>Type</label><select name="subtype" title="Type">
+                    <option value="-100">Text</option>
+                    <option value="-500">Form</option>
+                    <option value="-300">Table</option>
+                    <option value="-200">List</option>
+                    <option value="-400">Tree</option>
+                    <option value="-105">Tabs</option>
+                    <option value="-106" disabled>Group</option>
+                    <option value="-800">Calendar</option>
+                    <option value="-600" disabled>Graph</option>
+                    <option value="" disabled>Map</option>
+                    <option value="" disabled>Menu</option>
+                    <option value="-102">Page links</option>
+                    <option value="-101">Area links</option>
+                    <option value="-103">Indexed links</option>
+                    <option value="-104">Breadcrumb</option>
+                    <option value="-601">Image map</option>
+                    <option value="-700">Shortcut</option>
+                    <option value="-902">Client side code</option>
+                    <option value="-901">Server side code</option>
+                </select></li>
+            <li><label>Data source</label><select name="dsn" title="Datasource">
+                    <option></option>
+                    <option value="webbase">Webbase</option>
+                </select></li>
+            <li><textarea name="query" placeholder="Query" title="Query"></textarea>
+                <input type="text" name="parameters" placeholder="key=value" title="Parameters">
+            </li>
+            <li><label>Layout</label><textarea name="layout" placeholder="Layout" title="Layout"></textarea></li>
+        </ul>
+    </form>
+</article>
+<article class="stwTree" id="visibility" onclick="stwStudio.manageVisibility(event)">
+    <h1><i class="fa fa-fw fa-angle-right"></i> visibility</h1>
+    <ul style="display: none; max-height: 10em;"></ul>
+</article>
+<div>&nbsp;</div>

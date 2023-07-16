@@ -49,7 +49,7 @@ let stwHandlers = {
             article.innerHTML = '<article id="' + content.id + '"' +
                 content.attrs +
                 ' data-seq="' + content.sequence + '"' +
-                ' data-ref="' + content.section + sequence + '">' +
+                ' data-ref="' + content.section + sequence + '">' + 
                 content.body +
                 '</article>';
 
