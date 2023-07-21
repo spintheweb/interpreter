@@ -3,23 +3,24 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
+import WEBBASE from './Webbase.mjs';
 import Base from './Base.mjs';
 import { lexer, getValue, renderer } from './WBLL.mjs';
 
 export default class Content extends Base {
-    constructor(name, template, lang = 'en', wbll = false) {
+    constructor(name, layout, lang) {
         super(name, lang);
-        this.cssclass = 'stwContent stw' + this.constructor.name;
+        this.type = `Content.${this.constructor.name}`;
+        this.cssClass = `stw${this.constructor.name}`;
         this.section = '';
         this.sequence = 1;
-        this.datasource = null;
-        this.query = null;
-        this.params = null;
-        this.template = {};
-        this.wbll = wbll ? {} : undefined; // The template is WBLL
+        this.datasource = '';
+        this.query = '';
+        this.params = '';
+        this.layout = {};
 
-        if (template)
-            this.Template(lang, template);
+        if (layout)
+            this.layout[lang] = layout;
 
         this._clientHandler = null; // Client side code
         this._serverHandler = null; // Server side code (TODO: Predefined CRUD handlers)
@@ -27,30 +28,30 @@ export default class Content extends Base {
 
     CSSClass(value, lang) {
         if (typeof value === 'undefined') {
-            let layout = this.Template(lang);
+            let layout = this.Layout(lang);
             if (layout && layout.attrs) {
                 let attrs = '';
                 Object.keys(layout.attrs).forEach(key => {
-                    if (key === 'class' && this.cssclass)
-                        attrs += `class="${this.cssclass} ${layout.attrs.class}" `;
+                    if (key === 'class' && this.cssClass)
+                        attrs += `class="${this.cssClass} ${layout.attrs.class}" `;
                     else
                         attrs += `${key}="${layout.attrs[key]}" `;
                 });
                 return attrs;
             }
-            return `class="${this.cssclass}"`;
+            return `class="${this.cssClass}"`;
         }
-        this.cssclass = value.toString();
-        if (typeof this.webbase.changed === 'function')
-            this.webbase.changed(this);
+        this.cssClass = value.toString();
+        if (typeof this[WEBBASE].changed === 'function')
+            this[WEBBASE].changed(this);
         return this;
     }
     Section(value, sequence) {
         if (typeof value === 'undefined') return this.section;
         this.section = value.toString();
         if (sequence) this.Sequence(sequence);
-        if (typeof this.webbase.changed === 'function')
-            this.webbase.changed(this);
+        if (typeof this[WEBBASE].changed === 'function')
+            this[WEBBASE].changed(this);
         return this;
     }
     Sequence(value) {
@@ -58,9 +59,9 @@ export default class Content extends Base {
         this.sequence = isNaN(value) || value < 1 ? 1 : value;
         if (this.Parent()) // Order by section, sequence
             this.Parent().children.sort((a, b) =>
-            a._section + ('0000' + a._sequence.toFixed(2)).slice(-5) > b._section + ('0000' + b._sequence.toFixed(2)).slice(-5));
-        if (typeof this.webbase.changed === 'function')
-            this.webbase.changed(this);
+                a._section + ('0000' + a._sequence.toFixed(2)).slice(-5) > b._section + ('0000' + b._sequence.toFixed(2)).slice(-5));
+        if (typeof this[WEBBASE].changed === 'function')
+            this[WEBBASE].changed(this);
         return this;
     }
     Datasource(name, query, params) {
@@ -69,34 +70,31 @@ export default class Content extends Base {
         if (typeof name === 'undefined')
             return this.datasource;
         this.datasource = name;
-        if (typeof this.webbase.changed === 'function')
-            this.webbase.changed(this);
+        if (typeof this[WEBBASE].changed === 'function')
+            this[WEBBASE].changed(this);
         return this;
     }
     Query(value, params) {
         this.Params(params);
         if (typeof value === 'undefined') return this.query;
         this.query = value;
-        if (typeof this.webbase.changed === 'function')
-            this.webbase.changed(this);
+        if (typeof this[WEBBASE].changed === 'function')
+            this[WEBBASE].changed(this);
         return this;
     }
     Params(value) {
         if (typeof value === 'undefined') return this.params;
         this.params = value;
-        if (typeof this.webbase.changed === 'function')
-            this.webbase.changed(this);
+        if (typeof this[WEBBASE].changed === 'function')
+            this[WEBBASE].changed(this);
         return this;
     }
-    Template(lang, value) {
+    Layout(lang, value) {
         if (typeof value === 'undefined')
-            return this.webbase.localize(lang, typeof this.wbll === 'undefined' ? this.template : this.wbll);
-        if (typeof this.wbll !== 'undefined')
-            this.wbll[lang] = lexer(value);
-        else
-            this.template[lang] = value;
-        if (typeof this.webbase.changed === 'function')
-            this.webbase.changed(this);
+            return this[WEBBASE].localize(lang, this.layout);
+        this.layout[lang] = value;
+        if (typeof this[WEBBASE].changed === 'function')
+            this[WEBBASE].changed(this);
         return this;
     }
     clientHandler(callback) {
@@ -136,51 +134,49 @@ export default class Content extends Base {
                 child = new Reference(child);
             child.Parent() = this;
             this.children.push(child);
-            if (typeof this.webbase.changed == 'function')
-                this.webbase.changed(this);
+            if (typeof this[WEBBASE].changed == 'function')
+                this[WEBBASE].changed(this);
         }
         return this;
     }
-    getData(socket, callback) { // TODO: Request data asynchronously
-        return [{}];
+    getData(req, callback) { // TODO: Request data asynchronously
         if (typeof this.query == 'function')
-            return this.query(socket);
+            return this.query(req);
         return JSON.parse(this.query || '[{}]');
     }
-    Render(socket, renderBody) {
-        if (!renderBody)
-            renderBody = this.renderRow;
+    Render(req, res, next, body) {
+        body = body || this.renderRow;
 
         let fragment = '';
-        if (this.Section !== '' && this.granted(socket.target.user) & 0b01) {
-            socket.dataset = this.getData(socket); // TODO: Retrieve data asynchronously
+        if (this.granted(req.session.roles) & 0b01) {
+            req.dataset = this.getData(req); // TODO: Retrieve data asynchronously
 
-            let template = this.Template(this.webbase.Lang());
+            let layout = this.Layout(this[WEBBASE].Lang());
 
-            if (template && typeof template === 'object') {
-                // TODO: Evaluate template.settings
+            if (layout && typeof layout === 'object') {
+                // TODO: Evaluate layout.settings
 
-                if (typeof template.settings.visible != 'undefined' &&
-                    (getValue(socket, template.settings.visible) ? false : true)) // TODO: template.settings.invisible
+                if (typeof layout.settings.visible != 'undefined' &&
+                    (getValue(req, layout.settings.visible) ? false : true)) // TODO: layout.settings.invisible
                     return '';
 
-                if (template.settings.caption)
-                    fragment += `<h1>${template.settings.caption}</h1>`;
-                if (template.settings.header)
-                    fragment += `<header>${template.settings.header}</header>`;
-                fragment += `<div>${renderBody(socket, this.id, template)}</div>`;
-                if (template.settings.footer)
-                    fragment += `<footer>${template.settings.footer}</footer>`;
+                if (layout.settings.caption)
+                    fragment += `<h1>${layout.settings.caption}</h1>`;
+                if (layout.settings.header)
+                    fragment += `<header>${layout.settings.header}</header>`;
+                fragment += `<div>${body(req, this.id, layout)}</div>`;
+                if (layout.settings.footer)
+                    fragment += `<footer>${layout.settings.footer}</footer>`;
             } else
-                fragment = renderBody(socket, template);
+                fragment = body(req, layout);
         }
-        return fragment;
+        res.send({ type: 'text/html', section: this.section, sequence: this.sequence, body: fragment });
     }
-    renderRow(socket, contentId, template) {
-        if (typeof template === 'object')
-            return renderer(socket, contentId, template);
+    renderRow(req, contentId, layout) {
+        if (typeof layout === 'object')
+            return renderer(req, contentId, layout);
         else
-            return template;
+            return layout;
     }
 
     /*

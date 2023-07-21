@@ -3,6 +3,7 @@
  * Copyright(c) 2020 Giancarlo Trevisan
  * MIT Licensed
  */
+import WEBBASE from './Webbase.mjs';
 import Base from './Base.mjs';
 import Content from './Content.mjs';
 
@@ -18,16 +19,16 @@ export default class Group extends Base {
 		if (typeof value === 'undefined')
 			return `class="${this.cssClass}"`;
 		this.cssClass = value.toString();
-		if (typeof this.webbase.changed === 'function')
-			this.webbase.changed(this);
+		if (typeof this[WEBBASE].changed === 'function')
+			this[WEBBASE].changed(this);
 		return this;
 	}
     Section(value, sequence) {
         if (typeof value === 'undefined') return this.section;
         this.section = value.toString();
         if (sequence) this.Sequence(sequence);
-        if (typeof this.webbase.changed === 'function')
-            this.webbase.changed(this);
+        if (typeof this[WEBBASE].changed === 'function')
+            this[WEBBASE].changed(this);
         return this;
     }
     Sequence(value) {
@@ -36,8 +37,8 @@ export default class Group extends Base {
         if (this.Parent()) // Order by section, sequence
             this.Parent().children.sort((a, b) =>
                 a._section + ('0000' + a._sequence.toFixed(2)).slice(-5) > b._section + ('0000' + b._sequence.toFixed(2)).slice(-5));
-        if (typeof this.webbase.changed === 'function')
-            this.webbase.changed(this);
+        if (typeof this[WEBBASE].changed === 'function')
+            this[WEBBASE].changed(this);
         return this;
     }
     add(child) {
@@ -47,7 +48,7 @@ export default class Group extends Base {
         child.Section(this.id);
         return this;
     }
-    Render(socket) {
+    Render(req, res, next) {
         return ' ';
     }
 }

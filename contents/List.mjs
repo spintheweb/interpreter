@@ -3,7 +3,8 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import Content from '../elements/Content';
+import WEBBASE from '../elements/Webbase.mjs';
+import Content from '../elements/Content.mjs';
 
 export default class List extends Content {
 	constructor(name, template, lang) {
@@ -28,9 +29,9 @@ export default class List extends Content {
 					socket.emit('content', element.id);
 				};
 
-				let id = socket.data.searchParams.id || this.webbase.id;
-				let el = this.webbase.getElementById(id); // Roled Based Visibility
-				for (let role in this.webbase.roles) {
+				let id = socket.data.searchParams.id || this[WEBBASE].id;
+				let el = this[WEBBASE].getElementById(id); // Roled Based Visibility
+				for (let role in this[WEBBASE].roles) {
 					let granted = el.granted(socket.target.user, role);
 					fragment += `<li class="stwRBVIcn${granted}" onclick="stwListRoles(event)" data-ref="${granted}"> ${role}</li>`;
 				}

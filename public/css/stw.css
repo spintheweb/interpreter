@@ -3,7 +3,7 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-:root { --special: #966535; --fore: #333333; --faint: #a0a0a0; --back: #ffffff; }
+:root { --special: rgb(0, 183, 255); --fore: #333333; --faint: #a0a0a0; --back: #ffffff; }
 
 a {color:inherit; text-decoration:none;}
 

@@ -3,7 +3,8 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import Content from '../elements/Content';
+import WEBBASE from '../elements/Webbase.mjs';
+import Content from '../elements/Content.mjs';
 
 // https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
 export default class Languages extends Content {
@@ -13,16 +14,16 @@ export default class Languages extends Content {
 
     Render(socket) {
         return super.Render(socket, (socket, template) => {
-            if (this.webbase.langs().length == 1)
+            if (this[WEBBASE].langs().length == 1)
                 return '';
 
             let fragment = '';
-            if (this.webbase.langs().length <= 3) {
-                for (let lang of this.webbase.langs())
+            if (this[WEBBASE].langs().length <= 3) {
+                for (let lang of this[WEBBASE].langs())
                     fragment += `&nbsp;<a href="/" onclick="stwHref(event)">${lang.toLowerCase()}</a>`;
             } else {
                 fragment += '<select href="" onchange="stwHref(event)">'
-                for (let lang of this.webbase.langs())
+                for (let lang of this[WEBBASE].langs())
                     fragment += `<option>${lang.toLowerCase()}</option>`;
                 fragment += '</select>';
             }

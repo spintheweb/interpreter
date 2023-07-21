@@ -3,16 +3,17 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import Content from './Content.mjs';
+import WEBBASE from '../elements/Webbase.mjs';
+import Content from '../elements/Content.mjs';
 
 export default class Reference extends Content {
-	constructor(related) {
-		super(related.name());
-		this._cssClass = related._cssClass;
-		this.ref = related;
+	constructor(ref) {
+		super(ref.name());
+		this.cssClass = ref.cssClass;
+		this.ref = ref;
 	}
 
-	Render(socket) {
+	Render(req, res, next) {
 		if (this.ref.constructor.name !== 'Webbase' && this.granted(socket.target.user) & 0b01)
 			return this.ref.Render(socket);
 	}

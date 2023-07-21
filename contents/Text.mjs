@@ -3,18 +3,23 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import Content from '../elements/Content';
+import WEBBASE from '../elements/Webbase.mjs';
+import Content from '../elements/Content.mjs';
 
-// Plain text, i.e., renders template as plain text if there is a datasource @ and @@ substitutions are performed
+// Plain text, i.e., renders layout as plain text if there is a datasource @ and @@ substitutions are performed
 export default class Text extends Content {
-	constructor(name, template, lang) {
-		super(name, template, lang);
-		this._cssClass = null;
+	constructor(name, layout, lang) {
+		super(name, layout, lang);
+		this.cssClass = null;
 	}
 
-	Render(socket) {
-		return super.Render(socket, socket => {
-			return this.template(socket.target.lang);
-		});
+	Render(req, res, next) {
+		let fragment = this.Layout(lang);
+
+		if (this.datasource) {
+			
+		}
+
+		res.send(fragment);
 	}
 }

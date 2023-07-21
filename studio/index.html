@@ -40,9 +40,9 @@
                 <i tabindex="0" role="link" class="fa fa-fw fa-arrow-rotate-right" title="Refresh"
                     data-action="refresh"></i>
                 <i tabindex="0" role="link" class="fa fa-fw fa-house" title="Home" data-action="home"></i>
-                <input type="url" name="url" placeholder="URL" onchange="stwStudio.setURL(event)" pattern="(http|https)://*" require>
+                <input id="BrowseURL" type="url" name="url" placeholder="URL" onchange="stwStudio.setURL(event)" pattern="(http|https)://*" require>
             </div>
-            <iframe id="Browse" title="Site" src="" onload="stwStudio.setURL(event)"></iframe>
+            <iframe id="Browse" title="Site"></iframe>
         </div>
     </section>
     <section class="stwStatusbar"><span></span><span><i class="fa fa-fw fa-triangle-exclamation"></i> This site is under

@@ -3,8 +3,9 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import Content from '../elements/Content';
-import Reference from '../elements/Reference';
+import WEBBASE from '../elements/Webbase.mjs';
+import Content from '../elements/Content.mjs';
+import Reference from '../elements/Reference.mjs';
 
 export default class Menu extends Content {
 	constructor(name, template, lang) {

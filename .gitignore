@@ -3,4 +3,6 @@
 !/.gitignore
 trash
 /studio/dev/*
+/public/cert/*
+/public/data/*
 package-lock.json

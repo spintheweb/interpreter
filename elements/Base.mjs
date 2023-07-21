@@ -4,33 +4,39 @@
  * MIT Licensed
  */
 import { v1 } from 'uuid';
-import Webbase from './Webbase.mjs';
+
+import WEBBASE from './Webbase.mjs';
 
 export default class Base {
 	constructor(name, lang = 'en') {
 		this._id = v1();
+		this.type = this.constructor.name;
+		this.status = '';
 		this.name = {};
 		this.name[lang] = name || this.constructor.name;
-        this.private = false; // If private it will not be exported
+		this.slug = {};
+		this.slug[lang] = this.name[lang].replace(/[^a-z0-9_]/gi, '');
+		this.private = false; // If private it will not be exported
 		this.children = [];
 		this.visibility = {}; // [role: { false | true }] Role Based Visibilities
+		this[WEBBASE] = this.constructor.name === 'Site' ? this : null;
 	}
 	Name(value, lang) {
 		if (typeof value === 'undefined')
-			return this.webbase.localize(lang || this.webbase.Lang(), this.name);
-		this.name[lang || this.webbase.Lang()] = value;
-		if (typeof this.webbase.changed === 'function')
-			this.webbase.changed(this);
+			return this[WEBBASE].localize(lang || this[WEBBASE].Lang(), this.name);
+		this.name[lang || this[WEBBASE].Lang()] = value;
+		if (typeof this[WEBBASE].changed === 'function')
+			this[WEBBASE].changed(this);
 		return this;
 	}
-    Private(bool) {
-        if (typeof bool === 'undefined')
-            return this.private;
-        this.private = bool ? true : false;
-        return this;
-    }
+	Private(bool) {
+		if (typeof bool === 'undefined')
+			return this.private;
+		this.private = bool ? true : false;
+		return this;
+	}
 	Parent() {
-		return (this.webbase || this).route(this._idParent);
+		return this[WEBBASE].route(this._idParent);
 	}
 
 	// Grant a role access control, if no access control is specified remove the role from the RBV list (Role Based Visibility).
@@ -40,8 +46,8 @@ export default class Base {
 		else
 			this.visibility[role] = ac ? 1 : 0;
 
-		if (typeof this.webbase.changed === 'function')
-			this.webbase.changed(this);
+		if (typeof this[WEBBASE].changed === 'function')
+			this[WEBBASE].changed(this);
 		return this;
 	}
 
@@ -49,7 +55,7 @@ export default class Base {
 	granted(roles, role = null, recurse = false) {
 		let ac = null;
 
-		if (this.constructor.name === 'Page' && this.webbase.Mainpage() === this)
+		if (this.constructor.name === 'Page' && this[WEBBASE].mainpage === this._id)
 			ac = recurse ? 0b11 : 0b01; // Home page always visible
 
 		if (role) {
@@ -62,7 +68,7 @@ export default class Base {
 
 		if (ac === null) {
 			let obj = this.Parent();
-			if (obj && obj.type !== 'site')
+			if (obj && obj.type !== 'Site')
 				ac = 0b10 | obj.granted(roles, role, true);
 			else if (['Webbase', 'Area', 'Page'].indexOf(this.constructor.name) === -1) // Content
 				ac = 0b10; // NOTE: this covers a content without a parent nor a RBV, it's in limbo!
@@ -73,25 +79,20 @@ export default class Base {
 
 	// Add child to element, note, we are adding a child not moving it
 	add(child) {
-		if (child && child.constructor.name !== 'Webbase' && child !== this && this.children.indexOf(child) === -1) {
-			if (child.Parent())
-				child = new Reference(child);
-			child.Parent() = this;
-			child.webbase = this.webbase;
-			_setWebbase(child);
+		if (child && child.constructor.name !== 'Site' && child !== this && this.children.indexOf(child) === -1) {
+			child._idParent = this._id;
+			child[WEBBASE] = this[WEBBASE];
 			this.children.push(child);
 
-			if (typeof this.webbase.changed === 'function')
-				this.webbase.changed(this);
-		}
-		return this;
-
-		function _setWebbase(element) {
-			for (let child of element.children) {
-				child.webbase = element.webbase;
-				_setWebbase(child);
+			if (this[WEBBASE].index) {
+				this[WEBBASE].index.get(child._idParent).children.push(child);
+				this[WEBBASE].index.set(child._id, child);
 			}
+
+			if (typeof this[WEBBASE]?.changed === 'function')
+				this[WEBBASE].changed(this);
 		}
+		return child;
 	}
 
 	// Deep copy element, note, the webbase cannot be copied, use write() instead
@@ -125,18 +126,5 @@ export default class Base {
 		if (this.Parent())
 			return this.Parent().permalink() + '/' + this.slug;
 		return '';
-	}
-
-	getElementById(id) { // TODO: Make indexed array to speed-up
-		if (id) {
-			if (this.id === id)
-				return this;
-			for (let child of this.children) {
-				let el = child.getElementById(id);
-				if (el)
-					return el;
-			}
-		}
-		return null;
 	}
 }

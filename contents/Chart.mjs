@@ -3,8 +3,10 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import Content from '../elements/Content';
 import { DOMParser as xmldom } from '@xmldom/xmldom';
+
+import WEBBASE from '../elements/Webbase.mjs';
+import Content from '../elements/Content.mjs';
 
 export default class Chart extends Content {
     constructor(name, template, lang) {

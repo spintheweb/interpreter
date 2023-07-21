@@ -3,7 +3,8 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import Content from '../elements/Content';
+import WEBBASE from '../elements/Webbase.mjs';
+import Content from '../elements/Content.mjs';
 
 export default class Breadcrumbs extends Content {
 	constructor(name, template, lang) {
@@ -12,7 +13,7 @@ export default class Breadcrumbs extends Content {
 
 	Render(socket) {
 		return super.Render(socket, socket => {
-			let path = [], element = this.webbase.route(socket.data.url.pathname);
+			let path = [], element = this[WEBBASE].route(socket.data.url.pathname);
 
 			// Walk up to the webbase
 			for (; element.Parent(); path.unshift(element), element = element.Parent());

@@ -330,25 +330,25 @@ li[data-type]>div>span:nth-child(2)::before {
     text-align: center;
 }
 
-li[data-type=site]>div>span:nth-child(2)::before {
+li[data-type=Site]>div>span:nth-child(2)::before {
     content: "\f0ac";
 }
 
-li[data-type=area]>div>span:nth-child(2)::before,
+li[data-type=Area]>div>span:nth-child(2)::before,
 li[data-type=dir]>div>span:nth-child(2)::before {
     content: "\f07b";
 }
 
-li[data-type=page]>div>span:nth-child(2)::before,
+li[data-type=Page]>div>span:nth-child(2)::before,
 li[data-type=file]>div>span:nth-child(2)::before {
     content: "\f15c";
 }
 
-li[data-type=content]>div>span:nth-child(2)::before {
+li[data-type^=Content]>div>span:nth-child(2)::before {
     content: "\f0c8";
 }
 
-li[data-type=group]>div>span:nth-child(2)::before {
+li[data-type=Group]>div>span:nth-child(2)::before {
     content: "\f0c0";
 }
 

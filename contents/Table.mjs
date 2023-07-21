@@ -3,7 +3,8 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import Content from '../elements/Content';
+import WEBBASE from '../elements/Webbase.mjs';
+import Content from '../elements/Content.mjs';
 import { renderer } from `../elements/WBLL`;
 
 export default class Table extends Content {

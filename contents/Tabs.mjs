@@ -3,7 +3,8 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import Content from '../elements/Content';
+import WEBBASE from '../elements/Webbase.mjs';
+import Content from '../elements/Content.mjs';
 
 export default class Tabs extends Content {
 	constructor(name, template, lang) {
@@ -25,7 +26,8 @@ export default class Tabs extends Content {
 		};
 	}
 
-	Render(socket) {
+	Render(req, res, next) {
+		
 		return super.Render(socket, (socket, template) => {
 			let labels = '', tabs = '';
 			this.children.forEach((tab, i) => {
