@@ -8,7 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import git from 'simple-git';
 
-import WEBBASE from './elements/Webbase.mjs';
+import { WEBBASE } from './elements/Primitives.mjs';
 import Area from './elements/Area.mjs';
 import Page from './elements/Page.mjs';
 import Content from './elements/Content.mjs';

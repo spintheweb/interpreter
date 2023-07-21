@@ -5,7 +5,7 @@
  */
 import { v1 } from 'uuid';
 
-import WEBBASE from './Webbase.mjs';
+import { WEBBASE } from './Primitives.mjs';
 
 export default class Base {
 	constructor(name, lang = 'en') {

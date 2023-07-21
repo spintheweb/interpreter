@@ -3,7 +3,7 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import WEBBASE from '../elements/Webbase.mjs';
+import { WEBBASE } from '../elements/Webbase.mjs';
 import Content from '../elements/Content.mjs';
 
 // https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry

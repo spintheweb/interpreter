@@ -7,7 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import language from 'accept-language-parser';
 
-import WEBBASE from './Webbase.mjs';
+import { WEBBASE } from './Primitives.mjs';
 import Area from './Area.mjs';
 import Page from './Page.mjs';
 import Group from './Group.mjs';
@@ -205,7 +205,7 @@ export default (app, webbase) => {
     else {
         let page = new Page('Home');
         app[WEBBASE].add(page);
-        let content = new Text('Hello World', "Hello World!");
+        let content = new Text('Hello World', "Hello World from Spin The Web&trade;!");
         page[WEBBASE].add(content);
     }
 

@@ -3,7 +3,7 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import WEBBASE from './Webbase.mjs';
+import { WEBBASE } from './Primitives.mjs';
 import Base from './Base.mjs';
 
 import { join } from 'path';

@@ -18,13 +18,12 @@ window.onload = function () {
             })
             .then(content => {
                 let sequence = Math.floor(content.sequence).toString();
-                let article = document.querySelector(`article[data-ref="${content.section}-${sequence}"]`);
+                let article = document.querySelector(`article[data-loc="${content.section}-${sequence}"]`);
 
                 if (article) {
                     // TODO: set content.body based on diff see https://gomakethings.com/dom-diffing-with-vanilla-js-part-1/
-                    article.parentElement.removeChild(article);
-                } else
-                    article = document.querySelector('[data-ref="' + content.section.toString() + sequence + '"]');
+                    article.remove();
+                }
 
                 let section = document.getElementById(content.section);
                 if (section && content.body) {
