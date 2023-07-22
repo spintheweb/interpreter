@@ -12,19 +12,14 @@ import session from 'express-session';
 import language from 'accept-language-parser';
 
 import stwStudio from './stwStudio.mjs';
-import { WEBBASE } from './elements/Primitives.mjs';
+import { WEBBASE, SITE_DIR, STUDIO_DIR } from './elements/Constants.mjs';
 import Site from './elements/Site.mjs';
-
-const ROOT_DIR = process.cwd();
-const SITE_DIR = path.join(ROOT_DIR, 'public');
-const STUDIO_DIR = path.join(ROOT_DIR, 'studio');
 
 let settings = JSON.parse(fs.readFileSync(path.join(SITE_DIR, 'settings.json')) || '{"protocol":"http","hostname":"127.0.0.0","port":"80"}');
 
 const app = express();
 
-// [TODO] app[WEBBASE] = new Site(path.join(SITE_DIR, settings.webbase));
-Site(app, path.join(SITE_DIR, settings.webbase)); // Load webbase
+app[WEBBASE] = new Site({ webbase: path.join(SITE_DIR, settings.webbase) });
 
 app.use(session({
     secret: settings.secret || 'Spin the Web',
@@ -44,12 +39,8 @@ app.use(express.text());
 app.use('/studio', express.static(STUDIO_DIR));
 app.use('/studio', stwStudio);
 
-app.all('/cert/*', (req, res, next) => {
-    res.redirect('/');
-});
-app.all('/data/*', (req, res, next) => {
-    res.redirect('/');
-});
+app.all('/cert/*', (req, res, next) => res.redirect('/'));
+app.all('/data/*', (req, res, next) => res.redirect('/'));
 
 app.get('/*', (req, res, next) => {
     const lang = language.pick(req.app[WEBBASE].langs, req.headers['accept-language']);
@@ -64,9 +55,6 @@ app.use(express.static(SITE_DIR));
 
 let server;
 if (settings.protocol === 'https')
-    // $ openssl genrsa -out key.pem // Generate private key
-    // $ openssl req -new -key key.pem -out csr.pem // Create certificate signin request
-    // $ openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out cert.pem // Generate SLL certificate (del csr.pem)
     server = https.createServer({
         key: fs.readFileSync(path.join(SITE_DIR, settings.options.key)),
         cert: fs.readFileSync(path.join(SITE_DIR, settings.options.cert))

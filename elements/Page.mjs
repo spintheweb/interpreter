@@ -3,33 +3,29 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from './Primitives.mjs';
+import { WEBBASE } from './Constants.mjs';
 import Base from './Base.mjs';
 
 import { join } from 'path';
 
 export default class Page extends Base {
-	constructor(name, template, lang) {
-		super(name, lang);
-		this.keywords = {};
-		this.description = {};
-		this.contentType = 'text/html';
-		this.template = template || 'index.html';
+	constructor(params = {}) {
+		super(params);
+		this.keywords = params.keywords || {};
+		this.description = params.description || {};
+		this.contentType = params.contentType || 'text/html';
+		this.template = params.template || 'index.html';
 	}
 
 	ContentType(value) {
 		if (typeof value === 'undefined') return this.contentType;
 		this.contentType = value;
-		if (typeof this[WEBBASE].changed === 'function')
-			this[WEBBASE].changed(this);
 		return this;
 	}
 	Template(value) {
 		if (typeof value === 'undefined')
 			return this.template;
 		this.template = value;
-		if (typeof this[WEBBASE].changed === 'function')
-			this[WEBBASE].changed(this);
 		return this;
 	}
 

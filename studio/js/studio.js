@@ -263,19 +263,19 @@ const stwStudio = {
                         console.log(err);
                     });
                 break;
-            case '/studio/panels/groups.html':
+            case '/studio/panels/roles.html':
                 fetch('/studio/wbdl/visibility')
                     .then(res => {
                         if (res.ok)
                             return res.json();
                     })
-                    .then(groups => {
+                    .then(roles => {
                         let tree = { children: [] };
-                        for (let group in groups)
-                            tree.children.push({ name: group, type: 'group' });
+                        for (let role in roles)
+                            tree.children.push({ name: role, type: 'role' });
 
-                        document.getElementById('groups').lastElementChild.remove();
-                        document.getElementById('groups').insertAdjacentHTML('beforeend', `<ul>${stwStudio.renderTree(tree)}</ul>`);
+                        document.getElementById('roles').lastElementChild.remove();
+                        document.getElementById('roles').insertAdjacentHTML('beforeend', `<ul>${stwStudio.renderTree(tree)}</ul>`);
                     })
                     .catch(err => {
                         console.log(err);
@@ -404,10 +404,10 @@ const stwStudio = {
                                     if (res.ok)
                                         return res.json();
                                 })
-                                .then(groups => {
+                                .then(roles => {
                                     let tree = { children: [] };
-                                    for (let group in groups)
-                                        tree.children.push({ name: group, type: 'group', status: stwStudio.visibilityEnum[groups[group]] });
+                                    for (let role in roles)
+                                        tree.children.push({ name: role, type: 'role', status: stwStudio.visibilityEnum[roles[role]] });
 
                                     document.querySelector('#visibility ul').innerHTML = stwStudio.renderTree(tree);
                                 });
@@ -454,10 +454,10 @@ const stwStudio = {
         switch (target.tagName) {
             case 'H1':
                 if (event.target.dataset.action === 'refresh') {
-                    stwStudio.renderPanel('studio/panels/groups.html');
+                    stwStudio.renderPanel('studio/panels/roles.html');
 
                 } else if (event.target.dataset.action === 'addGroup') {
-                    alert('add group');
+                    alert('add role');
                 }
                 break;
             case 'UL':
@@ -567,7 +567,7 @@ const stwStudio = {
                 fetch(`/studio/wbdl/visibility/${document.getElementById('properties').dataset.id}`, {
                     method: 'POST',
                     body: JSON.stringify({
-                        group: event.target.closest('div').innerText,
+                        role: event.target.closest('div').innerText,
                         visibility: (key === 'LV') ? false : (key === 'LI') ? null : true
                     }),
                     headers: { 'Content-type': 'application/json' }

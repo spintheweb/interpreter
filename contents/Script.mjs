@@ -3,7 +3,7 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from '../elements/Webbase.mjs';
+import { WEBBASE } from '../elements/Constants.mjs';
 import Content from '../elements/Content.mjs';
 
 export default class Script extends Content {

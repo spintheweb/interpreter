@@ -5,34 +5,25 @@
  */
 import { v1 } from 'uuid';
 
-import { WEBBASE } from './Primitives.mjs';
+import { WEBBASE, INDEX } from './Constants.mjs';
 
 export default class Base {
-	constructor(name, lang = 'en') {
+	constructor(params = {}) {
+		params.lang = params.lang || 'en';
+
 		this._id = v1();
 		this.type = this.constructor.name;
-		this.status = '';
-		this.name = {};
-		this.name[lang] = name || this.constructor.name;
-		this.slug = {};
-		this.slug[lang] = this.name[lang].replace(/[^a-z0-9_]/gi, '');
-		this.private = false; // If private it will not be exported
+		this.status = 'U';
+		this.name = { [params.lang]: params.name || this.constructor.name };
+		this.slug = { [params.lang]: this.name[params.lang].replace(/[^a-z0-9_]/gi, '') };
 		this.children = [];
-		this.visibility = {}; // [role: { false | true }] Role Based Visibilities
+		this.visibility = params.visibility || {}; // [role: { false | true }] Role Based Visibilities
 		this[WEBBASE] = this.constructor.name === 'Site' ? this : null;
 	}
 	Name(value, lang) {
 		if (typeof value === 'undefined')
 			return this[WEBBASE].localize(lang || this[WEBBASE].Lang(), this.name);
 		this.name[lang || this[WEBBASE].Lang()] = value;
-		if (typeof this[WEBBASE].changed === 'function')
-			this[WEBBASE].changed(this);
-		return this;
-	}
-	Private(bool) {
-		if (typeof bool === 'undefined')
-			return this.private;
-		this.private = bool ? true : false;
 		return this;
 	}
 	Parent() {
@@ -45,9 +36,6 @@ export default class Base {
 			delete this.visibility[role];
 		else
 			this.visibility[role] = ac ? 1 : 0;
-
-		if (typeof this[WEBBASE].changed === 'function')
-			this[WEBBASE].changed(this);
 		return this;
 	}
 
@@ -84,13 +72,10 @@ export default class Base {
 			child[WEBBASE] = this[WEBBASE];
 			this.children.push(child);
 
-			if (this[WEBBASE].index) {
-				this[WEBBASE].index.get(child._idParent).children.push(child);
-				this[WEBBASE].index.set(child._id, child);
+			if (this[WEBBASE]) {
+				this[WEBBASE][INDEX].get(child._idParent)?.children.push(child);
+				this[WEBBASE][INDEX].set(child._id, child);
 			}
-
-			if (typeof this[WEBBASE]?.changed === 'function')
-				this[WEBBASE].changed(this);
 		}
 		return child;
 	}

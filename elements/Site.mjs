@@ -7,11 +7,10 @@ import fs from 'fs';
 import path from 'path';
 import language from 'accept-language-parser';
 
-import { WEBBASE } from './Primitives.mjs';
+import { WEBBASE, PATH, INDEX } from './Constants.mjs';
 import Area from './Area.mjs';
 import Page from './Page.mjs';
 import Group from './Group.mjs';
-import Content from './Content.mjs';
 
 import Text from '../contents/Text.mjs';
 
@@ -23,36 +22,58 @@ fs.readdirSync(path.join(process.cwd(), 'contents')).forEach(async module => {
 });
 */
 
-class Site extends Area {
-    constructor(domain, lang = 'en') {
-        super(domain, lang);
-        this.langs = [lang];
+export default class Site extends Area {
+    constructor(params = {}) {
+        super(params);
+        this.langs = [params.lang];
 
-        this.roles = { // Predefined roles
-            administrators: {
-                enabled: true
-            }, // Everything except development
-            developers: {
-                enabled: true
-            }, // Manage webbase
-            translators: {
-                enabled: false
-            }, // Modify texts in webbase
-            guests: {
-                enabled: true
-            }, // Use public parts of webbase
-            users: {
-                enabled: true
-            }, // Use webbase
-            webmasters: {
-                enabled: false
-            } // Add data
+        this[WEBBASE][INDEX] = new Map();
+        this[WEBBASE][PATH] = params.webbase;
+
+        this.visibility = params.visibility || { // Predefined roles
+            administrators: true, // Everything except development
+            developers: true, // Manage webbase
+            translators: false, // Modify texts in webbase
+            guests: true, // Use public parts of webbase
+            users: true, // Use webbase
+            webmasters: false // Add data
         };
-        this.datasources = {
-            'xml': 'text/xml',
-            'json': 'application/json',
-            'webservice': ''
+        this.datasources = params.datasources || {
+            json: { mime: 'application/json', data: {} }
         };
+
+        // Import webbase
+        if (params.webbase && fs.existsSync(params.webbase)) {
+            this[WEBBASE] = Object.assign(this[WEBBASE], JSON.parse(fs.readFileSync(params.webbase)));
+
+            function createIndex(obj, _idParent = null) {
+                obj._idParent = _idParent;
+                this[WEBBASE][INDEX].set(obj._id, obj);
+                if (obj.children)
+                    for (let i = 0; i < obj.children.length; ++i) {
+                        let typedChild;
+                        if (obj.children[i].type === 'Area')
+                            typedChild = new Area();
+                        else if (obj.children[i].type === 'Page')
+                            typedChild = new Page();
+                        else if (obj.children[i].type === 'Group')
+                            typedChild = new Group();
+                        else
+                            typedChild = new Content();
+
+                        if (typedChild)
+                            obj.children[i] = Object.assign(typedChild, obj.children[i]);
+
+                        createIndex(obj.children[i], obj._id);
+                        obj.children[i][WEBBASE] = this[WEBBASE];
+                    }
+            }
+            createIndex(this[WEBBASE]);
+
+        } else
+            this[WEBBASE]
+                .add(new Page({ name: 'Home' }))
+                .add(new Text({ name: 'Hello World', layout: 'Hello World from Spin The Web&trade;!' }));
     }
 
     // [TODO] https://www.npmjs.com/package/locale
@@ -103,24 +124,9 @@ class Site extends Area {
     role(name, enabled) {
         if (this.users[this.user()].roles.indexOf('administrators') !== -1)
             return -1;
-        if (!this.roles[name])
-            this.roles[name] = {};
-        this.roles[name].enabled = (enabled || name === 'administrators' || name === 'guests') ? true : false;
-        return 0;
-    }
-
-    // NOTE: The administrators role can change any password
-    user(name, password, newpassword, enabled) {
-        if (!name)
-            return this.webspinner.user || 'guest';
-
-        if (!this.users[name] && this.users[this.user()].roles.indexOf('administrators') !== -1)
-            this.users[name] = {};
-        else if (this.users[name].password !== password && this.users[this.user()].roles.indexOf('administrators') !== -1)
-            return -1;
-        else if (name === this.user() && this.users[name].password !== password)
-            return -2;
-        this.users[name].password = newpassword;
+        if (!this.visibility[name])
+            this.visibility[name] = {};
+        this.visibility[name].enabled = (enabled || name === 'administrators' || name === 'guests') ? true : false;
         return 0;
     }
 
@@ -143,7 +149,7 @@ class Site extends Area {
             return pathname;
 
         if (/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(pathname))
-            return this.index.get(pathname);
+            return this[INDEX].get(pathname);
 
         return (function walk(slugs, node) {
             node = node.children.find(child => (child.slug[lang] || child.slug[0]) === slugs.shift());
@@ -156,16 +162,12 @@ class Site extends Area {
         })(pathname.split('/'), this);
     }
 
-    changed(element) {
-        // TODO: Broadcast change
-    }
-
     Render(req, res, next) {
         const lang = language.pick(this.langs, req.headers['accept-language']);
 
         if (req.method === 'GET') {
             if (req.url === '/sitemap.xml')
-                return this.sitemap(req);
+                return this.Sitemap(req);
             else if (req.url.search(/\.[a-z0-9]{1,4}$/i) !== -1)
                 return path.join(process.cwd(), 'public', req.url);
 
@@ -175,7 +177,7 @@ class Site extends Area {
     }
 
     // Build a site map (https://www.sitemaps.org/index.html) that includes the urls of the visible pages in the webbase, if no language is specified in the url return the sitemap index
-    sitemap(req, res) {
+    Sitemap(req, res) {
         let lang = parse(req.url).query, fragment = '';
 
         if (lang) {
@@ -196,44 +198,4 @@ class Site extends Area {
                 fragment += `<url><loc>${element.webbase.name(undefined, lang)}${element.slugSlug(true)}</loc><changefreq>always</changefreq><priority>0.5</priority></url>`;
         }
     }
-}
-
-export default (app, webbase) => {
-    app[WEBBASE] = new Site();
-    if (fs.existsSync(webbase))
-        app[WEBBASE] = Object.assign(app[WEBBASE], JSON.parse(fs.readFileSync(webbase)));
-    else {
-        let page = new Page('Home');
-        app[WEBBASE].add(page);
-        let content = new Text('Hello World', "Hello World from Spin The Web&trade;!");
-        page[WEBBASE].add(content);
-    }
-
-    app[WEBBASE].webspinner = () => { app };
-    app[WEBBASE].path = webbase;
-
-    app[WEBBASE].index = new Map();
-    function createIndex(obj, _idParent = null) {
-        obj._idParent = _idParent;
-        app[WEBBASE].index.set(obj._id, obj);
-        if (obj.children)
-            for (let i = 0; i < obj.children.length; ++i) {
-                let typedChild;
-                if (obj.children[i].type === 'Area')
-                    typedChild = new Area();
-                else if (obj.children[i].type === 'Page')
-                    typedChild = new Page();
-                else if (obj.children[i].type === 'Group')
-                    typedChild = new Group();
-                else
-                    typedChild = new Content();
-
-                if (typedChild)
-                    obj.children[i] = Object.assign(typedChild, obj.children[i]);
-
-                createIndex(obj.children[i], obj._id);
-                obj.children[i][WEBBASE] = app[WEBBASE];
-            }
-    }
-    createIndex(app[WEBBASE]);
 }

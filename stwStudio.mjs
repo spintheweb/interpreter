@@ -2,20 +2,16 @@
  * Spin the Web Studio
  * Copyright(c) 2023 Giancarlo Trevisan
  * MIT Licensed
- */
+*/
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import git from 'simple-git';
 
-import { WEBBASE } from './elements/Primitives.mjs';
+import { WEBBASE, PATH, INDEX, SITE_DIR } from './elements/Constants.mjs';
 import Area from './elements/Area.mjs';
 import Page from './elements/Page.mjs';
-import Content from './elements/Content.mjs';
-
-const ROOT_DIR = process.cwd();
-const SITE_DIR = path.join(ROOT_DIR, 'public');
-const STUDIO_DIR = path.join(ROOT_DIR, 'studio');
+import Text from './contents/Text.mjs';
 
 const router = express.Router();
 
@@ -34,7 +30,7 @@ router.post('/wbdl/search/:lang', (req, res) => {
         pattern = new RegExp(`"\\w+?":".*?${req.body.text}.*?"`,
             (req.body.ignoreCase ? 'i' : ''));
 
-    req.app[WEBBASE].index.forEach(obj => {
+    req.app[WEBBASE][INDEX].forEach(obj => {
         let search = {
             name: obj.name,
             keywords: obj.keywords,
@@ -67,19 +63,19 @@ router.get('/wbdl/visibility/:_id?', (req, res) => {
     if (!req.params || !/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(req.params._id))
         localVisibility = req.app[WEBBASE].visibility;
     else
-        localVisibility = req.app[WEBBASE].index.get(req.params._id).visibility;
+        localVisibility = req.app[WEBBASE][INDEX].get(req.params._id).visibility;
 
     if (req.params._id)
-        for (let group in visibility)
-            if (localVisibility[group] == true)
-                visibility[group] = 'LV';
-            else if (localVisibility[group] == false)
-                visibility[group] = 'LI';
+        for (let role in visibility)
+            if (localVisibility[role] == true)
+                visibility[role] = 'LV';
+            else if (localVisibility[role] == false)
+                visibility[role] = 'LI';
             else {
-                visibility[group] = 'II';
-                for (let parent = req.app[WEBBASE].index.get(req.app[WEBBASE].index.get(req.params._id)._idParent); parent; parent = req.app[WEBBASE].index.get(parent._idParent))
-                    if (parent.visibility[group]) {
-                        visibility[group] = parent.visibility[group] ? 'IV' : 'II';
+                visibility[role] = 'II';
+                for (let parent = req.app[WEBBASE][INDEX].get(req.app[WEBBASE][INDEX].get(req.params._id)._idParent); parent; parent = req.app[WEBBASE][INDEX].get(parent._idParent))
+                    if (parent.visibility[role]) {
+                        visibility[role] = parent.visibility[role] ? 'IV' : 'II';
                         break;
                     }
             }
@@ -88,20 +84,20 @@ router.get('/wbdl/visibility/:_id?', (req, res) => {
 });
 
 router.get('/wbdl(/*)?', (req, res) => {
-    res.json(req.params[1] ? req.app[WEBBASE].index.get(req.params[1]) : req.app[WEBBASE]);
+    res.json(req.params[1] ? req.app[WEBBASE][INDEX].get(req.params[1]) : req.app[WEBBASE]);
 });
 
 router.post('/wbdl/visibility/:_id', (req, res) => {
     try {
-        if (!/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(req.params._id) || !req.app[WEBBASE].index.get(req.params._id))
+        if (!/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(req.params._id) || !req.app[WEBBASE][INDEX].get(req.params._id))
             throw 406; // 406 Not Acceptable
 
-        let node = req.app[WEBBASE].index.get(req.params._id),
+        let node = req.app[WEBBASE][INDEX].get(req.params._id),
             status = req.body;
 
-        node.visibility[status.group.replace(/[^a-zA-Z]/g, '')] = status.visibility;
+        node.visibility[status.role.replace(/[^a-zA-Z]/g, '')] = status.visibility;
         if (!status.visibility)
-            delete node.visibility[status.group];
+            delete node.visibility[status.role];
 
         res.json({ _id: req.params._id });
 
@@ -112,7 +108,7 @@ router.post('/wbdl/visibility/:_id', (req, res) => {
 
 router.post('/wbdl/:lang/:_id/:type?', (req, res) => {
     try {
-        if (!/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(req.params._id) || !req.app[WEBBASE].index.get(req.params._id))
+        if (!/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(req.params._id) || !req.app[WEBBASE][INDEX].get(req.params._id))
             throw 406; // 406 Not Acceptable
 
         let node,
@@ -121,21 +117,21 @@ router.post('/wbdl/:lang/:_id/:type?', (req, res) => {
         if (req.params.type) {
             // [NOTE] If there are slugs with the same name, only the first will be considered
             switch (req.params.type) {
-                case 'Area': node = new Area('New area'); break;
-                case 'Page': node = new Page('New page'); break;
-                case 'Content': node = new Content('New content'); break;
+                case 'Area': node = new Area({ name: 'New Area' }); break;
+                case 'Page': node = new Page({ name: 'New Page' }); break;
+                case 'Content': node = new Text({ name: 'New Text' }); break;
             }
             req.app[WEBBASE].add(node);
 
         } else
-            node = req.app[WEBBASE].index.get(req.body._id);
+            node = req.app[WEBBASE][INDEX].get(req.body._id);
 
         if (newNode.status === 'T' && node.status === 'T') {
-            let i = req.app[WEBBASE].index.get(node._idParent).children.findIndex(child => child._id === node._id);
-            req.app[WEBBASE].index.get(node._idParent).children.splice(i, 1);
-            req.app[WEBBASE].index.clear();
+            let i = req.app[WEBBASE][INDEX].get(node._idParent).children.findIndex(child => child._id === node._id);
+            req.app[WEBBASE][INDEX].get(node._idParent).children.splice(i, 1);
+            req.app[WEBBASE][INDEX].clear();
             req.app[WEBBASE].createIndex(req.app[WEBBASE]);
-            node = req.app[WEBBASE].index.get(newNode._idParent);
+            node = req.app[WEBBASE][INDEX].get(newNode._idParent);
 
         } else
             for (let obj in newNode)
@@ -145,11 +141,11 @@ router.post('/wbdl/:lang/:_id/:type?', (req, res) => {
                     else
                         node[obj] = newNode[obj];
 
-        fs.writeFile(req.app[WEBBASE].path, JSON.stringify(req.app[WEBBASE]), err => {
+        fs.writeFile(req.app[WEBBASE][PATH], JSON.stringify(req.app[WEBBASE]), err => {
             if (err)
                 throw 503; // 503 Service Unavailable
         });
-        console.log('Saved ' + req.app[WEBBASE].path);
+        console.log('Saved ' + req.app[WEBBASE][PATH]);
         res.json(node);
 
     } catch (err) {

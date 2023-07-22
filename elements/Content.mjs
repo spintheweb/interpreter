@@ -3,24 +3,21 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from './Primitives.mjs';
+import { WEBBASE } from './Constants.mjs';
 import Base from './Base.mjs';
 import { lexer, getValue, renderer } from './WBLL.mjs';
 
 export default class Content extends Base {
-    constructor(name, layout, lang) {
-        super(name, lang);
+    constructor(params = {}) {
+        super(params);
         this.type = `Content.${this.constructor.name}`;
         this.cssClass = `stw${this.constructor.name}`;
-        this.section = '';
-        this.sequence = 1;
-        this.datasource = '';
-        this.query = '';
-        this.params = '';
-        this.layout = {};
-
-        if (layout)
-            this.layout[lang] = layout;
+        this.section = params.section || '';
+        this.sequence = params.sequence || 1;
+        this.datasource = params.datasource || '';
+        this.query = params.query || '';
+        this.params = params.params || '';
+        this.layout = { [params.lang]: params.layout };
 
         this._clientHandler = null; // Client side code
         this._serverHandler = null; // Server side code (TODO: Predefined CRUD handlers)
@@ -42,16 +39,12 @@ export default class Content extends Base {
             return `class="${this.cssClass}"`;
         }
         this.cssClass = value.toString();
-        if (typeof this[WEBBASE].changed === 'function')
-            this[WEBBASE].changed(this);
         return this;
     }
     Section(value, sequence) {
         if (typeof value === 'undefined') return this.section;
         this.section = value.toString();
         if (sequence) this.Sequence(sequence);
-        if (typeof this[WEBBASE].changed === 'function')
-            this[WEBBASE].changed(this);
         return this;
     }
     Sequence(value) {
@@ -60,8 +53,6 @@ export default class Content extends Base {
         if (this.Parent()) // Order by section, sequence
             this.Parent().children.sort((a, b) =>
                 a._section + ('0000' + a._sequence.toFixed(2)).slice(-5) > b._section + ('0000' + b._sequence.toFixed(2)).slice(-5));
-        if (typeof this[WEBBASE].changed === 'function')
-            this[WEBBASE].changed(this);
         return this;
     }
     Datasource(name, query, params) {
@@ -70,31 +61,23 @@ export default class Content extends Base {
         if (typeof name === 'undefined')
             return this.datasource;
         this.datasource = name;
-        if (typeof this[WEBBASE].changed === 'function')
-            this[WEBBASE].changed(this);
         return this;
     }
     Query(value, params) {
         this.Params(params);
         if (typeof value === 'undefined') return this.query;
         this.query = value;
-        if (typeof this[WEBBASE].changed === 'function')
-            this[WEBBASE].changed(this);
         return this;
     }
     Params(value) {
         if (typeof value === 'undefined') return this.params;
         this.params = value;
-        if (typeof this[WEBBASE].changed === 'function')
-            this[WEBBASE].changed(this);
         return this;
     }
     Layout(lang, value) {
         if (typeof value === 'undefined')
             return this[WEBBASE].localize(lang, this.layout);
         this.layout[lang] = value;
-        if (typeof this[WEBBASE].changed === 'function')
-            this[WEBBASE].changed(this);
         return this;
     }
     clientHandler(callback) {
@@ -134,8 +117,6 @@ export default class Content extends Base {
                 child = new Reference(child);
             child.Parent() = this;
             this.children.push(child);
-            if (typeof this[WEBBASE].changed == 'function')
-                this[WEBBASE].changed(this);
         }
         return this;
     }

@@ -3,14 +3,14 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from './Primitives.mjs';
+import { WEBBASE } from './Constants.mjs';
 import Base from './Base.mjs';
 import Page from './Page.mjs';
 
 export default class Area extends Base {
-	constructor(name, lang) {
-		super(name, lang);
-		this.mainpage = null;
+	constructor(params = {}) {
+		super(params);
+		this.mainpage = params.mainpage;
 	}
 	Mainpage(value) {
 		if (typeof value === 'undefined')
