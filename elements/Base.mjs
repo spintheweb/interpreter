@@ -15,13 +15,13 @@ export default class Base {
 		this.type = this.constructor.name;
 		this.status = 'U';
 		this.name = { [params.lang]: params.name || this.constructor.name };
-		this.slug = { [params.lang]: this.name[params.lang].replace(/[^a-z0-9_]/gi, '') };
+		this.slug = { [params.lang]: this.name[params.lang].replace(/[^a-z0-9_]/gi, '').toLowerCase() };
 		this.children = [];
 		this.visibility = params.visibility || {}; // [role: { false | true }] Role Based Visibilities
 		this[WEBBASE] = this.constructor.name === 'Site' ? this : null;
 	}
 	Parent() {
-		return this[WEBBASE].route(this._idParent);
+		return this[WEBBASE][INDEX].get(this._idParent);
 	}
 
 	// Grant a role access control, if no access control is specified remove the role from the RBV list (Role Based Visibility).
@@ -45,15 +45,15 @@ export default class Base {
 				ac = this.visibility[role] ? 0b01 : 0b00;
 		} else
 			for (let i = 0; ac != 0b01 && i < roles.length; ++i)
-				if (this.visibility.hasOwnProperty(roles[i]))
+				if (this.visibility.hasOwnProperty(roles[i]) && this.visibility[roles[i]] !== null)
 					ac |= this.visibility[roles[i]] ? 0b01 : 0b00;
 
 		if (ac === null) {
 			let obj = this.Parent();
-			if (obj && obj.type !== 'Site')
+			if (obj)
 				ac = 0b10 | obj.granted(roles, role, true);
 			else if (['Site', 'Area', 'Page'].indexOf(this.constructor.name) === -1) // Content
-				ac = 0b10; // NOTE: this covers a content without a parent nor a RBV, it's in limbo!
+				ac = 0b10; // NOTE: this covers contents without a parent nor a RBV, it's in limbo!
 		}
 
 		return ac || 0b00;
@@ -66,10 +66,8 @@ export default class Base {
 			child[WEBBASE] = this[WEBBASE];
 			this.children.push(child);
 
-			if (this[WEBBASE]) {
-				this[WEBBASE][INDEX].get(child._idParent)?.children.push(child);
+			if (this[WEBBASE])
 				this[WEBBASE][INDEX].set(child._id, child);
-			}
 		}
 		return child;
 	}

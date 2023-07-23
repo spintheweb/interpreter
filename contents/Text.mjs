@@ -14,12 +14,12 @@ export default class Text extends Content {
 	}
 
 	Render(req, res, next) {
-		let fragment = this.Layout(lang);
+		let fragment = this.Layout(req.session.lang);
 
 		if (this.datasource) {
 			
 		}
 
-		res.send(fragment);
+		res.send({ type: 'text/plain', id: this._id, section: this.section, sequence: this.sequence, body: fragment });
 	}
 }

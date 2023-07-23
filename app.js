@@ -22,6 +22,8 @@ const app = express();
 app[WEBBASE] = new Site({ webbase: path.join(SITE_DIR, settings.webbase) });
 
 app.use(session({
+    resave: true,
+    saveUninitialized: true,
     secret: settings.secret || 'Spin the Web',
     cookie: { sameSite: 'strict' }
 }));
@@ -43,10 +45,10 @@ app.all('/cert/*', (req, res, next) => res.redirect('/'));
 app.all('/data/*', (req, res, next) => res.redirect('/'));
 
 app.get('/*', (req, res, next) => {
-    const lang = language.pick(req.app[WEBBASE].langs, req.headers['accept-language']);
-   
-    let el = req.app[WEBBASE].route(req.params[0], lang);
-    if (typeof el.Render === 'function')
+    req.session.lang = language.pick(req.app[WEBBASE].langs, req.headers['accept-language']);
+
+    let el = req.app[WEBBASE].route(req.params[0], req.session.lang);
+    if (el && typeof el.Render === 'function')
         el.Render(req, res, next);
     else
         next();

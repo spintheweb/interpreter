@@ -173,7 +173,7 @@ body {
     padding: 0.25em;
     display: grid;
     gap: 0.5em;
-    grid-template-columns: repeat(4, min-content) 1fr;
+    grid-template-columns: repeat(5, min-content) 1fr;
 }
 
 .stwBrowsebar i:hover,
@@ -350,6 +350,10 @@ li[data-type^=Content]>div>span:nth-child(2)::before {
 
 li[data-type=Group]>div>span:nth-child(2)::before {
     content: "\f0c0";
+}
+
+li[data-type=role]>div>span:nth-child(2)::before {
+    content: "\f21d";
 }
 
 li[data-type=ds]>div>span:nth-child(2)::before {

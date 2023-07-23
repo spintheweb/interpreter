@@ -15,7 +15,6 @@ const stwStudio = {
                 console.log(err);
             });
         */
-
         document.getElementById('BrowseURL').value = document.location.origin;
         document.getElementById('Browse').src = document.location.origin;
 
@@ -137,7 +136,7 @@ const stwStudio = {
             })
             .then(res => res.json())
             .then(data => {
-                stwStudio.renderPanel('studio/panels/webbase.html', data._id);
+                stwStudio.renderPanel('/studio/panels/webbase.html', data._id);
                 stwStudio.loadForm(document.querySelector('#properties form'), data);
             })
             .catch(err => {
@@ -166,6 +165,8 @@ const stwStudio = {
         }
         if (form.slug && form.slug.value === '')
             form.slug.value = form.name.value.toLowerCase().replace(/[^a-z]/g, '');
+        else
+            form.slug.value = form.slug.value.toLowerCase().replace(/[^a-z]/g, '');
 
         document.querySelector('#properties .fa-trash-can').className = data.status === 'T' ? 'fa-solid fa-fw fa-trash-can' : 'fa-regular fa-fw fa-trash-can';
     },
@@ -346,7 +347,7 @@ const stwStudio = {
                 var parent = tree.querySelector('li[selected]');
 
                 if (event.target.dataset.action === 'refresh') {
-                    stwStudio.loadFile('studio/panels/webbase.html', document.querySelector('section.stwPanel'), stwStudio.renderPanel);
+                    stwStudio.loadFile('/studio/panels/webbase.html', document.querySelector('section.stwPanel'), stwStudio.renderPanel);
 
                 } else if (event.target.dataset.action === 'trashed') {
                     if (event.target.className === 'fa-solid fa-fw fa-trash-can')
@@ -454,7 +455,7 @@ const stwStudio = {
         switch (target.tagName) {
             case 'H1':
                 if (event.target.dataset.action === 'refresh') {
-                    stwStudio.renderPanel('studio/panels/roles.html');
+                    stwStudio.renderPanel('/studio/panels/roles.html');
 
                 } else if (event.target.dataset.action === 'addGroup') {
                     alert('add role');
@@ -486,7 +487,7 @@ const stwStudio = {
         switch (target.tagName) {
             case 'H1':
                 if (event.target.dataset.action === 'refresh') {
-                    stwStudio.renderPanel('studio/panels/datasources.html');
+                    stwStudio.renderPanel('/studio/panels/datasources.html');
 
                 } else if (event.target.dataset.action === 'addDatasource') {
                     alert('add datasource');
@@ -506,7 +507,7 @@ const stwStudio = {
                 }
                 break;
         }
-     },
+    },
     manageFiles: event => {
         let target = event.target.closest('h1') || event.target.closest('li') || event.target;
 
@@ -616,10 +617,16 @@ const stwStudio = {
             case 'back':
                 // document.querySelector('iframe').window.history.back(-1); Does not work
                 break;
-            case 'refresh':
-                document.querySelector('iframe').src = document.querySelector('.stwBrowsebar [name=url]').value;
+            case 'forward': // [TODO] Hide when history not present
+                break;
+            case 'refresh': // [TODO] Animate when loading
+                document.getElementById('Browse').src = document.getElementById('BrowseURL').value;
+                break;
+            case 'locate':
+                alert(document.getElementById('BrowseURL').value.replace(location.origin, ''));
                 break;
             case 'home':
+                document.getElementById('Browse').src = location.origin;
                 break;
         }
     },

@@ -17,7 +17,10 @@ import contentFactory from '../contents/Contents.mjs';
 export default class Site extends Area {
     constructor(params = {}) {
         super(params);
-        this.langs = [params.lang];
+        delete this.slug;
+        this.url = params.url;
+        this.lang = params.lang;
+        this.langs = new Array(params.lang);
 
         this[WEBBASE][INDEX] = new Map();
         this[WEBBASE][PATH] = params.webbase;
@@ -35,39 +38,37 @@ export default class Site extends Area {
         };
 
         // Import webbase
-        if (params.webbase && fs.existsSync(params.webbase)) {
-            this[WEBBASE] = Object.assign(this[WEBBASE], JSON.parse(fs.readFileSync(params.webbase)));
+        let webbase;
+        if (params.webbase && fs.existsSync(params.webbase))
+            webbase = fs.readFileSync(params.webbase);
+        else
+            webbase = '{"_id":"169ecfb0-2916-11ee-ad92-6bd31f953e80","type":"Site","status":"M","name":{"en":"Hello World"},"slug":{"en":"Site"},"children":[{"_id":"169ecfb1-2916-11ee-ad92-6bd31f953e80","type":"Page","status":"U","name":{"en":"Home"},"slug":{"en":"Home"},"children":[{"_id":"169ecfb2-2916-11ee-ad92-6bd31f953e80","type":"Content","status":"U","name":{"en":"Hello World"},"slug":{"en":"HelloWorld"},"children":[],"visibility":{},"subtype":"Text","cssClass":null,"section":"","sequence":1,"datasource":"","query":"","params":"","layout":{"en":"Hello World from Spin The Web&trade;!"},"_clientHandler":null,"_serverHandler":null,"_idParent":"169ecfb1-2916-11ee-ad92-6bd31f953e80"}],"visibility":{},"keywords":{},"description":{},"contentType":"text/html","template":"index.html","_idParent":"169ecfb0-2916-11ee-ad92-6bd31f953e80"}],"visibility":{"administrators":true,"developers":true,"translators":false,"guests":true,"users":true,"webmasters":false},"mainpage":"169ecfb1-2916-11ee-ad92-6bd31f953e80","langs":["en"],"datasources":{"json":{"mime":"application/json","data":{}}}}';
 
-            let createIndex = (obj, _idParent = null) => {
-                obj._idParent = _idParent;
-                this[INDEX].set(obj._id, obj);
-                if (obj.children)
-                    for (let i = 0; i < obj.children.length; ++i) {
-                        let typedChild;
-                        if (obj.children[i].type === 'Area')
-                            typedChild = new Area();
-                        else if (obj.children[i].type === 'Page')
-                            typedChild = new Page();
-                        else if (obj.children[i].type === 'Group')
-                            typedChild = new Group();
-                        else
-                            typedChild = contentFactory.create(obj.children[i].subtype);
+        this[WEBBASE] = Object.assign(this[WEBBASE], JSON.parse(webbase));
 
-                        if (typedChild)
-                            obj.children[i] = Object.assign(typedChild, obj.children[i]);
+        let createIndex = (obj, _idParent = null) => {
+            obj._idParent = _idParent;
+            this[INDEX].set(obj._id, obj);
+            if (obj.children)
+                for (let i = 0; i < obj.children.length; ++i) {
+                    let typedChild;
+                    if (obj.children[i].type === 'Area')
+                        typedChild = new Area();
+                    else if (obj.children[i].type === 'Page')
+                        typedChild = new Page();
+                    else if (obj.children[i].type === 'Group')
+                        typedChild = new Group();
+                    else
+                        typedChild = contentFactory.create(obj.children[i].subtype);
 
-                        createIndex(obj.children[i], obj._id);
-                        obj.children[i][WEBBASE] = this[WEBBASE];
-                    }
-            }
-            createIndex(this[WEBBASE]);
+                    if (typedChild)
+                        obj.children[i] = Object.assign(typedChild, obj.children[i]);
 
-        } else {
-            this[WEBBASE]
-                .add(new Page({ name: 'Home' }))
-                .add(contentFactory.create('Text', { name: 'Hello World', layout: 'Hello World from Spin The Web&trade;!' }));
-            this[WEBBASE][INDEX].set(this._id, this);
+                    createIndex(obj.children[i], obj._id);
+                    obj.children[i][WEBBASE] = this[WEBBASE];
+                }
         }
+        createIndex(this[WEBBASE]);
     }
 
     // [TODO] https://www.npmjs.com/package/locale
@@ -119,12 +120,12 @@ export default class Site extends Area {
             return this[INDEX].get(pathname);
 
         return (function walk(slugs, node) {
-            node = node.children.find(child => (child.slug[lang] || child.slug[0]) === slugs.shift());
-            if (!node || !slugs.length) {
-                let clone = { ...node };
-                delete clone.children;
-                return clone;
-            }
+            node = node.children.find(child => child.slug[lang] == slugs[0]);
+            slugs.shift();
+            if (!node)
+                return undefined;
+            else if (slugs.length == 0)
+                return node;
             return walk(slugs, node);
         })(pathname.split('/'), this);
     }

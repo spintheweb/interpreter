@@ -152,7 +152,7 @@ export default class Content extends Base {
             } else
                 fragment = body(req, layout);
         }
-        res.send({ type: 'text/html', section: this.section, sequence: this.sequence, body: fragment });
+        res.send({ type: 'text/html', id: this._id, section: this.section, sequence: this.sequence, body: fragment });
     }
     renderRow(req, contentId, layout) {
         if (typeof layout === 'object')

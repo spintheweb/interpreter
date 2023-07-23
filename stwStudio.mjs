@@ -121,7 +121,7 @@ router.post('/wbdl/:lang/:_id/:type?', (req, res) => {
                 case 'Page': node = new Page({ name: 'New Page' }); break;
                 case 'Content': node = new Text({ name: 'New Text' }); break;
             }
-            req.app[WEBBASE].add(node);
+            req.app[WEBBASE][INDEX].get(req.params._id).add(node);
 
         } else
             node = req.app[WEBBASE][INDEX].get(req.body._id);
@@ -146,6 +146,7 @@ router.post('/wbdl/:lang/:_id/:type?', (req, res) => {
             if (err)
                 throw 503; // 503 Service Unavailable
         });
+
         res.json(node);
 
     } catch (err) {

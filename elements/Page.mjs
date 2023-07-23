@@ -30,7 +30,7 @@ export default class Page extends Base {
 	}
 
 	Render(req, res, next) {
-		if (this.granted(req.session.roles)) {
+		if (this.granted(req.session.roles) & 0b01 === 0b01) {
 			let contents = this.children.filter(content => content.section && content.granted(req.session.roles)).map(content => content._id);
 
 			res.cookie('stwContents', contents.join(','));

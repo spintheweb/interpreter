@@ -10,6 +10,8 @@ import Page from './Page.mjs';
 export default class Area extends Base {
 	constructor(params = {}) {
 		super(params);
+		this.keywords = params.keywords || {};
+		this.description = params.description || {};
 		this.mainpage = params.mainpage;
 	}
 	Mainpage(value) {
