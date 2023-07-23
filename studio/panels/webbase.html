@@ -45,13 +45,7 @@
                 </div>
             </li>
 
-            <li><label>Default language</label><select name="lang" title="Default language">
-                    <option value="en">English</option>
-                    <option value="fr">French</option>
-                    <option value="de">German</option>
-                    <option value="it">Italian</option>
-                    <option value="es">Spanish</option>
-                </select></li>
+            <li><label>Languages</label><input type="text" name="langs" placeholder="en" title="Languages" required></li>
             <li><label>Documentation</label>
                 <textarea name="description" placeholder="description" title="Description"></textarea>
                 <input type="text" name="keywords" placeholder="keywords" title="Keywords">
@@ -67,7 +61,7 @@
 
             <li><label>CSS class</label><input type="text" name="cssClass" placeholder="CSS class" title="CSS class">
             </li>
-            <li><label>Type</label><select name="type" title="Type">
+            <li><label>Type</label><select name="subtype" title="Type">
                     <option value="Text" data-value="-100">Text</option>
                     <option value="-500">Form</option>
                     <option value="-300">Table</option>

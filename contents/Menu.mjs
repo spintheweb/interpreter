@@ -3,7 +3,7 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from '../elements/Constants.mjs';
+import { WEBBASE } from '../elements/Miscellanea.mjs';
 import Content from '../elements/Content.mjs';
 import Reference from '../elements/Reference.mjs';
 
@@ -14,7 +14,7 @@ export default class Menu extends Content {
 
 	add(child) {
 		if (child && child !== this && this.children.indexOf(child) === -1) {
-			if (child.Parent() || child.constructor.name === 'Webbase')
+			if (child.Parent() || child.constructor.name === 'Site')
 				child = new Reference(child);
 			child.Parent() = this;
 			child.webbase = this.webbase;
@@ -31,7 +31,7 @@ export default class Menu extends Content {
 					if (option.ref.constructor.name === 'Page') {
 						if (option.granted(socket.target.user) & 0b01)
 							options += `<li class="stwMenuOption"><a href="/${option.slug}" onclick="stwHref(event)">${option.name()}</a></li>`;
-					} else if (['Webbase', 'Area'].indexOf(option.ref.constructor.name) !== -1) {
+					} else if (['Site', 'Area'].indexOf(option.ref.constructor.name) !== -1) {
 						option.ref.children.forEach(suboption => {
 							if (suboption.constructor.name === 'Page' && suboption.granted(socket.target.user) & 0b01)
 								options += `<li class="stwMenuOption"><a href="/${suboption.slug}" onclick="stwHref(event)">${suboption.name()}</a></li>`;

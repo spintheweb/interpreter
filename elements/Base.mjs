@@ -5,7 +5,7 @@
  */
 import { v1 } from 'uuid';
 
-import { WEBBASE, INDEX } from './Constants.mjs';
+import { WEBBASE, INDEX } from './Miscellanea.mjs';
 
 export default class Base {
 	constructor(params = {}) {
@@ -19,12 +19,6 @@ export default class Base {
 		this.children = [];
 		this.visibility = params.visibility || {}; // [role: { false | true }] Role Based Visibilities
 		this[WEBBASE] = this.constructor.name === 'Site' ? this : null;
-	}
-	Name(value, lang) {
-		if (typeof value === 'undefined')
-			return this[WEBBASE].localize(lang || this[WEBBASE].Lang(), this.name);
-		this.name[lang || this[WEBBASE].Lang()] = value;
-		return this;
 	}
 	Parent() {
 		return this[WEBBASE].route(this._idParent);
@@ -58,7 +52,7 @@ export default class Base {
 			let obj = this.Parent();
 			if (obj && obj.type !== 'Site')
 				ac = 0b10 | obj.granted(roles, role, true);
-			else if (['Webbase', 'Area', 'Page'].indexOf(this.constructor.name) === -1) // Content
+			else if (['Site', 'Area', 'Page'].indexOf(this.constructor.name) === -1) // Content
 				ac = 0b10; // NOTE: this covers a content without a parent nor a RBV, it's in limbo!
 		}
 
@@ -83,7 +77,7 @@ export default class Base {
 	// Deep copy element, note, the webbase cannot be copied, use write() instead
 	copy() {
 		let obj;
-		if (this.constructor.name !== 'Webbase')
+		if (this.constructor.name !== 'Site')
 			obj = new this.constructor();
 		return obj;
 	}

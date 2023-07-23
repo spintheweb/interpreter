@@ -3,14 +3,15 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from './Constants.mjs';
+import { WEBBASE, localize } from './Miscellanea.mjs';
 import Base from './Base.mjs';
 import { lexer, getValue, renderer } from './WBLL.mjs';
 
 export default class Content extends Base {
     constructor(params = {}) {
         super(params);
-        this.type = `Content.${this.constructor.name}`;
+        this.type = 'Content';
+        this.subtype = this.constructor.name;
         this.cssClass = `stw${this.constructor.name}`;
         this.section = params.section || '';
         this.sequence = params.sequence || 1;
@@ -76,7 +77,7 @@ export default class Content extends Base {
     }
     Layout(lang, value) {
         if (typeof value === 'undefined')
-            return this[WEBBASE].localize(lang, this.layout);
+            return localize(lang, this.layout);
         this.layout[lang] = value;
         return this;
     }
@@ -104,7 +105,7 @@ export default class Content extends Base {
         return this;
     }
     add(child) {
-        if (!child || child == this || child.constructor.name === 'Webbase')
+        if (!child || child == this || child.constructor.name === 'Site')
             return this;
 
         if (child instanceof Content)

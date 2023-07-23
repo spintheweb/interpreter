@@ -12,7 +12,7 @@ import session from 'express-session';
 import language from 'accept-language-parser';
 
 import stwStudio from './stwStudio.mjs';
-import { WEBBASE, SITE_DIR, STUDIO_DIR } from './elements/Constants.mjs';
+import { WEBBASE, SITE_DIR, STUDIO_DIR } from './elements/Miscellanea.mjs';
 import Site from './elements/Site.mjs';
 
 let settings = JSON.parse(fs.readFileSync(path.join(SITE_DIR, 'settings.json')) || '{"protocol":"http","hostname":"127.0.0.0","port":"80"}');

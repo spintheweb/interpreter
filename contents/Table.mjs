@@ -3,7 +3,7 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from '../elements/Constants.mjs';
+import { WEBBASE } from '../elements/Miscellanea.mjs';
 import Content from '../elements/Content.mjs';
 import { renderer } from `../elements/WBLL`;
 

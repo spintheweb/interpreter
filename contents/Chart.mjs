@@ -5,7 +5,7 @@
  */
 import { DOMParser as xmldom } from '@xmldom/xmldom';
 
-import { WEBBASE } from '../elements/Constants.mjs';
+import { WEBBASE } from '../elements/Miscellanea.mjs';
 import Content from '../elements/Content.mjs';
 
 export default class Chart extends Content {

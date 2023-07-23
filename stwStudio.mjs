@@ -8,7 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import git from 'simple-git';
 
-import { WEBBASE, PATH, INDEX, SITE_DIR } from './elements/Constants.mjs';
+import { WEBBASE, PATH, INDEX, SITE_DIR } from './elements/Miscellanea.mjs';
 import Area from './elements/Area.mjs';
 import Page from './elements/Page.mjs';
 import Text from './contents/Text.mjs';
@@ -84,7 +84,7 @@ router.get('/wbdl/visibility/:_id?', (req, res) => {
 });
 
 router.get('/wbdl(/*)?', (req, res) => {
-    res.json(req.params[1] ? req.app[WEBBASE][INDEX].get(req.params[1]) : req.app[WEBBASE]);
+    res.json(req.app[WEBBASE][INDEX].get(req.params[1]) || req.app[WEBBASE]);
 });
 
 router.post('/wbdl/visibility/:_id', (req, res) => {
@@ -141,15 +141,15 @@ router.post('/wbdl/:lang/:_id/:type?', (req, res) => {
                     else
                         node[obj] = newNode[obj];
 
-        fs.writeFile(req.app[WEBBASE][PATH], JSON.stringify(req.app[WEBBASE]), err => {
+        const webbase = JSON.stringify(req.app[WEBBASE]);
+        fs.writeFile(req.app[WEBBASE][PATH], webbase, { flag: 'w+' }, err => {
             if (err)
                 throw 503; // 503 Service Unavailable
         });
-        console.log('Saved ' + req.app[WEBBASE][PATH]);
         res.json(node);
 
     } catch (err) {
-        res.end(err);
+        res.json({ err: err });
     }
 });
 
@@ -158,11 +158,10 @@ router.get('/fs(/:path)?', async (req, res) => {
 });
 
 router.post('/fs/public(/*)', (req, res) => {
-    fs.writeFile(path.join(SITE_DIR, req.params[1]), req.body, err => {
+    fs.writeFile(path.join(SITE_DIR, req.params[1]), req.body, { flag: 'w+' }, err => {
         if (err)
             throw 503; // 503 Service Unavailable
     });
-    console.log(`Saved ${req.params[1]}`);
     res.end();
 });
 

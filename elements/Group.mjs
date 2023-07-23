@@ -3,7 +3,7 @@
  * Copyright(c) 2020 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from './Constants.mjs';
+import { WEBBASE } from './Miscellanea.mjs';
 import Base from './Base.mjs';
 import Content from './Content.mjs';
 

@@ -3,7 +3,7 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from '../elements/Constants.mjs';
+import { WEBBASE } from '../elements/Miscellanea.mjs';
 import Content from '../elements/Content.mjs';
 
 // Plain text, i.e., renders layout as plain text if there is a datasource @ and @@ substitutions are performed

@@ -7,20 +7,12 @@ import fs from 'fs';
 import path from 'path';
 import language from 'accept-language-parser';
 
-import { WEBBASE, PATH, INDEX } from './Constants.mjs';
+import { WEBBASE, PATH, INDEX } from './Miscellanea.mjs';
 import Area from './Area.mjs';
 import Page from './Page.mjs';
 import Group from './Group.mjs';
 
-import Text from '../contents/Text.mjs';
-
-/*
-const contents = {};
-fs.readdirSync(path.join(process.cwd(), 'contents')).forEach(async module => {
-    if (module.endsWith('.mjs'))
-        contents[module.replace('.mjs', '')] = await import('../contents/' + module);
-});
-*/
+import contentFactory from '../contents/Contents.mjs';
 
 export default class Site extends Area {
     constructor(params = {}) {
@@ -46,9 +38,9 @@ export default class Site extends Area {
         if (params.webbase && fs.existsSync(params.webbase)) {
             this[WEBBASE] = Object.assign(this[WEBBASE], JSON.parse(fs.readFileSync(params.webbase)));
 
-            function createIndex(obj, _idParent = null) {
+            let createIndex = (obj, _idParent = null) => {
                 obj._idParent = _idParent;
-                this[WEBBASE][INDEX].set(obj._id, obj);
+                this[INDEX].set(obj._id, obj);
                 if (obj.children)
                     for (let i = 0; i < obj.children.length; ++i) {
                         let typedChild;
@@ -59,7 +51,7 @@ export default class Site extends Area {
                         else if (obj.children[i].type === 'Group')
                             typedChild = new Group();
                         else
-                            typedChild = new Content();
+                            typedChild = contentFactory.create(obj.children[i].subtype);
 
                         if (typedChild)
                             obj.children[i] = Object.assign(typedChild, obj.children[i]);
@@ -70,10 +62,12 @@ export default class Site extends Area {
             }
             createIndex(this[WEBBASE]);
 
-        } else
+        } else {
             this[WEBBASE]
                 .add(new Page({ name: 'Home' }))
-                .add(new Text({ name: 'Hello World', layout: 'Hello World from Spin The Web&trade;!' }));
+                .add(contentFactory.create('Text', { name: 'Hello World', layout: 'Hello World from Spin The Web&trade;!' }));
+            this[WEBBASE][INDEX].set(this._id, this);
+        }
     }
 
     // [TODO] https://www.npmjs.com/package/locale
@@ -91,33 +85,6 @@ export default class Site extends Area {
         if (value.search(/^[a-z][a-z](-[a-z][a-z])?$/i) !== -1 && !this.Langs.includes(code))
             this.langs.push(code.toLowerCase());
         return this;
-    }
-
-    // Return langs RFC 3282 as a language array sorted by preference
-    acceptLanguage(langs) {
-        const pattern = /([a-z][a-z](-[a-z][a-z])?|\*)(;q=([01](\.[0-9]+)?))?/gi;
-        let match, accept = '';
-        while (match = pattern.exec(langs)) {
-            pattern.lastIndex += (match.index === pattern.lastIndex);
-            accept += (accept !== '' ? ',' : '[') + `{"l":"${match[1]}","q":${match[4] || 1}}`;
-        }
-        return JSON.parse(accept + ']').sort((a, b) => a.q < b.q).map(a => a.l);
-    }
-
-    // Pick the preferred localized text, if pick is true return the picked locale
-    localize(langs, txts, pick) {
-        let _langs = Object.keys(txts);
-        switch (_langs.length) {
-            case 0:
-                return null;
-            case 1:
-                return pick ? _langs[0] : txts[_langs[0]];
-            default:
-                for (let lang of langs)
-                    if (txts[lang])
-                        return pick ? lang : txts[lang];
-                return pick ? langs[0] : txts[langs[0]];
-        }
     }
 
     // NOTE: Role management is allowed only to the administrators role
@@ -192,7 +159,7 @@ export default class Site extends Area {
         return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${fragment}</sitemapindex>`;
 
         function _url(element) {
-            if (['Webbase', 'Area'].indexOf(element.constructor.name) !== -1 && element.children.length > 0)
+            if (['Site', 'Area'].indexOf(element.constructor.name) !== -1 && element.children.length > 0)
                 element.children.forEach(child => _url(child));
             else if (element.constructor.name === 'Page' && element.granted(req.user) & 0b01 === 0b01)
                 fragment += `<url><loc>${element.webbase.name(undefined, lang)}${element.slugSlug(true)}</loc><changefreq>always</changefreq><priority>0.5</priority></url>`;
