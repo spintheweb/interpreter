@@ -7,7 +7,7 @@ The difference between a regular site and a Spin the Web site is the presence of
 Spin the Web Studio is a GUI for managing WBDL.
 
 ## Software as a Service (SaaS)
-Head over to <a href="https://studio.spintheweb.org" target="_blank">https://studio.spintheweb.org</a>, visit a Spin the Web site, authenticate and start developing.
+To use Spin the Web Studio your need to be logged in to a Spin the Web site as a developer, then visit URL/studio.
 
 ## Versions
 * STW Studio Ver. 1.x.x (Under development)
