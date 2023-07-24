@@ -77,6 +77,11 @@ const stwStudio = {
             document.querySelector('#properties i[data-action="trash"]').click();
             event.preventDefault();
         }
+        if (event.key == 'F5') {
+            document.getElementById('Browse').src = document.getElementById('BrowseURL').value;
+            event.preventDefault();
+            event.stopPropagation();
+        }
     },
     click: event => {
         let target = event.target;
@@ -130,9 +135,7 @@ const stwStudio = {
                 stwStudio.renderPanel('/studio/panels/webbase.html', data._id);
                 stwStudio.loadForm(document.querySelector('#properties form'), data);
             })
-            .catch(err => {
-                console.log(err);
-            });
+            .catch(err => { console.log(err) });
     },
     loadForm: (form, data) => {
         for (let input of form.elements) {
@@ -144,6 +147,13 @@ const stwStudio = {
             } else {
                 input.removeAttribute('disabled');
                 if (li) li.style.display = '';
+            }
+
+            if (input.name === 'permalink' && data.mainpage) {
+                fetch(`/studio/wbdl/permalink/${data.mainpage}`)
+                    .then(res => res.text())
+                    .then(text => { input.value = text })
+                    .catch(err => { console.log(err) });
             }
 
             let obj = data[input.name];
@@ -634,6 +644,11 @@ const stwStudio = {
     }
 }
 
-window.addEventListener('load', stwStudio.setup, { once: true });
+window.addEventListener('load', () => {
+    stwStudio.setup();
+    document.getElementById('Browse').addEventListener('load', event => {
+        document.getElementById('BrowseURL').value = event.currentTarget.contentDocument.location.href;
+    });
+}, { once: true });
 window.addEventListener('click', stwStudio.click);
 window.addEventListener('keydown', stwStudio.keydown);

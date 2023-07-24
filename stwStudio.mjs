@@ -8,12 +8,22 @@ import fs from 'fs';
 import path from 'path';
 import git from 'simple-git';
 
-import { WEBBASE, PATH, INDEX, SITE_DIR } from './elements/Miscellanea.mjs';
+import { WEBBASE, PATH, INDEX, STUDIO_DIR, SITE_DIR } from './elements/Miscellanea.mjs';
 import Area from './elements/Area.mjs';
 import Page from './elements/Page.mjs';
 import Text from './contents/Text.mjs';
 
 const router = express.Router();
+
+// Only developers are allowed to use the studio
+router.all('/*', (req, res, next) => {
+    if (!req.session.roles.includes('developers'))
+        res.redirect('..');
+    else
+        next();
+});
+
+router.use(express.static(STUDIO_DIR));
 
 // Persist webbase
 router.put('/wbdl/persist', (req, res, next) => {
@@ -33,6 +43,11 @@ router.get('/', (req, res, next) => {
 // Load /public static files
 router.get('/public/*', (req, res) => {
     res.sendFile(path.join(SITE_DIR, req.params[0]));
+});
+
+router.get('/wbdl/permalink/:_id', (req, res) => {
+    let element = req.app[WEBBASE][INDEX].get(req.params._id);
+    res.send(element ? element.Permalink(req.session.lang) : '');
 });
 
 // [TODO] Replace

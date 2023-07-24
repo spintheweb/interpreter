@@ -11,13 +11,6 @@
         integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="/studio/js/studio.js"></script>
-    <script>
-        window.addEventListener('load', () => {
-            document.getElementById('Browse').addEventListener('load', () => { 
-                document.getElementById('BrowseURL').value = event.currentTarget.contentDocument.location.href;
-            });
-        });
-    </script>
 </head>
 
 <body class="stwDark">
@@ -47,7 +40,7 @@
             <div class="stwBrowsebar" onclick="stwStudio.manageBrowse(event)">
                 <i tabindex="0" role="link" class="fa fa-fw fa-arrow-left" title="Back" data-action="back"></i>
                 <i tabindex="0" role="link" class="fa fa-fw fa-arrow-right" title="Forward" data-action="forward"></i>
-                <i tabindex="0" role="link" class="fa-solid fa-fw fa-rotate-right" title="Refresh"
+                <i tabindex="0" role="link" class="fa-solid fa-fw fa-rotate-right" title="Refresh (F5)"
                     data-action="refresh"></i>
                     <i tabindex="0" role="link" class="fa-solid fa-sitemap" title="Locate page in webbase"
                     data-action="locate"></i>

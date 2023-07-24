@@ -17,7 +17,7 @@ export default class Breadcrumbs extends Content {
 			let element = this[WEBBASE][INDEX].get(req.res.locals.cookie.stwPage);
 			let fragment = element.Name(lang);
 
-			for (element = element.Parent(); element; element = element.Parent())
+			for (element = element.Parent(); element.type != 'Site'; element = element.Parent())
 				fragment = `<a href="${element.Permalink(lang) || '/'}">${element.Name(lang)}</a><i class="fas fa-fw fa-angle-right"></i>${fragment}` 
 
 			return `<nav ${this.CSSClass()}">${fragment}</nav>`;

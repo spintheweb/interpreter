@@ -30,7 +30,7 @@ app.use(session({
 app.use((req, res, next) => {
     if (!req.session.user) {
         req.session.user = 'guest';
-        req.session.roles = ['guests'];
+        req.session.roles = ['guests', 'developers'];
     }
 
     const { headers: { cookie } } = req;
@@ -48,7 +48,6 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.text());
 
-app.use('/studio', express.static(STUDIO_DIR));
 app.use('/studio', stwStudio);
 
 app.all('/cert/*', (req, res, next) => res.redirect('/'));
