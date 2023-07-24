@@ -104,9 +104,9 @@ export default class Base {
 		this.move();
 	}
 
-	permalink() {
+	Permalink(lang) {
 		if (this.Parent())
-			return this.Parent().permalink() + '/' + this.slug;
+			return this.Parent().Permalink(lang) + '/' + this.slug[lang];
 		return '';
 	}
 }

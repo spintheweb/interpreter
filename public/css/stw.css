@@ -41,8 +41,8 @@ article.stwContent {position:relative; padding:0.25em; border: thin dashed trans
 .stwKeypad li {display:inline-block; padding:0.5em; border:1px solid #f0f0f0; border-radius:0.5em; min-width:2em; margin:0.25em; text-align:center; cursor:pointer;}
 .stwKeypad li:hover {background-color:#f0f0f0; color:#000000;}
 
-.stwBreadcrumbs nav {margin:0.5em 0;}
-.stwBreadcrumbs a {text-transform:lowercase; padding:0.25em 0; cursor:pointer; }
+.stwBreadcrumbs {margin:0.5em; text-transform:lowercase; font-size:smaller;}
+.stwBreadcrumbs a {padding:0.25em 0; cursor:pointer; }
 .stwBreadcrumbs a:hover {color:var(--special);}
 
 .stwMenu ul {display:flex; align-items:center; list-style-type:none; margin:0; padding:0;}

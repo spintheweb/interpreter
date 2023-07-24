@@ -24,23 +24,8 @@ export default class Content extends Base {
         this._serverHandler = null; // Server side code (TODO: Predefined CRUD handlers)
     }
 
-    CSSClass(value, lang) {
-        if (typeof value === 'undefined') {
-            let layout = this.Layout(lang);
-            if (layout && layout.attrs) {
-                let attrs = '';
-                Object.keys(layout.attrs).forEach(key => {
-                    if (key === 'class' && this.cssClass)
-                        attrs += `class="${this.cssClass} ${layout.attrs.class}" `;
-                    else
-                        attrs += `${key}="${layout.attrs[key]}" `;
-                });
-                return attrs;
-            }
-            return `class="${this.cssClass}"`;
-        }
-        this.cssClass = value.toString();
-        return this;
+    CSSClass() {
+        return this.cssClass ? `class="${this.cssClass}"` : '';
     }
     Section(value, sequence) {
         if (typeof value === 'undefined') return this.section;
@@ -151,7 +136,7 @@ export default class Content extends Base {
                     fragment += `<footer>${layout.settings.footer}</footer>`;
             } else
                 fragment = body(req, layout);
-                
+
             res.send({ type: 'text/html', id: this._id, section: this.section, sequence: this.sequence, body: fragment });
 
         } else

@@ -3,7 +3,7 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from './Miscellanea.mjs';
+import { WEBBASE, INDEX } from './Miscellanea.mjs';
 import Base from './Base.mjs';
 import Page from './Page.mjs';
 
@@ -30,8 +30,10 @@ export default class Area extends Base {
 	}
 
 	Render(req, res, next) {
-		if (this.mainpage)
-			return this.mainpage.Render(req, res, next);
-		res.end();
+		let page = req.app[WEBBASE][INDEX].get(this.mainpage);
+		if (page)
+			return page.Render(req, res, next);
+
+		res.status(204).send({}); // 204 No content
 	}
 }
