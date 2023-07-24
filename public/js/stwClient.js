@@ -1,6 +1,6 @@
 /*!
- * stw-client.js
- * Copyright(c) 2017- Giancarlo Trevisan
+ * stwClient.js
+ * Copyright(c) 2023 - Giancarlo Trevisan
  * MIT Licensed
  */
 window.onload = function () {
@@ -14,6 +14,7 @@ window.onload = function () {
                     return res.json();
             })
             .then(content => {
+                // [TODO] Manage sequence
                 let section = document.getElementById(content.section);
 
                 section.insertAdjacentHTML('beforeend', content.body);

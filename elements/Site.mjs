@@ -10,9 +10,8 @@ import language from 'accept-language-parser';
 import { WEBBASE, PATH, INDEX } from './Miscellanea.mjs';
 import Area from './Area.mjs';
 import Page from './Page.mjs';
-import Group from './Group.mjs';
 
-import contentFactory from '../contents/Contents.mjs';
+import contentFactory from '../contents/contentFactory.mjs';
 
 export default class Site extends Area {
     constructor(params = {}) {
@@ -56,8 +55,6 @@ export default class Site extends Area {
                         typedChild = new Area();
                     else if (obj.children[i].type === 'Page')
                         typedChild = new Page();
-                    else if (obj.children[i].type === 'Group')
-                        typedChild = new Group();
                     else
                         typedChild = contentFactory.create(obj.children[i].subtype);
 

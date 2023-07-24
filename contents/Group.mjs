@@ -4,13 +4,12 @@
  * MIT Licensed
  */
 import { WEBBASE } from './Miscellanea.mjs';
-import Base from './Base.mjs';
 import Content from './Content.mjs';
 
-export default class Group extends Base {
+export default class Group extends Content {
     constructor(params = {}) {
         super(params);
-		this.cssClass = 'stwGroup';
+		delete this.cssClass;
         this.section = params.section || '';
         this.sequence = params.sequence || 1;
     }
