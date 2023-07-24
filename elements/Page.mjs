@@ -41,10 +41,11 @@ export default class Page extends Base {
 				walk(node.Parent(), contents);
 			})(this.Parent(), contents);
 
+			res.cookie('stwPage', this._id);
 			res.cookie('stwContents', contents.join(','));
 			res.header('Content-Type', this.contentType);
 			res.sendFile(join(process.cwd(), 'public', this.Template()));
 		} else
-			next();
+			res.status(204).send({}); // 204 No content
 	}
 }

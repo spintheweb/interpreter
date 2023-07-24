@@ -20,6 +20,11 @@ export default class Base {
 		this.visibility = params.visibility || {}; // [role: { false | true }] Role Based Visibilities
 		this[WEBBASE] = this.constructor.name === 'Site' ? this : null;
 	}
+
+	Name(lang) {
+		return this.name[lang] || this.name[0];		
+	}
+
 	Parent() {
 		return this[WEBBASE][INDEX].get(this._idParent);
 	}

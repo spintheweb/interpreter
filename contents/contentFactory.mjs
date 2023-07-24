@@ -3,6 +3,7 @@
  * Copyright(c) 2023 Giancarlo Trevisan
  * MIT Licensed
  */
+import Breadcrumbs from './Breadcrumbs.mjs';
 import Text from './Text.mjs';
 
 /*
@@ -17,6 +18,7 @@ fs.readdirSync(path.join(process.cwd(), 'contents')).forEach(async module => {
 const contentFactory = {
     contents: {
         Text: Text, // Default content
+        Breadcrumbs: Breadcrumbs
     },
     create(name, params) {
         let content = this.contents[name] || this.contents['Text'];

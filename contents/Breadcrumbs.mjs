@@ -3,7 +3,7 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from '../elements/Miscellanea.mjs';
+import { WEBBASE, INDEX } from '../elements/Miscellanea.mjs';
 import Content from '../elements/Content.mjs';
 
 export default class Breadcrumbs extends Content {
@@ -11,21 +11,15 @@ export default class Breadcrumbs extends Content {
 		super(name, template, lang, true);
 	}
 
-	Render(socket) {
-		return super.Render(socket, socket => {
-			let path = [], element = this[WEBBASE].route(socket.data.url.pathname);
+	Render(req, res, next) {
+		return super.Render(req, res, next, () => {
+			let element = this[WEBBASE][INDEX].get(req.res.locals.cookie.stwPage);
+			let fragment = element.Name(req.session.lang);
 
-			// Walk up to the webbase
-			for (; element.Parent(); path.unshift(element), element = element.Parent());
+			for (element = element.Parent(); element.type !== 'Site'; element = element.Parent())
+				fragment = `<a href="/${element.slug}">${element.Name(req.session.lang)}</a><i class="fas fa-fw fa-angle-right"></i>${fragment}` 
 
-			let fragment = '<nav><i class="far fa-fw fa-compass"></i> ';
-			fragment += path.map((element, i) => {
-				if (!i)
-					return `<a href="/" onclick="stwHref(event)">${element.name()}</a>`;
-				return `<a href="/${element.slug}" onclick="stwHref(event)">${element.name()}</a>`;
-			}).join(' <i class="fas fa-fw fa-angle-right"></i> ');
-			fragment += '</nav>';
-			return fragment;
+			return `<nav>${fragment}</nav>`;
 		});
 	}
 }
