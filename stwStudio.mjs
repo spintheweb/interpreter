@@ -15,6 +15,16 @@ import Text from './contents/Text.mjs';
 
 const router = express.Router();
 
+// Persist webbase
+router.put('/wbdl/persist', (req, res, next) => {
+    const webbase = JSON.stringify(req.app[WEBBASE]);
+    fs.writeFile(req.app[WEBBASE][PATH], webbase, { flag: 'w+' }, err => {
+        if (err)
+            throw 503; // 503 Service Unavailable
+    });
+    res.send(204); // 204 No Content 
+});
+
 router.get('/', (req, res, next) => {
     res.sendFile(path.join(STUDIO_DIR, 'index.html'));
     next();
@@ -25,6 +35,7 @@ router.get('/public/*', (req, res) => {
     res.sendFile(path.join(SITE_DIR, req.params[0]));
 });
 
+// [TODO] Replace
 router.post('/wbdl/search/:lang', (req, res) => {
     let found = [],
         pattern = new RegExp(`"\\w+?":".*?${req.body.text}.*?"`,
@@ -95,8 +106,9 @@ router.post('/wbdl/visibility/:_id', (req, res) => {
         let node = req.app[WEBBASE][INDEX].get(req.params._id),
             status = req.body;
 
-        node.visibility[status.role.replace(/[^a-zA-Z]/g, '')] = status.visibility;
-        if (!status.visibility)
+        status.role = status.role.replace(/[^a-zA-Z]/g, '').toLowerCase();
+        node.visibility[status.role] = status.visibility;
+        if (node.type !== 'Site' && status.visibility === null)
             delete node.visibility[status.role];
 
         res.json({ _id: req.params._id });
@@ -140,12 +152,6 @@ router.post('/wbdl/:lang/:_id/:type?', (req, res) => {
                         node[obj] = { [req.params.lang]: newNode[obj] };
                     else
                         node[obj] = newNode[obj];
-
-        const webbase = JSON.stringify(req.app[WEBBASE]);
-        fs.writeFile(req.app[WEBBASE][PATH], webbase, { flag: 'w+' }, err => {
-            if (err)
-                throw 503; // 503 Service Unavailable
-        });
 
         res.json(node);
 

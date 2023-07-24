@@ -7,9 +7,6 @@ window.onload = function () {
     // Request page contents
     let stwContents = decodeURIComponent(document.cookie.split('; ').find(row => row.startsWith('stwContents='))?.split('=')[1]);
 
-    if (stwContents === '')
-        return;
-
     stwContents.split(',').forEach(_id => {
         fetch(`/${_id}?${location.search}`)
             .then(res => {

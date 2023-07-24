@@ -12,7 +12,7 @@ export default class Area extends Base {
 		super(params);
 		this.keywords = params.keywords || {};
 		this.description = params.description || {};
-		this.mainpage = params.mainpage;
+		this.mainpage = params.mainpage || '';
 	}
 	Mainpage(value) {
 		if (typeof value === 'undefined')

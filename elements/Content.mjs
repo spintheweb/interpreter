@@ -15,7 +15,7 @@ export default class Content extends Base {
         this.cssClass = `stw${this.constructor.name}`;
         this.section = params.section || '';
         this.sequence = params.sequence || 1;
-        this.datasource = params.datasource || '';
+        this.dsn = params.dsn || '';
         this.query = params.query || '';
         this.params = params.params || '';
         this.layout = { [params.lang]: params.layout };

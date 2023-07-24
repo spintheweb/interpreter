@@ -3,14 +3,14 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from '../elements/Miscellanea.mjs';
-import Content from '../elements/Content.mjs';
+import { WEBBASE } from './Miscellanea.mjs';
+import Content from './Base.mjs';
 
-export default class Reference extends Content {
+export default class Reference extends Base {
 	constructor(ref) {
 		super(ref.name());
-		this.cssClass = ref.cssClass;
 		this.ref = ref;
+		delete this.children;
 	}
 
 	Render(req, res, next) {

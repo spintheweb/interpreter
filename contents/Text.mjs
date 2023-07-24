@@ -16,9 +16,12 @@ export default class Text extends Content {
 	Render(req, res, next) {
 		let fragment = this.Layout(req.session.lang);
 
-		if (this.datasource) {
-			
+		if (this.dsn) {
+
 		}
+
+		if (this.cssClass)
+			fragment = `<div class="${this.cssClass}">${fragment}</div>`;
 
 		res.send({ type: 'text/plain', id: this._id, section: this.section, sequence: this.sequence, body: fragment });
 	}

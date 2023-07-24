@@ -1,7 +1,7 @@
 <article class="stwTree" id="datasources" onclick="stwStudio.manageDatasource(event)">
     <h1><i class="fa fa-fw fa-nothing"></i> datasources
         <span>
-            <i class="fa fa-fw fa-arrow-rotate-right" title="Refresh" data-action="refresh"></i>
+            <i class="fa-solid fa-fw fa-rotate" title="Refresh" data-action="refresh"></i>
             <i class="fa fa-fw fa-plus" title="Add datasource" data-action="addSource"></i>
         </span>
     </h1>
@@ -9,17 +9,25 @@
         <i class="fa fa-sync fa-spin fa-2x"></i>
     </div>
 </article>
-<article class="stwForm" id="properties" onclick="stwStudio.manageProperties(event, 'datasources')" style="display:none">
+<article class="stwForm" id="properties" onclick="stwStudio.manageProperties(event, 'datasources')"
+    style="display:none">
     <h1><i class="fa fa-fw fa-angle-down"></i> properties
         <span>
             <i class="fa-regular fa-fw fa-trash-can" title="Trash" data-action="trash"></i>
-            <i class="fa-solid fa-fw fa-expand" title="Expand (F2)" data-action="Expand"></i><!--[TODO] interact with datasource-->
+            <i class="fa-solid fa-fw fa-expand" title="Expand (F2)"
+                data-action="Expand"></i><!--[TODO] interact with datasource-->
         </span>
     </h1>
     <form>
         <ul>
-            <li><label>Name</label><input type="text" name="name" placeholder="Name" title="Name" pattern="[a-z]{3,}" required></li>
-            <li><label>Connection string</label><textarea name="description" placeholder="Connection string" title="Connection string"></textarea></li>
+            <li><label>Name</label><input type="text" name="name" placeholder="Name" title="Name" pattern="[a-z]{3,}"
+                    required></li>
+            <li><label>Type</label><select name="type" required>
+                <option value="json">JSON</option>
+                <option value="xml">XML</option>
+                <option value="mssql">MS SQL Server</option>
+            </select></li>
+            <li><label>Details</label><textarea name="details" placeholder="details" title="May be actual formatted data or connection string specifications"></textarea></li>
         </ul>
     </form>
 </article>

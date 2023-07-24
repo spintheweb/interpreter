@@ -1,7 +1,8 @@
 <article class="stwTree" id="webbase" onclick="stwStudio.manageWebbase(event)">
     <h1><i class="fa fa-fw fa-nothing"></i> webbase
         <span>
-            <i class="fa fa-fw fa-arrow-rotate-right" title="Refresh" data-action="refresh"></i>
+            <i class="fa-regular fa-fw fa-floppy-disk" title="Save webbase" data-action="persist"></i>
+            <i class="fa-solid fa-fw fa-rotate" title="Refresh" data-action="refresh"></i>
             <i class="fa-regular fa-fw fa-folder" title="New area" data-action="Area"></i>
             <i class="fa-regular fa-fw fa-file" title="New page" data-action="Page"></i>
             <i class="fa-regular fa-fw fa-square" title="New content" data-action="Content"></i>
@@ -89,11 +90,9 @@
                     <option value="-901">Server side code</option>
                 </select></li>
             <li><label>Data source</label><select name="dsn" title="Datasource">
-                    <option></option>
-                    <option value="webbase">Webbase</option>
                 </select></li>
             <li><textarea name="query" placeholder="Query" title="Query"></textarea>
-                <input type="text" name="parameters" placeholder="key=value" title="Parameters">
+                <input type="text" name="params" placeholder="key=value" title="Parameters">
             </li>
             <li><label>Layout</label><textarea name="layout" placeholder="Layout" title="Layout"></textarea></li>
         </ul>

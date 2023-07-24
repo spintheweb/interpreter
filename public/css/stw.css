@@ -54,7 +54,7 @@ article.stwContent {position:relative; padding:0.25em; border: thin dashed trans
 .stwTree .stwBody>ul {margin:0;}
 .stwTree li>div {padding:0.25em; cursor:pointer;}
 
-.stwCalendar ul {list-style-type:none; margin:0em; padding:0;}
+.stwCalendar ul {list-style-type:none; margin:0; padding:0;}
 .stwCalendar li {display:inline-block; padding:0.5em; min-width:3em; text-align:center;}
 .stwWeekday {color:var(--special); border-top:2px solid #f0f0f0;}
 .stwWeedday > div {font-size:0.50em;}

@@ -6,15 +6,6 @@ const stwStudio = {
         'II': '<i class="far fa-fw fa-square" title="Inherited invisibility"></i>'
     },
     setup: (settings = {}) => {
-        /* [TODO] Load WBDL
-        fetch('http://127.0.0.1:8080', { method: 'CONNECT' })
-            .then(res => {
-                console.log(res.status, res.statusText)
-            })
-            .catch(err => {
-                console.log(err);
-            });
-        */
         document.getElementById('BrowseURL').value = document.location.origin;
         document.getElementById('Browse').src = document.location.origin;
 
@@ -144,7 +135,7 @@ const stwStudio = {
             });
     },
     loadForm: (form, data) => {
-        for (let input of form) {
+        for (let input of form.elements) {
             let li = form.querySelector(`[name="${input.name}"]`).closest('li');
 
             if (data[input.name] === undefined) {
@@ -348,6 +339,10 @@ const stwStudio = {
 
                 if (event.target.dataset.action === 'refresh') {
                     stwStudio.loadFile('/studio/panels/webbase.html', document.querySelector('section.stwPanel'), stwStudio.renderPanel);
+
+                } else if (event.target.dataset.action === 'persist') {
+                    fetch('/studio/wbdl/persist', { method: 'PUT' })
+                        .catch(err => console.log(err));
 
                 } else if (event.target.dataset.action === 'trashed') {
                     if (event.target.className === 'fa-solid fa-fw fa-trash-can')
