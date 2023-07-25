@@ -90,7 +90,7 @@ export default class Content extends Base {
         return this;
     }
     add(child) {
-        if (!child || child == this || child.constructor.name === 'Site')
+        if (!child || child == this || child.constructor.name === 'Webo')
             return this;
 
         if (child instanceof Content)

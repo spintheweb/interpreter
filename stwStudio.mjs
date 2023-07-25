@@ -8,7 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import git from 'simple-git';
 
-import { WEBBASE, PATH, INDEX, STUDIO_DIR, SITE_DIR } from './elements/Miscellanea.mjs';
+import { WEBBASE, PATH, INDEX, STUDIO_DIR, WEBO_DIR } from './elements/Miscellanea.mjs';
 import Area from './elements/Area.mjs';
 import Page from './elements/Page.mjs';
 import Text from './contents/Text.mjs';
@@ -42,7 +42,7 @@ router.get('/', (req, res, next) => {
 
 // Load /public static files
 router.get('/public/*', (req, res) => {
-    res.sendFile(path.join(SITE_DIR, req.params[0]));
+    res.sendFile(path.join(WEBO_DIR, req.params[0]));
 });
 
 router.get('/wbdl/permalink/:_id', (req, res) => {
@@ -123,7 +123,7 @@ router.post('/wbdl/visibility/:_id', (req, res) => {
 
         status.role = status.role.replace(/[^a-zA-Z]/g, '').toLowerCase();
         node.visibility[status.role] = status.visibility;
-        if (node.type !== 'Site' && status.visibility === null)
+        if (node.type !== 'Webo' && status.visibility === null)
             delete node.visibility[status.role];
 
         res.json({ _id: req.params._id });
@@ -180,7 +180,7 @@ router.get('/fs(/:path)?', async (req, res) => {
 });
 
 router.post('/fs/public(/*)', (req, res) => {
-    fs.writeFile(path.join(SITE_DIR, req.params[1]), req.body, { flag: 'w+' }, err => {
+    fs.writeFile(path.join(WEBO_DIR, req.params[1]), req.body, { flag: 'w+' }, err => {
         if (err)
             throw 503; // 503 Service Unavailable
     });

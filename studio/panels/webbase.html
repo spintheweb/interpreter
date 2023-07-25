@@ -70,7 +70,7 @@
             <li><label>CSS class</label><input type="text" name="cssClass" placeholder="CSS class" title="CSS class">
             </li>
             <li><label>Type</label><select name="subtype" title="Type">
-                    <option value="Text" data-value="-100">Text</option>
+                    <option value="Text" data-value="-100" selected>Text</option>
                     <option value="-500" disabled>Form</option>
                     <option value="-300" disabled>Table</option>
                     <option value="-200" disabled>List</option>
@@ -91,6 +91,7 @@
                     <option value="-901" disabled>Server side code</option>
                 </select></li>
             <li><label>Data source</label><select name="dsn" title="Datasource">
+                    <option value="" disabled selected>datasource</option>
                 </select></li>
             <li><textarea name="query" placeholder="Query" title="Query"></textarea>
                 <input type="text" name="params" placeholder="key=value" title="Parameters">

@@ -1,5 +1,5 @@
 /*!
- * Site
+ * Webo
  * Copyright(c) 2020 Giancarlo Trevisan
  * MIT Licensed
  */
@@ -13,7 +13,7 @@ import Page from './Page.mjs';
 
 import contentFactory from '../contents/contentFactory.mjs';
 
-export default class Site extends Area {
+export default class Webo extends Area {
     constructor(params = {}) {
         super(params);
         delete this.slug;
@@ -41,7 +41,7 @@ export default class Site extends Area {
         if (params.webbase && fs.existsSync(params.webbase))
             webbase = fs.readFileSync(params.webbase);
         else
-            webbase = '{"_id":"169ecfb0-2916-11ee-ad92-6bd31f953e80","type":"Site","status":"M","name":{"en":"Hello World"},"slug":{"en":"Site"},"children":[{"_id":"169ecfb1-2916-11ee-ad92-6bd31f953e80","type":"Page","status":"U","name":{"en":"Home"},"slug":{"en":"Home"},"children":[{"_id":"169ecfb2-2916-11ee-ad92-6bd31f953e80","type":"Content","status":"U","name":{"en":"Hello World"},"slug":{"en":"HelloWorld"},"children":[],"visibility":{},"subtype":"Text","cssClass":null,"section":"","sequence":1,"dsn":"","query":"","params":"","layout":{"en":"Hello World from Spin The Web&trade;!"},"_clientHandler":null,"_serverHandler":null,"_idParent":"169ecfb1-2916-11ee-ad92-6bd31f953e80"}],"visibility":{},"keywords":{},"description":{},"contentType":"text/html","template":"index.html","_idParent":"169ecfb0-2916-11ee-ad92-6bd31f953e80"}],"visibility":{"administrators":true,"developers":true,"translators":false,"guests":true,"users":true,"webmasters":false},"mainpage":"169ecfb1-2916-11ee-ad92-6bd31f953e80","langs":["en"],"datasources":{"json":{"mime":"application/json","data":{}}}}';
+            webbase = '{"_id":"169ecfb0-2916-11ee-ad92-6bd31f953e80","type":"Webo","status":"M","name":{"en":"Hello World"},"slug":{"en":"Webo"},"children":[{"_id":"169ecfb1-2916-11ee-ad92-6bd31f953e80","type":"Page","status":"U","name":{"en":"Home"},"slug":{"en":"Home"},"children":[{"_id":"169ecfb2-2916-11ee-ad92-6bd31f953e80","type":"Content","status":"U","name":{"en":"Hello World"},"slug":{"en":"HelloWorld"},"children":[],"visibility":{},"subtype":"Text","cssClass":null,"section":"","sequence":1,"dsn":"","query":"","params":"","layout":{"en":"Hello World from Spin The Web&trade;!"},"_clientHandler":null,"_serverHandler":null,"_idParent":"169ecfb1-2916-11ee-ad92-6bd31f953e80"}],"visibility":{},"keywords":{},"description":{},"contentType":"text/html","template":"index.html","_idParent":"169ecfb0-2916-11ee-ad92-6bd31f953e80"}],"visibility":{"administrators":true,"developers":true,"translators":false,"guests":true,"users":true,"webmasters":false},"mainpage":"169ecfb1-2916-11ee-ad92-6bd31f953e80","langs":["en"],"datasources":{"json":{"mime":"application/json","data":{}}}}';
 
         this[WEBBASE] = Object.assign(this[WEBBASE], JSON.parse(webbase));
 
@@ -157,7 +157,7 @@ export default class Site extends Area {
         return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${fragment}</sitemapindex>`;
 
         function _url(element) {
-            if (['Site', 'Area'].indexOf(element.constructor.name) !== -1 && element.children.length > 0)
+            if (['Webo', 'Area'].indexOf(element.constructor.name) !== -1 && element.children.length > 0)
                 element.children.forEach(child => _url(child));
             else if (element.constructor.name === 'Page' && element.granted(req.user) & 0b01 === 0b01)
                 fragment += `<url><loc>${element.webbase.name(undefined, lang)}${element.slugSlug(true)}</loc><changefreq>always</changefreq><priority>0.5</priority></url>`;

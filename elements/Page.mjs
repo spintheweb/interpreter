@@ -33,7 +33,7 @@ export default class Page extends Base {
 		if (this.granted(req.session.roles) & 0b01 === 0b01) {
 			let contents = this.children.filter(content => content.section && content.granted(req.session.roles)).map(content => content._id);
 
-			// Collect contents children of Areas and Site
+			// Collect contents children of Areas and Webo
 			(function walk(node, contents) {
 				if (!node)
 					return;

@@ -2,7 +2,6 @@
 node_modules
 !.gitignore
 trash
-studio/dev/*
 public/cert/*.pem
 public/data/*.json
 package-lock.json

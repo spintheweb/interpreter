@@ -18,7 +18,7 @@ export default class Base {
 		this.slug = { [params.lang]: this.name[params.lang].replace(/[^a-z0-9_]/gi, '').toLowerCase() };
 		this.children = [];
 		this.visibility = params.visibility || {}; // [role: { false | true }] Role Based Visibilities
-		this[WEBBASE] = this.constructor.name === 'Site' ? this : null;
+		this[WEBBASE] = this.constructor.name === 'Webo' ? this : null;
 	}
 
 	Name(lang) {
@@ -57,7 +57,7 @@ export default class Base {
 			let obj = this.Parent();
 			if (obj)
 				ac = 0b10 | obj.granted(roles, role, true);
-			else if (['Site', 'Area', 'Page'].indexOf(this.constructor.name) === -1) // Content
+			else if (['Webo', 'Area', 'Page'].indexOf(this.constructor.name) === -1) // Content
 				ac = 0b10; // NOTE: this covers contents without a parent nor a RBV, it's in limbo!
 		}
 
@@ -66,7 +66,7 @@ export default class Base {
 
 	// Add child to element, note, we are adding a child not moving it
 	add(child) {
-		if (child && child.constructor.name !== 'Site' && child !== this && this.children.indexOf(child) === -1) {
+		if (child && child.constructor.name !== 'Webo' && child !== this && this.children.indexOf(child) === -1) {
 			child._idParent = this._id;
 			child[WEBBASE] = this[WEBBASE];
 			this.children.push(child);
@@ -80,7 +80,7 @@ export default class Base {
 	// Deep copy element, note, the webbase cannot be copied, use write() instead
 	copy() {
 		let obj;
-		if (this.constructor.name !== 'Site')
+		if (this.constructor.name !== 'Webo')
 			obj = new this.constructor();
 		return obj;
 	}

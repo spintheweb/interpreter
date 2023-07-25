@@ -14,7 +14,7 @@ export default class Reference extends Base {
 	}
 
 	Render(req, res, next) {
-		if (this.ref.constructor.name !== 'Site' && this.granted(socket.target.user) & 0b01)
+		if (this.ref.constructor.name !== 'Webo' && this.granted(socket.target.user) & 0b01)
 			return this.ref.Render(socket);
 	}
 }

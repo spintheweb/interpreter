@@ -330,7 +330,7 @@ li[data-type]>div>span:nth-child(2)::before {
     text-align: center;
 }
 
-li[data-type=Site]>div>span:nth-child(2)::before {
+li[data-type=Webo]>div>span:nth-child(2)::before {
     content: "\f0ac";
 }
 

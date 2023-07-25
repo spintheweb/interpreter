@@ -1,7 +1,7 @@
 {
-    "protocol": "https",
+    "protocol": "http",
     "hostname": "127.0.0.1",
-    "port": 443,
+    "port": 8080,
     "secret": "Spin the Web",
     "webbase": "data/webbase.json",
     "users": "data/users.json",

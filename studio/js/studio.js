@@ -213,7 +213,7 @@ const stwStudio = {
                         } else {
                             document.getElementById('webbase').lastElementChild.remove();
                             document.getElementById('webbase').insertAdjacentHTML('beforeend', `<ul>${stwStudio.renderTree(json)}</ul>`);
-                            document.querySelector('li[data-type=Site]>div').click();
+                            document.querySelector('li[data-type=Webo]>div').click();
                         }
                     })
                     .catch(err => {

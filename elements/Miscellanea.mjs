@@ -10,7 +10,7 @@ export const INDEX = Symbol('index');
 export const PATH = Symbol('path')
 
 export const ROOT_DIR = process.cwd();
-export const SITE_DIR = path.join(ROOT_DIR, 'public');
+export const WEBO_DIR = path.join(ROOT_DIR, 'public');
 export const STUDIO_DIR = path.join(ROOT_DIR, 'studio');
 
 // Return langs RFC 3282 as a language array sorted by preference

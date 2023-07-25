@@ -1,18 +1,18 @@
 [
     {
-        "user": "administrator",
-        "password": "hash",
+        "name": "administrator",
+        "password": "password",
         "enabled": true,
         "roles": [
             "administrators"
         ]
     },
     {
-        "user": "user",
-        "password": "hash",
+        "name": "user",
+        "password": "password",
         "enabled": true,
         "roles": [
-            "users"
+            "users", "developers"
         ]
     }
 ]

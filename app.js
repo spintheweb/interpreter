@@ -12,14 +12,18 @@ import session from 'express-session';
 import language from 'accept-language-parser';
 
 import stwStudio from './stwStudio.mjs';
-import { WEBBASE, SITE_DIR, STUDIO_DIR } from './elements/Miscellanea.mjs';
-import Site from './elements/Site.mjs';
+import stwAuth from './stwAuth.mjs';
+import { WEBBASE, WEBO_DIR, STUDIO_DIR } from './elements/Miscellanea.mjs';
+import Webo from './elements/Webo.mjs';
 
-let settings = JSON.parse(fs.readFileSync(path.join(SITE_DIR, 'settings.json')) || '{"protocol":"http","hostname":"127.0.0.0","port":"80"}');
+let settings = JSON.parse(fs.readFileSync(path.join(WEBO_DIR, 'settings.json')) || '{"protocol":"http","hostname":"127.0.0.0","port":"80"}');
 
 const app = express();
 
-app[WEBBASE] = new Site({ webbase: path.join(SITE_DIR, settings.webbase) });
+app[WEBBASE] = new Webo({ webbase: path.join(WEBO_DIR, settings.webbase) });
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 app.use(session({
     resave: true,
@@ -30,7 +34,7 @@ app.use(session({
 app.use((req, res, next) => {
     if (!req.session.user) {
         req.session.user = 'guest';
-        req.session.roles = ['guests', 'developers'];
+        req.session.roles = ['guests'];
     }
 
     const { headers: { cookie } } = req;
@@ -41,17 +45,13 @@ app.use((req, res, next) => {
         }, {});
         res.locals.cookie = values;
     }
-    else res.locals.cookie = {};
+    else 
+        res.locals.cookie = {};
     next();
 });
 
-app.use(express.json());
-app.use(express.text());
-
 app.use('/studio', stwStudio);
-
-app.all('/cert/*', (req, res, next) => res.redirect('/'));
-app.all('/data/*', (req, res, next) => res.redirect('/'));
+app.use('/stw', stwAuth);
 
 app.get('/*', (req, res, next) => {
     req.session.lang = language.pick(req.app[WEBBASE].langs, req.headers['accept-language']);
@@ -62,13 +62,13 @@ app.get('/*', (req, res, next) => {
     else
         next();
 });
-app.use(express.static(SITE_DIR));
+app.use(express.static(WEBO_DIR));
 
 let server;
 if (settings.protocol === 'https')
     server = https.createServer({
-        key: fs.readFileSync(path.join(SITE_DIR, settings.options.key)),
-        cert: fs.readFileSync(path.join(SITE_DIR, settings.options.cert))
+        key: fs.readFileSync(path.join(WEBO_DIR, settings.options.key)),
+        cert: fs.readFileSync(path.join(WEBO_DIR, settings.options.cert))
     }, app);
 else
     server = http.createServer(app);
