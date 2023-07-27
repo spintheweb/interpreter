@@ -38,14 +38,14 @@ export default class Page extends Base {
 				if (!node)
 					return;
 				node.children.filter(content => content.section && content.granted(req.session.roles) & 0b01 == 0b01).map(content => contents.push(content._id));
-				walk(node.Parent(), contents);
-			})(this.Parent(), contents);
+				walk(node.parent, contents);
+			})(this.parent, contents);
 
 			res.cookie('stwPage', this._id);
 			res.cookie('stwContents', contents.join(','));
 			res.header('Content-Type', this.contentType);
 			res.sendFile(join(process.cwd(), 'public', this.Template()));
 		} else
-			res.status(204).send({}); // 204 No content
+			res.sendStatus(204); // 204 No content
 	}
 }

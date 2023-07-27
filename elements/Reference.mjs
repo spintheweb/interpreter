@@ -8,7 +8,7 @@ import Content from './Base.mjs';
 
 export default class Reference extends Base {
 	constructor(ref) {
-		super(ref.name());
+		super(ref.localizedName());
 		this.ref = ref;
 		delete this.children;
 	}

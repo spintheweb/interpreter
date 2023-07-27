@@ -18,7 +18,7 @@ const router = express.Router();
 // Only developers are allowed to use the studio
 router.all('/*', (req, res, next) => {
     if (!req.session.roles.includes('developers'))
-        res.redirect('..');
+        res.redirect('../');
     else
         next();
 });
@@ -32,7 +32,7 @@ router.put('/wbdl/persist', (req, res, next) => {
         if (err)
             throw 503; // 503 Service Unavailable
     });
-    res.send(204); // 204 No Content 
+    res.sendStatus(204); // 204 No Content 
 });
 
 router.get('/', (req, res, next) => {
@@ -47,7 +47,7 @@ router.get('/public/*', (req, res) => {
 
 router.get('/wbdl/permalink/:_id', (req, res) => {
     let element = req.app[WEBBASE][INDEX].get(req.params._id);
-    res.send(element ? element.Permalink(req.session.lang) : '');
+    res.send(element ? element.permalink(req.session.lang) : '');
 });
 
 // [TODO] Replace
@@ -180,11 +180,13 @@ router.get('/fs(/:path)?', async (req, res) => {
 });
 
 router.post('/fs/public(/*)', (req, res) => {
-    fs.writeFile(path.join(WEBO_DIR, req.params[1]), req.body, { flag: 'w+' }, err => {
-        if (err)
-            throw 503; // 503 Service Unavailable
+    fs.writeFileSync(path.join(WEBO_DIR, req.params[1]), req.body, { flag: 'w+' }, err => {
+        if (err) {
+            res.sendStatus(503); // 503 Service Unavailable
+            return;
+        }
     });
-    res.end();
+    res.sendStatus(204); // 204 No content
 });
 
 router.get('/git/status', async (req, res) => {

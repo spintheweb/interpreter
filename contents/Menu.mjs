@@ -14,9 +14,9 @@ export default class Menu extends Content {
 
 	add(child) {
 		if (child && child !== this && this.children.indexOf(child) === -1) {
-			if (child.Parent() || child.constructor.name === 'Webo')
+			if (child.parent || child.constructor.name === 'Webo')
 				child = new Reference(child);
-			child.Parent() = this;
+			child.parent = this;
 			child.webbase = this.webbase;
 			this.children.push(child);
 		}
@@ -30,11 +30,11 @@ export default class Menu extends Content {
 				if (option.constructor.name === 'Reference') {
 					if (option.ref.constructor.name === 'Page') {
 						if (option.granted(socket.target.user) & 0b01)
-							options += `<li class="stwMenuOption"><a href="/${option.slug}" onclick="stwHref(event)">${option.name()}</a></li>`;
+							options += `<li class="stwMenuOption"><a href="/${option.slug}" onclick="stwHref(event)">${option.localizedName()}</a></li>`;
 					} else if (['Webo', 'Area'].indexOf(option.ref.constructor.name) !== -1) {
 						option.ref.children.forEach(suboption => {
 							if (suboption.constructor.name === 'Page' && suboption.granted(socket.target.user) & 0b01)
-								options += `<li class="stwMenuOption"><a href="/${suboption.slug}" onclick="stwHref(event)">${suboption.name()}</a></li>`;
+								options += `<li class="stwMenuOption"><a href="/${suboption.slug}" onclick="stwHref(event)">${suboption.localizedName()}</a></li>`;
 						});
 					}
 				} else if (option instanceof Content) {

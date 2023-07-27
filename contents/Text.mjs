@@ -14,15 +14,18 @@ export default class Text extends Content {
 	}
 
 	Render(req, res, next) {
-		let fragment = this.Layout(req.session.lang);
+		if (this.granted(req.session.roles) & 0b01) {
+			let fragment = this.Layout(req.session.lang);
 
-		if (this.dsn) {
+			if (this.dsn) {
 
-		}
+			}
 
-		if (this.cssClass)
-			fragment = `<div class="${this.cssClass}">${fragment}</div>`;
+			if (this.cssClass)
+				fragment = `<div class="${this.cssClass}">${fragment}</div>`;
 
-		res.send({ type: 'text/plain', id: this._id, section: this.section, sequence: this.sequence, body: fragment });
+			res.send({ id: this._id, section: this.section, sequence: this.sequence, body: fragment });
+		} else
+			res.sendStatus(204); // 204 No content
 	}
 }

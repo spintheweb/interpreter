@@ -34,6 +34,6 @@ export default class Area extends Base {
 		if (page)
 			return page.Render(req, res, next);
 
-		res.status(204).send({}); // 204 No content
+		res.sendStatus(204); // 204 No content
 	}
 }

@@ -11,6 +11,10 @@
     --hideLabels: none;
 }
 
+.specialColor:hover {
+    background-color: rgb(var(--special)) !important;
+}
+
 .stwDark,
 .stwDark .stwPanel,
 .stwDark .stwTabs,

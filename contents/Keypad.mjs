@@ -11,10 +11,10 @@ export default class Keypad extends Content {
 		super(name, template || 'abcdefghijklmnopqrstuvwxyz', lang);
 	}
 
-	Render(socket) {
-		return super.Render(socket, (socket, template) => {
+	Render(req, res, next) {
+		return super.Render(req, res, next, () => {
 			let fragment = '';
-			this.template(socket.target.lang).split('').forEach((c, i) => {
+			this.template(res.session.lang).split('').forEach((c, i) => {
 				if (c === '\n')
 					return fragment += '<br>';
 				return fragment += `<li data-ref="${c}">${c}</a></li>`;

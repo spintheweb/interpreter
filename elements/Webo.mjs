@@ -46,8 +46,11 @@ export default class Webo extends Area {
         this[WEBBASE] = Object.assign(this[WEBBASE], JSON.parse(webbase));
 
         let createIndex = (obj, _idParent = null) => {
+            delete obj._idParent;
+            Object.defineProperty(obj, '_idParent', { value: 'static', writable: true });
             obj._idParent = _idParent;
-            this[INDEX].set(obj._id, obj);
+
+            this[WEBBASE][INDEX].set(obj._id, obj);
             if (obj.children)
                 for (let i = 0; i < obj.children.length; ++i) {
                     let typedChild;
@@ -74,14 +77,6 @@ export default class Webo extends Area {
             return this.langs[0];
         if (value.search(/^[a-z][a-z](-[a-z][a-z])?$/i) !== -1)
             this.langs[0] = code.toLowerCase();
-        return this;
-    }
-
-    Langs(codes) {
-        if (typeof codes === 'undefined')
-            return this.langs;
-        if (value.search(/^[a-z][a-z](-[a-z][a-z])?$/i) !== -1 && !this.Langs.includes(code))
-            this.langs.push(code.toLowerCase());
         return this;
     }
 
@@ -114,7 +109,7 @@ export default class Webo extends Area {
             return pathname;
 
         if (/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(pathname))
-            return this[INDEX].get(pathname);
+            return this[WEBBASE][INDEX].get(pathname);
 
         return (function walk(slugs, node) {
             node = node.children.find(child => child.slug[lang] == slugs[0]);
@@ -152,15 +147,15 @@ export default class Webo extends Area {
             return `<?xml version="1.0" encoding="utf-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${fragment}</urlset>`;
         }
 
-        for (lang of this.Langs())
-            fragment += `<sitemap><loc>${this.name(undefined, lang)}?${lang}</loc></sitemap>`;
+        for (lang of this.langs)
+            fragment += `<sitemap><loc>${this.localizedName(undefined, lang)}?${lang}</loc></sitemap>`;
         return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${fragment}</sitemapindex>`;
 
         function _url(element) {
             if (['Webo', 'Area'].indexOf(element.constructor.name) !== -1 && element.children.length > 0)
                 element.children.forEach(child => _url(child));
             else if (element.constructor.name === 'Page' && element.granted(req.user) & 0b01 === 0b01)
-                fragment += `<url><loc>${element.webbase.name(undefined, lang)}${element.slugSlug(true)}</loc><changefreq>always</changefreq><priority>0.5</priority></url>`;
+                fragment += `<url><loc>${element.webbase.localizedName(undefined, lang)}${element.slugSlug(true)}</loc><changefreq>always</changefreq><priority>0.5</priority></url>`;
         }
     }
 }

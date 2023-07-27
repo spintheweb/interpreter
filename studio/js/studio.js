@@ -73,10 +73,10 @@ const stwStudio = {
             document.querySelector('#properties i[data-action="expand"]').click();
             event.preventDefault();
         }
-        if (event.key == 'Delete' && event.ctrlKey && document.getElementById('properties')) {
+        /* if (event.key == 'Delete' && event.ctrlKey && document.getElementById('properties')) {
             document.querySelector('#properties i[data-action="trash"]').click();
             event.preventDefault();
-        }
+        } */
         if (event.key == 'F5') {
             document.getElementById('Browse').src = document.getElementById('BrowseURL').value;
             event.preventDefault();
@@ -169,7 +169,7 @@ const stwStudio = {
         else
             form.slug.value = form.slug.value.toLowerCase().replace(/[^a-z]/g, '');
 
-        document.querySelector('#properties .fa-trash-can').className = data.status === 'T' ? 'fa-solid fa-fw fa-trash-can' : 'fa-regular fa-fw fa-trash-can';
+        // document.querySelector('#properties .fa-trash-can').className = data.status === 'T' ? 'fa-solid fa-fw fa-trash-can' : 'fa-regular fa-fw fa-trash-can';
     },
     loadFile: (path, destination, callback) => {
         fetch(path)
@@ -354,12 +354,12 @@ const stwStudio = {
                     fetch('/studio/wbdl/persist', { method: 'PUT' })
                         .catch(err => console.log(err));
 
-                } else if (event.target.dataset.action === 'trashed') {
+                /* } else if (event.target.dataset.action === 'trashed') {
                     if (event.target.className === 'fa-solid fa-fw fa-trash-can')
                         event.target.className = 'fa-regular fa-fw fa-trash-can';
                     else
                         event.target.className = 'fa-solid fa-fw fa-trash-can';
-                    event.currentTarget.querySelector('ul').classList.toggle('stwT');
+                    event.currentTarget.querySelector('ul').classList.toggle('stwT'); */
 
                 } else if (parent) {
                     fetch(`/studio/wbdl/${stwStudio.settings.lang}/${parent.dataset.id}/${event.target.dataset.action}`,
@@ -540,7 +540,7 @@ const stwStudio = {
 
         if (target.tagName === 'H1' && event.target.dataset.action) {
             switch (event.target.dataset.action) {
-                case 'trash':
+                /* case 'trash':
                     if (what === 'webbase' && event.currentTarget.querySelector('form')._idParent.value != '') {
                         if (event.currentTarget.querySelector('form').status.value != 'T')
                             event.currentTarget.querySelector('form').status.value = 'T';
@@ -549,7 +549,7 @@ const stwStudio = {
                                 return;
                         stwStudio.submitForm({ target: { form: event.currentTarget.querySelector('form') } });
                     }
-                    break;
+                    break; */
 
                 case 'clone':
                     // [TODO] Deep clone node

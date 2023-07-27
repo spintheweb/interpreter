@@ -18,15 +18,16 @@ export default class Base {
 		this.slug = { [params.lang]: this.name[params.lang].replace(/[^a-z0-9_]/gi, '').toLowerCase() };
 		this.children = [];
 		this.visibility = params.visibility || {}; // [role: { false | true }] Role Based Visibilities
+		
 		this[WEBBASE] = this.constructor.name === 'Webo' ? this : null;
 	}
 
-	Name(lang) {
-		return this.name[lang] || this.name[0];		
+	get parent() {
+		return this[WEBBASE][INDEX].get(this._idParent);
 	}
 
-	Parent() {
-		return this[WEBBASE][INDEX].get(this._idParent);
+	localizedName(lang) {
+		return this.name[lang] || this.name[0];
 	}
 
 	// Grant a role access control, if no access control is specified remove the role from the RBV list (Role Based Visibility).
@@ -54,7 +55,7 @@ export default class Base {
 					ac |= this.visibility[roles[i]] ? 0b01 : 0b00;
 
 		if (ac === null) {
-			let obj = this.Parent();
+			let obj = this.parent;
 			if (obj)
 				ac = 0b10 | obj.granted(roles, role, true);
 			else if (['Webo', 'Area', 'Page'].indexOf(this.constructor.name) === -1) // Content
@@ -67,8 +68,14 @@ export default class Base {
 	// Add child to element, note, we are adding a child not moving it
 	add(child) {
 		if (child && child.constructor.name !== 'Webo' && child !== this && this.children.indexOf(child) === -1) {
-			child._idParent = this._id;
+			Object.defineProperty(child, '_idParent', { value: 'static', writable: true });
+			child._idParent = _idParent;
+
 			child[WEBBASE] = this[WEBBASE];
+
+			//			if (this instanceof Content)
+			//				this.links.push({ _id: child })
+			//			then
 			this.children.push(child);
 
 			if (this[WEBBASE])
@@ -88,9 +95,9 @@ export default class Base {
 	// Move and Remove element
 	move(parent) {
 		if (this !== parent) {
-			let i = this.Parent().children.indexOf(this);
+			let i = this.parent.children.indexOf(this);
 			if (i !== -1)
-				this.Parent().children.splice(i, 1);
+				this.parent.children.splice(i, 1);
 			if (parent)
 				parent.children.push(this);
 			else {
@@ -104,9 +111,9 @@ export default class Base {
 		this.move();
 	}
 
-	Permalink(lang) {
-		if (this.Parent())
-			return this.Parent().Permalink(lang) + '/' + this.slug[lang];
+	permalink(lang) {
+		if (this.parent)
+			return this.parent.permalink(lang) + '/' + this.slug[lang];
 		return '';
 	}
 }

@@ -22,19 +22,28 @@ const app = express();
 
 app[WEBBASE] = new Webo({ webbase: path.join(WEBO_DIR, settings.webbase) });
 
+app.use(express.text());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(session({
-    resave: true,
-    saveUninitialized: true,
+const sessionConfig = {
     secret: settings.secret || 'Spin the Web',
+    name: 'stw',
+    resave: true,
+    saveUninitialized: false,
     cookie: { sameSite: 'strict' }
-}));
+};
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+    sessionConfig.cookie.secure = true;
+}
+app.use(session(sessionConfig));
 app.use((req, res, next) => {
     if (!req.session.user) {
         req.session.user = 'guest';
         req.session.roles = ['guests'];
+        req.session.lang = language.pick(req.app[WEBBASE].langs, req.headers['accept-language']);
+        res.cookie('stwDeveloper', false);
     }
 
     const { headers: { cookie } } = req;
@@ -54,8 +63,6 @@ app.use('/studio', stwStudio);
 app.use('/stw', stwAuth);
 
 app.get('/*', (req, res, next) => {
-    req.session.lang = language.pick(req.app[WEBBASE].langs, req.headers['accept-language']);
-
     let el = req.app[WEBBASE].route(req.params[0], req.session.lang);
     if (el && typeof el.Render === 'function')
         el.Render(req, res, next);

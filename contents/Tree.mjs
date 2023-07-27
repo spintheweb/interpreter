@@ -24,10 +24,10 @@ export default class Tree extends Content {
 					if (event.type === 'click') {
 						if (event.target.className.indexOf('fa-angle') !== -1) {
 							if (event.target.classList.contains('fa-angle-right')) {
-								target.Parent().Element.lastElementChild.style.display = 'block';
+								target.parent.Element.lastElementChild.style.display = 'block';
 								event.target.classList.replace('fa-angle-right', 'fa-angle-down');
 							} else {
-								target.Parent().Element.lastElementChild.style.display = 'none';
+								target.parent.Element.lastElementChild.style.display = 'none';
 								event.target.classList.replace('fa-angle-down', 'fa-angle-right');
 							}
 							return;
@@ -54,11 +54,11 @@ export default class Tree extends Content {
 
 				function _webbase(element, level = 0) {
 					if (element.children.length > 0) {
-						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(socket.target.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fas fa-fw fa-angle-${level === 0 ? 'down' : 'right'}"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.name()}</div><ul ${level > 0 ? 'style="display: none"' : ''}>`;
+						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(socket.target.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fas fa-fw fa-angle-${level === 0 ? 'down' : 'right'}"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.localizedName()}</div><ul ${level > 0 ? 'style="display: none"' : ''}>`;
 						element.children.forEach(child => _webbase(child, level + 1));
 						fragment += '</ul></li>';
 					} else {
-						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(socket.target.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fas fa-fw"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.name()}</div></li>`;
+						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(socket.target.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fas fa-fw"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.localizedName()}</div></li>`;
 					}
 				}
 			} else {

@@ -10,6 +10,8 @@ import { lexer, getValue, renderer } from './WBLL.mjs';
 export default class Content extends Base {
     constructor(params = {}) {
         super(params);
+        delete this.children;
+
         this.type = 'Content';
         this.subtype = this.constructor.name;
         this.cssClass = `stw${this.constructor.name}`;
@@ -19,25 +21,16 @@ export default class Content extends Base {
         this.query = params.query || '';
         this.params = params.params || '';
         this.layout = { [params.lang]: params.layout };
-
-        this._clientHandler = null; // Client side code
-        this._serverHandler = null; // Server side code (TODO: Predefined CRUD handlers)
     }
 
-    CSSClass() {
+    get CSSClass() {
         return this.cssClass ? `class="${this.cssClass}"` : '';
-    }
-    Section(value, sequence) {
-        if (typeof value === 'undefined') return this.section;
-        this.section = value.toString();
-        if (sequence) this.Sequence(sequence);
-        return this;
     }
     Sequence(value) {
         if (typeof value === 'undefined') return this.sequence;
         this.sequence = isNaN(value) || value < 1 ? 1 : value;
-        if (this.Parent()) // Order by section, sequence
-            this.Parent().children.sort((a, b) =>
+        if (this.parent) // Order by section, sequence
+            this.parent.children.sort((a, b) =>
                 a._section + ('0000' + a._sequence.toFixed(2)).slice(-5) > b._section + ('0000' + b._sequence.toFixed(2)).slice(-5));
         return this;
     }
@@ -49,44 +42,20 @@ export default class Content extends Base {
         this.datasource = name;
         return this;
     }
-    Query(value, params) {
-        this.Params(params);
-        if (typeof value === 'undefined') return this.query;
-        this.query = value;
-        return this;
+    get Query() {
+        // [TODO] Preprocess query
+        return this.query;
     }
-    Params(value) {
+    Params(name) {
+        // [TODO] Preprocess query
         if (typeof value === 'undefined') return this.params;
         this.params = value;
         return this;
     }
-    Layout(lang, value) {
+    Layout(lang) {
         if (typeof value === 'undefined')
             return localize(lang, this.layout);
         this.layout[lang] = value;
-        return this;
-    }
-    clientHandler(callback) {
-        if (typeof callback === 'function')
-            this._clientHandler = callback;
-        return this;
-    }
-    serverHandler(callback) {
-        switch (typeof callback) {
-            case 'undefined':
-                return (this._serverHandler || '').toString();
-            case 'string':
-                try {
-                    let fn = new Function(callback);
-                    this._serverHandler = fn;
-                } catch (err) {
-                    console.log(err);
-                }
-                break;
-            case 'function':
-                this._serverHandler = callback;
-                break;
-        }
         return this;
     }
     add(child) {
@@ -99,28 +68,28 @@ export default class Content extends Base {
             child = new Reference(child);
 
         if (this.children.indexOf(child) === -1) {
-            if (child.Parent())
+            if (child.parent)
                 child = new Reference(child);
-            child.Parent() = this;
+            child.parent = this;
             this.children.push(child);
         }
         return this;
     }
-    getData(req, callback) { // TODO: Request data asynchronously
+    async getData(req, callback) { // TODO: Request data asynchronously
         if (typeof this.query == 'function')
             return this.query(req);
         return JSON.parse(this.query || '[{}]');
     }
-    Render(req, res, next, body) {
+    async Render(req, res, next, body) {
         body = body || this.renderRow;
 
         let fragment = '';
         if (this.granted(req.session.roles) & 0b01) {
-            req.dataset = this.getData(req); // TODO: Retrieve data asynchronously
+            req.dataset = await this.getData(req); // TODO: Retrieve data asynchronously
 
-            let layout = this.Layout(this[WEBBASE].Lang());
+            let layout = lexer(this.Layout(req.session.lang));
 
-            if (layout && typeof layout === 'object') {
+            if (typeof layout === 'object') {
                 // TODO: Evaluate layout.settings
 
                 if (typeof layout.settings.visible != 'undefined' &&
@@ -137,10 +106,11 @@ export default class Content extends Base {
             } else
                 fragment = body(req, layout);
 
-            res.send({ type: 'text/html', id: this._id, section: this.section, sequence: this.sequence, body: fragment });
+            res.set('Cache-Control', 'max-age=0, no-store');
+            res.send({ id: this._id, section: this.section, sequence: this.sequence, body: fragment });
 
         } else
-            res.status(204).send({}); // 204 No content
+            res.sendStatus(204); // 204 No content
     }
     renderRow(req, contentId, layout) {
         if (typeof layout === 'object')

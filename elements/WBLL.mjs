@@ -85,68 +85,68 @@ export function lexer(wbll = '') {
     return layout;
 }
 
-function evaluate(socket, expression) {
+function evaluate(req, expression) {
     // TODO: if = then javascript
-    return getValue(socket, expression);
+    return getValue(req, expression);
 }
 
-function getName(socket, name) {
+function getName(req, name) {
     try {
-        return name || socket.dataset[socket.row][socket.col] || `Field${socket.col}`;
+        return name || req.dataset[req.row][req.col] || `Field${req.col}`;
     } catch {
-        return `Field${socket.col}`;
+        return `Field${req.col}`;
     }
 }
 
-export function getValue(socket, key) {
+export function getValue(req, key) {
     try {
         if (key === '@@')
-            return socket.dataset[socket.row][Object.keys(socket.dataset[socket.row])[socket.col++]] || '';
-        if (key.startsWith('@@')) // dataset, socket
-            return socket.dataset[socket.row][key.replace('@@', '')] || '';
+            return req.dataset[req.row][Object.keys(req.dataset[req.row])[req.col++]] || '';
+        if (key.startsWith('@@')) // dataset, req
+            return req.dataset[req.row][key.replace('@@', '')] || '';
         if (key.startsWith('@')) // data
-            return socket.data.url.searchParams.get(key.replace('@', '')) || '';
-        if (typeof socket.dataset[socket.row][key] === 'function')
-            return socket.dataset[socket.row][key].toString();
-        return socket.dataset[socket.row][key] || key;
+            return req.data.url.searchParams.get(key.replace('@', '')) || '';
+        if (typeof req.dataset[req.row][key] === 'function')
+            return req.dataset[req.row][key].toString();
+        return req.dataset[req.row][key] || key;
     } catch {
         return key;
     }
 }
 
-function renderAttributes(socket, attrs) {
+function renderAttributes(req, attrs) {
     let html = '';
     if (attrs)
         for (let attr of Object.keys(attrs))
-            html += ` ${attr}="${attr === 'name' ? attrs[attr] : encode(getValue(socket, attrs[attr]))}"`;
+            html += ` ${attr}="${attr === 'name' ? attrs[attr] : encode(getValue(req, attrs[attr]))}"`;
     return html;
 }
 
-function renderParameters(socket, uri, params) {
+function renderParameters(req, uri, params) {
     let url;
     try {
-        url = new URL(getValue(socket, uri));
+        url = new URL(getValue(req, uri));
 
         if (params)
             for (let param of Object.keys(params))
-                url.searchParams.set(param, getValue(socket, params[param]));
+                url.searchParams.set(param, getValue(req, params[param]));
         return url.href;
     } catch {
         url = new URL('http://stw.local' + uri);
         if (params)
             for (let param of Object.keys(params))
-                url.searchParams.set(param, getValue(socket, params[param]));
+                url.searchParams.set(param, getValue(req, params[param]));
         return url.href.replace('http://stw.local', '');
     }
 }
 
-export function renderer(socket, contentId, layout) {
+export function renderer(req, contentId, layout) {
     if (typeof layout == 'string')
         return layout;
 
-    socket.cols = [];
-    socket.col = 0;
-    socket.row = socket.row || 0;
+    req.cols = [];
+    req.col = 0;
+    req.row = req.row || 0;
 
     let html = '', str;
     for (let token of layout.tokens)
@@ -154,74 +154,74 @@ export function renderer(socket, contentId, layout) {
             switch (token.symbol) {
                 case 'a':
                     str = token.args ? token.args[0] : '@@';
-                    html += `<a href="${renderParameters(socket, str, token.params)}" onclick="stwHref(event)"${renderAttributes(socket, token.attrs)}>
-                        ${renderer(socket, contentId, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [str] }] })}</a>`;
+                    html += `<a href="${renderParameters(req, str, token.params)}" onclick="stwHref(event)"${renderAttributes(req, token.attrs)}>
+                        ${renderer(req, contentId, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [str] }] })}</a>`;
                     break;
                 case 'b':
                     if (token.args)
-                        str = token.args[0] == '.' ? socket.data.url.pathname : token.args[0];
+                        str = token.args[0] == '.' ? req.data.url.pathname : token.args[0];
                     else
                         str = '@@';
                     token.params.stwHandler = contentId;
-                    html += `<button formaction="${renderParameters(socket, str, token.params)}" onclick="stwSubmit(event)"${renderAttributes(socket, token.attrs)}>
-                        ${renderer(socket, contentId, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [''] }] } || str)}</button>`;
+                    html += `<button formaction="${renderParameters(req, str, token.params)}" onclick="stwSubmit(event)"${renderAttributes(req, token.attrs)}>
+                        ${renderer(req, contentId, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [''] }] } || str)}</button>`;
                     break;
                 case 'c':
                     token.attrs = token.attrs || {};
                     token.attrs.type = 'checkbox'
-                    token.attrs.name = getName(socket, token.args[0]);
+                    token.attrs.name = getName(req, token.args[0]);
                     token.attrs.value = token.args[1] || '@@';
                     for (let i = 3; i < token.args.length; i += (token.args[2] == 2 ? 2 : 1)) {
-                        html += `<label><input${renderAttributes(socket, token.attrs)}>`;
+                        html += `<label><input${renderAttributes(req, token.attrs)}>`;
                     }
                     break;
                 case 'd':
                     token.attrs = token.attrs || {};
-                    token.attrs.name = getName(socket, token.args[0]);
+                    token.attrs.name = getName(req, token.args[0]);
                     token.attrs.value = token.args[0] || '@@';
-                    html += `<select${renderAttributes(socket, token.attrs)}><option></option></select>`;
+                    html += `<select${renderAttributes(req, token.attrs)}><option></option></select>`;
                     break;
                 case 'h':
                     token.attrs = token.attrs || {};
                     token.attrs.type = 'hidden';
                 case 'e':
                     token.attrs = token.attrs || {};
-                    token.attrs.name = getName(socket, token.args[1]);
+                    token.attrs.name = getName(req, token.args[1]);
                     token.attrs.value = token.args[1] || '@@';
-                    html += `<input${renderAttributes(socket, token.attrs)}>`;
+                    html += `<input${renderAttributes(req, token.attrs)}>`;
                     break;
                 case 'f':
-                    str = getValue(socket, '@@');
+                    str = getValue(req, '@@');
                     if (!token.attrs)
                         html += str;
                     else
-                        html += `<span${renderAttributes(socket, token.attrs)}>${str}</span>`;
+                        html += `<span${renderAttributes(req, token.attrs)}>${str}</span>`;
                     break;
                 case 'i':
-                    str = getValue(socket, token.args[0]);
+                    str = getValue(req, token.args[0]);
                     if (str)
-                        html += `<img src="${str}"${renderAttributes(socket, token.attrs)}>`;
+                        html += `<img src="${str}"${renderAttributes(req, token.attrs)}>`;
                     break;
                 case 'j':
-                    html += `<script${renderAttributes(socket, token.attrs)}>${token.args[2]}</script>`;
+                    html += `<script${renderAttributes(req, token.attrs)}>${token.args[2]}</script>`;
                     break;
                 case 'l':
-                    str = getName(socket, token.args[0]);
-                    html += `<label${renderAttributes(socket, token.attrs)}>${str}</label>`;
+                    str = getName(req, token.args[0]);
+                    html += `<label${renderAttributes(req, token.attrs)}>${str}</label>`;
                     break;
                 case 'm':
                     token.attrs = token.attrs || {};
-                    token.attrs.name = getName(socket, token.args[0]);
-                    html += `<textarea${renderAttributes(socket, token.attrs)}>${encode(getValue(socket, token.args[0] || '@@'))}</textarea>`;
+                    token.attrs.name = getName(req, token.args[0]);
+                    html += `<textarea${renderAttributes(req, token.attrs)}>${encode(getValue(req, token.args[0] || '@@'))}</textarea>`;
                     break;
                 case 'n':
                     break;
                 case 'o':
                     token.args.forEach(child => {
-                        socket.target.send(JSON.stringify({
+                        req.target.send(JSON.stringify({
                             message: 'request',
                             body: {
-                                url: renderParameters(socket, 'http://stw.local' + getValue(socket, child), token.params),
+                                url: renderParameters(req, 'http://stw.local' + getValue(req, child), token.params),
                                 section: `_${contentId}`
                             }
                         }));
@@ -236,11 +236,11 @@ export function renderer(socket, contentId, layout) {
                 case 'T':
                 case 'v':
                 case 'V':
-                    str = 'tv'.indexOf(token.symbol) != -1 ? token.args[2] : evaluate(socket, token.args[2]);
+                    str = 'tv'.indexOf(token.symbol) != -1 ? token.args[2] : evaluate(req, token.args[2]);
                     if (!token.attrs)
                         html += str;
                     else
-                        html += `<span${renderAttributes(socket, token.attrs)}>${str}</span>`;
+                        html += `<span${renderAttributes(req, token.attrs)}>${str}</span>`;
                     break;
                 case 'u':
                     break;

@@ -12,19 +12,19 @@ export default class Languages extends Content {
         super(name, template, lang);
     }
 
-    Render(socket) {
-        return super.Render(socket, (socket, template) => {
-            if (this[WEBBASE].langs().length == 1)
+    Render(req, res, next) {
+        return super.Render(req, res, necxt, () => {
+            if (this[WEBBASE].langs.length == 1)
                 return '';
 
             let fragment = '';
-            if (this[WEBBASE].langs().length <= 3) {
-                for (let lang of this[WEBBASE].langs())
-                    fragment += `&nbsp;<a href="/" onclick="stwHref(event)">${lang.toLowerCase()}</a>`;
+            if (this[WEBBASE].langs.length <= 3) {
+                for (let lang of this[WEBBASE].langs)
+                    fragment += `&nbsp;<a href="/" onclick="stwHref(event)">${lang.toUpperCase()}</a>`;
             } else {
                 fragment += '<select href="" onchange="stwHref(event)">'
-                for (let lang of this[WEBBASE].langs())
-                    fragment += `<option>${lang.toLowerCase()}</option>`;
+                for (let lang of this[WEBBASE].langs)
+                    fragment += `<option>${lang.toUpperCase()}</option>`;
                 fragment += '</select>';
             }
             return fragment;
