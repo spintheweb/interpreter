@@ -1,0 +1,18 @@
+[
+    {
+        "name": "administrator",
+        "pwd": "password",
+        "enabled": true,
+        "roles": [
+            "administrators"
+        ]
+    },
+    {
+        "name": "user",
+        "pwd": "password",
+        "enabled": true,
+        "roles": [
+            "users", "developers"
+        ]
+    }
+]
