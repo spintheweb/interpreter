@@ -3,7 +3,7 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE, localize } from '../elements/Miscellanea.mjs';
+import { WEBBASE, pickText } from '../elements/Miscellanea.mjs';
 import Content from '../elements/Content.mjs';
 
 // Plain text, i.e., renders layout as plain text if there is a datasource @ and @@ substitutions are performed
@@ -15,7 +15,7 @@ export default class Text extends Content {
 
 	render(req, res, next) {
 		if (this.granted(req.session.roles) & 0b01) {
-			let fragment = localize([req.session.lang, req.app[WEBBASE].lang], this.layout);
+			let fragment = pickText([req.session.lang, req.app[WEBBASE].lang], this.layout);
 
 			if (this.dsn) {
 

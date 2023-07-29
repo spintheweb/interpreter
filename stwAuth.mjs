@@ -8,7 +8,7 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 
-import { WEBBASE, INDEX, STUDIO_DIR, WEBO_DIR } from './elements/Miscellanea.mjs';
+import { WEBBASE, STUDIO_DIR, WEBO_DIR } from './elements/Miscellanea.mjs';
 
 const router = express.Router();
 
@@ -51,7 +51,7 @@ router.post('/setpwd/:id?', async (req, res) => {
     }
 });
 
-// [TODO] Cypher password https://www.geeksforgeeks.org/node-js-crypto-createcipheriv-method/
+// TODO: Cypher password https://www.geeksforgeeks.org/node-js-crypto-createcipheriv-method/
 function encrypt(text) {
     return text;
 }

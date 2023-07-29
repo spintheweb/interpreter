@@ -3,10 +3,10 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE, INDEX } from './Miscellanea.mjs';
+import { WEBBASE } from './Miscellanea.mjs';
 import Base from './Base.mjs';
 import Page from './Page.mjs';
-import CreateElement from './Element.mjs';
+import createElement from './Element.mjs';
 
 export default class Area extends Base {
 	constructor(params = {}) {
@@ -17,7 +17,7 @@ export default class Area extends Base {
 
 		if (this.constructor.name === 'Area')
 			for (let child of params.children)
-				this.add(CreateElement(this, child));
+				this.add(createElement(this, child));
 	}
 
 	add(child) {

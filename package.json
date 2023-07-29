@@ -1,7 +1,7 @@
 {
     "name": "spintheweb",
     "version": "0.1.1",
-    "description": "Spin the Web deals with the Webbase Descriptioon Language (WBDL). Simply put, HTML describes a web page, WBDL, a web site; and, while HTML is interpreted by a client side web browser, WBDL, by a server side web spinner.",
+    "description": "Spin the Web deals with the Webbase Description Language (WBDL). Simply put, HTML describes a web page, WBDL, a web site; and, while HTML is interpreted by a client side web browser, WBDL, by a server side web spinner.",
     "type": "module",
     "main": "app.js",
     "dependencies": {

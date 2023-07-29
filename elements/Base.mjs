@@ -4,7 +4,7 @@
  * MIT Licensed
  */
 import { v1 } from 'uuid';
-import { WEBBASE, INDEX } from './Miscellanea.mjs';
+import { WEBBASE } from './Miscellanea.mjs';
 
 export default class Base {
 	static [WEBBASE] = {};
@@ -96,12 +96,14 @@ export default class Base {
 		return child;
 	}
 
-	// Deep copy element, note, the webbase cannot be copied, use write() instead
-	copy() {
-		let obj;
-		if (this.constructor.name !== 'Webo')
-			obj = new this.constructor();
-		return obj;
+	// TODO: Deep copy element, note, the webbase cannot be copied, use write() instead
+	// _id and _idParent should be remapped as well as permalinks that point to cloned elements
+	clone() {
+//		let element;
+//		if (this.constructor.name !== 'Webo') {
+//			element = new createElement(this.parent, this);
+//		}
+//		return element;
 	}
 
 	// Move and Remove element
@@ -115,12 +117,12 @@ export default class Base {
 			else {
 				// TODO: while visiting the site remove shortcuts that point to nothing
 				delete this;
+			// TODO: Dissociate from webbase and remove index
+//			[WEBBASE].index.delete(child._id);
+//			this.children.splice(this.children.findIndex(element => element._id == child._id), 1);
 				return;
 			}
 		}
-	}
-	remove() {
-		this.move();
 	}
 
 	permalink(lang) {

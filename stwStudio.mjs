@@ -8,7 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import git from 'simple-git';
 
-import { WEBBASE, INDEX, PATH, STUDIO_DIR, WEBO_DIR } from './elements/Miscellanea.mjs';
+import { WEBBASE, PATH, STUDIO_DIR, WEBO_DIR } from './elements/Miscellanea.mjs';
 import Area from './elements/Area.mjs';
 import Page from './elements/Page.mjs';
 import Text from './contents/Text.mjs';
@@ -50,7 +50,7 @@ router.get('/wbdl/permalink/:_id', (req, res) => {
     res.send(element ? element.permalink(req.session.lang) : '');
 });
 
-// [TODO] Replace
+// TODO: Replace
 router.post('/wbdl/search/:lang', (req, res) => {
     let found = [],
         pattern = new RegExp(`"\\w+?":".*?${req.body.text}.*?"`,

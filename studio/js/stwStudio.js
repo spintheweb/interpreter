@@ -46,7 +46,7 @@ const stwStudio = {
         });
     },
     manageSettings: event => {
-        // [TODO] Persist locally
+        // TODO: Persist locally
         if (event.target.name === 'theme') {
             document.body.className = event.target.value;
             document.querySelectorAll('.ace_editor').forEach(ace => {
@@ -296,7 +296,7 @@ const stwStudio = {
         }
     },
     renderTree: (node, depth = 0, show = false) => {
-        // [TODO] Remember open nodes
+        // TODO: Remember open nodes
         let html = '';
 
         if (!depth && !node.type) {
@@ -430,7 +430,7 @@ const stwStudio = {
         }
     },
     manageSearch: event => {
-        // [TODO] handle whole words, regex and Replace
+        // TODO: handle whole words, regex and Replace
         let form = event.target.form, settings = form.querySelector('#searchMode');
         fetch(`/studio/wbdl/search/${stwStudio.settings.lang}`, {
             method: 'POST',
@@ -472,7 +472,7 @@ const stwStudio = {
                 }
                 break;
             case 'UL':
-                // [TODO] Properties visible
+                // TODO: Properties visible
                 let div = event.target.closest('div');
                 if (div && (!div.parentElement.hasAttribute('selected') || !event.isTrusted)) {
                     if (target.querySelector('li[selected]'))
@@ -504,7 +504,7 @@ const stwStudio = {
                 }
                 break;
             case 'UL':
-                // [TODO] Properties visible
+                // TODO: Properties visible
                 let div = event.target.closest('div');
                 if (div && (!div.parentElement.hasAttribute('selected') || !event.isTrusted)) {
                     if (target.querySelector('li[selected]'))
@@ -557,7 +557,7 @@ const stwStudio = {
                     break; */
 
                 case 'clone':
-                    // [TODO] Deep clone node
+                    // TODO: Deep clone node
                     break;
                 case 'expand':
                     document.getElementById('properties').classList.toggle('stwFullScreen');
@@ -627,9 +627,9 @@ const stwStudio = {
             case 'back':
                 // document.querySelector('iframe').window.history.back(-1); Does not work
                 break;
-            case 'forward': // [TODO] Hide when history not present
+            case 'forward': // TODO: Hide when history not present
                 break;
-            case 'refresh': // [TODO] Animate when loading
+            case 'refresh': // TODO: Animate when loading
                 document.getElementById('Browse').src = document.getElementById('BrowseURL').value;
                 break;
             case 'locate':

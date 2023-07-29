@@ -6,10 +6,10 @@
 import path from 'path';
 import language from 'accept-language-parser';
 
-import { WEBBASE, INDEX, } from './Miscellanea.mjs';
+import { WEBBASE } from './Miscellanea.mjs';
 import Base from './Base.mjs';
 import Area from './Area.mjs';
-import CreateElement from './Element.mjs';
+import createElement from './Element.mjs';
 
 export default class Webo extends Area {
     constructor(params = {}) {
@@ -34,10 +34,10 @@ export default class Webo extends Area {
         };
 
         for (let child of params.children)
-            this.add(CreateElement(this, child));
+            this.add(createElement(this, child));
     }
 
-    // [TODO] https://www.npmjs.com/package/locale
+    // TODO: https://www.npmjs.com/package/locale
     Lang(code) {
         if (typeof code === 'undefined')
             return this.langs[0];

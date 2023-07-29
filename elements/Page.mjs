@@ -4,7 +4,7 @@
  * MIT Licensed
  */
 import Base from './Base.mjs';
-import CreateElement from './Element.mjs';
+import createElement from './Element.mjs';
 
 import { join } from 'path';
 
@@ -17,7 +17,7 @@ export default class Page extends Base {
 		this.template = params.template || 'index.html';
 
 		for (let child of params.children)
-			this.add(CreateElement(this, child));
+			this.add(createElement(this, child));
 	}
 
 	ContentType(value) {

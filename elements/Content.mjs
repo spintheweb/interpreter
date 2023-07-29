@@ -3,9 +3,10 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE, localize } from './Miscellanea.mjs';
+import { WEBBASE, pickText } from './Miscellanea.mjs';
 import Base from './Base.mjs';
 import { lexer, getValue, renderer } from './WBLL.mjs';
+import createElement from './Element.mjs';
 
 export default class Content extends Base {
     constructor(params = {}) {
@@ -44,14 +45,19 @@ export default class Content extends Base {
         return this;
     }
     get Query() {
-        // [TODO] Preprocess query
+        // TODO: Preprocess query
         return this.query;
     }
     Params(name) {
-        // [TODO] Preprocess query
+        // TODO: Preprocess query
         if (typeof value === 'undefined') return this.params;
         this.params = value;
         return this;
+    }
+    changeSubtype(newSubtype) {
+//        this.subtype = newSubtype;
+//        this = createElement(this, this); // Replace
+//        return this;
     }
     add(link) {
         if (!link || link == this || link.constructor.name === 'Webo')
@@ -82,7 +88,7 @@ export default class Content extends Base {
         if (this.granted(req.session.roles) & 0b01) {
             req.dataset = await this.getData(req); // TODO: Retrieve data asynchronously
 
-            let layout = lexer(localize([req.session.lang, req.app[WEBBASE].lang], this.layout));
+            let layout = lexer(pickText([req.session.lang, req.app[WEBBASE].lang], this.layout));
 
             if (typeof layout === 'object') {
                 // TODO: Evaluate layout.settings

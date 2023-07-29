@@ -24,7 +24,7 @@ const contents = {
     Breadcrumbs: Breadcrumbs
 }
 
-export default function CreateElement(parent, element) {
+export default function createElement(parent, element) {
     element._idParent = parent._idParent;
 
     switch (element.type) {

@@ -14,7 +14,7 @@ else {
         let stwContents = decodeURIComponent(document.cookie.split('; ').find(row => row.startsWith('stwContents='))?.split('=')[1]);
 
         stwContents.split(',').forEach(_id => {
-            // [TODO] Manage sub sequence rendering
+            // TODO: Manage sub sequence rendering
 
             fetch(`/${_id}?${location.search}`)
                 .then(res => {
