@@ -1,5 +1,5 @@
 /*!
- * webspinner
+ * webspinner authentication module
  * Copyright(c) 2023 Giancarlo Trevisan
  * MIT Licensed
  */

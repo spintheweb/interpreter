@@ -1,6 +1,6 @@
 /*!
- * util
- * Copyright(c) 2020 Giancarlo Trevisan
+ * webspinner data module
+ * Copyright(c) 2023 Giancarlo Trevisan
  * MIT Licensed
  */
 'use strict';

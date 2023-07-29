@@ -10,9 +10,26 @@ import Content from '../elements/Content.mjs';
 export default class Languages extends Content {
     constructor(name, template, lang) {
         super(name, template, lang);
+        delete this.params;
+        delete this.layout;
+		delete this.links;
+    }
+
+    // Content specific behaviors
+    behaviors(req) {
+        this.behavior = true;
+
+        req.app.get('/stw/setlanguage/:lang', (req, res, next) => {
+            req.app[WEBBASE]
+            req.session.lang = req.params.lang;
+            res.redirect('back');
+        });
     }
 
     render(req, res, next) {
+        if (!this.behavior) 
+            this.behaviors(req);
+
         return super.render(req, res, next, () => {
             if (req.app[WEBBASE].langs.length == 1)
                 return '';
@@ -20,14 +37,14 @@ export default class Languages extends Content {
             let fragment = '';
             if (req.app[WEBBASE].langs.length <= 3) {
                 for (let lang of req.app[WEBBASE].langs)
-                    fragment += `&nbsp;<a href="/" onclick="stwHref(event)">${lang.toUpperCase()}</a>`;
+                    fragment += `&nbsp;<a href="/stw/setlanguage/${lang}">${lang.toUpperCase()}</a>&nbsp;`;
             } else {
-                fragment += '<i class="fa-solid fa-language"></i> <select onchange="">'
+                fragment += `<i class="fa-solid fa-language"></i> <select onchange="location.href='/stw/setlanguage/${lang}'">`
                 for (let lang of req.app[WEBBASE].langs)
                     fragment += `<option>${lang.toUpperCase()}</option>`;
                 fragment += '</select>';
             }
-            return fragment;
+            return `<span ${this.CSSClass}">${fragment}</span>`;
         });
     }
 }

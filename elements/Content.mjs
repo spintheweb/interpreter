@@ -9,6 +9,8 @@ import { lexer, getValue, renderer } from './WBLL.mjs';
 import createElement from './Element.mjs';
 
 export default class Content extends Base {
+    static #behavior = false;
+
     constructor(params = {}) {
         super(params);
         delete this.children;
