@@ -26,9 +26,9 @@ export default class Tabs extends Content {
 		};
 	}
 
-	Render(req, res, next) {
+	render(req, res, next) {
 		
-		return super.Render(socket, (socket, template) => {
+		return super.render(socket, (socket, template) => {
 			let labels = '', tabs = '';
 			this.children.forEach((tab, i) => {
 				if (tab.granted(socket.target.user) & 0b1) {

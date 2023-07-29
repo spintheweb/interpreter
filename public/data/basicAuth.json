@@ -12,6 +12,14 @@
         "pwd": "password",
         "enabled": true,
         "roles": [
+            "users"
+        ]
+    },
+    {
+        "name": "developer",
+        "pwd": "password",
+        "enabled": true,
+        "roles": [
             "users", "developers"
         ]
     }

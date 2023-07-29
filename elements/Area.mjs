@@ -6,6 +6,7 @@
 import { WEBBASE, INDEX } from './Miscellanea.mjs';
 import Base from './Base.mjs';
 import Page from './Page.mjs';
+import CreateElement from './Element.mjs';
 
 export default class Area extends Base {
 	constructor(params = {}) {
@@ -13,26 +14,25 @@ export default class Area extends Base {
 		this.keywords = params.keywords || {};
 		this.description = params.description || {};
 		this.mainpage = params.mainpage || '';
-	}
-	Mainpage(value) {
-		if (typeof value === 'undefined')
-			return this.mainpage || this[WEBBASE].mainpage;
-		if (value instanceof Page)
-			this.mainpage = value._id;
-		return this;
+
+		if (this.constructor.name === 'Area')
+			for (let child of params.children)
+				this.add(CreateElement(this, child));
 	}
 
-	add(child, isMain) {
+	add(child) {
 		super.add(child);
-		if (child instanceof Page && isMain || !this.Mainpage())
-			this.Mainpage(child);
-		return this;
+
+		if (child instanceof Page && !this.mainpage)
+			this.mainpage = child._id;
+
+		return child;
 	}
 
-	Render(req, res, next) {
-		let page = req.app[WEBBASE][INDEX].get(this.mainpage);
+	render(req, res, next) {
+		let page = req.app[WEBBASE].index.get(this.mainpage);
 		if (page)
-			return page.Render(req, res, next);
+			return page.render(req, res, next);
 
 		res.sendStatus(204); // 204 No content
 	}

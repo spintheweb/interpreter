@@ -23,8 +23,8 @@ export default class Menu extends Content {
 		return this;
 	}
 
-	Render(socket) {
-		return super.Render(socket, (socket, template) => {
+	render(socket) {
+		return super.render(socket, (socket, template) => {
 			let options = '';
 			this.children.forEach(option => {
 				if (option.constructor.name === 'Reference') {

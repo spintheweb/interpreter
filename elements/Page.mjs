@@ -3,8 +3,8 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from './Miscellanea.mjs';
 import Base from './Base.mjs';
+import CreateElement from './Element.mjs';
 
 import { join } from 'path';
 
@@ -15,6 +15,9 @@ export default class Page extends Base {
 		this.description = params.description || {};
 		this.contentType = params.contentType || 'text/html';
 		this.template = params.template || 'index.html';
+
+		for (let child of params.children)
+			this.add(CreateElement(this, child));
 	}
 
 	ContentType(value) {
@@ -29,17 +32,18 @@ export default class Page extends Base {
 		return this;
 	}
 
-	Render(req, res, next) {
+	render(req, res, next) {
 		if (this.granted(req.session.roles) & 0b01 === 0b01) {
 			let contents = this.children.filter(content => content.section && content.granted(req.session.roles)).map(content => content._id);
 
 			// Collect contents children of Areas and Webo
-			(function walk(node, contents) {
+			function walk(node, contents) {
 				if (!node)
 					return;
 				node.children.filter(content => content.section && content.granted(req.session.roles) & 0b01 == 0b01).map(content => contents.push(content._id));
 				walk(node.parent, contents);
-			})(this.parent, contents);
+			}
+			walk(this.parent, contents);
 
 			res.cookie('stwPage', this._id);
 			res.cookie('stwContents', contents.join(','));

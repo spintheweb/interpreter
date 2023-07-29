@@ -11,20 +11,20 @@ export default class Calendar extends Content {
 		super(name, template, lang, true);
 	}
 
-	Render(socket) {
-		return super.Render(socket, socket => {
+	render(req, res, next) {
+		return super.render(request, res, next, () => {
 			let fragment = '';
 
 			let today = new Date(), date = new Date();
 
 			// TODO: Start on the proper day and localized
-			fragment += `<li class="stwMonth">${new Intl.DateTimeFormat(this[WEBBASE].Lang(), { month: 'long', year: 'numeric' }).format(date)}</li><br>`;
+			fragment += `<li class="stwMonth">${new Intl.DateTimeFormat(req.app[WEBBASE].Lang(), { month: 'long', year: 'numeric' }).format(date)}</li><br>`;
 
 			date = new Date(date.setDate(1));
 			date = new Date(date.setDate(1 - date.getDay())); // First day alignment monthly view
 			let weekday = new Date(date);
 			for (let d = 0; d < 7; ++d, weekday.setDate(weekday.getDate() + 1)) {
-				fragment += `<li class="stwWeekday"><div>${new Intl.DateTimeFormat(this[WEBBASE].Lang(), { weekday: 'short' }).format(weekday)}</div></li>`;
+				fragment += `<li class="stwWeekday"><div>${new Intl.DateTimeFormat(req.app[WEBBASE].Lang(), { weekday: 'short' }).format(weekday)}</div></li>`;
 			}
 			fragment += '<br>';
 

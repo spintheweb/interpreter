@@ -11,8 +11,8 @@ export default class Keypad extends Content {
 		super(name, template || 'abcdefghijklmnopqrstuvwxyz', lang);
 	}
 
-	Render(req, res, next) {
-		return super.Render(req, res, next, () => {
+	render(req, res, next) {
+		return super.render(req, res, next, () => {
 			let fragment = '';
 			this.template(res.session.lang).split('').forEach((c, i) => {
 				if (c === '\n')

@@ -24,18 +24,11 @@ export function acceptLanguage(langs) {
     return JSON.parse(accept + ']').sort((a, b) => a.q < b.q).map(a => a.l);
 }
 
-// Pick the preferred localized text, if pick is true return the picked locale
-export function localize(langs, txts, pick) {
-    let _langs = Object.keys(txts);
-    switch (_langs.length) {
-        case 0:
-            return null;
-        case 1:
-            return pick ? _langs[0] : txts[_langs[0]];
-        default:
-            for (let lang of langs)
-                if (txts[lang]) 
-                    return pick ? lang : txts[lang];
-            return pick ? langs[0] : txts[langs[0]];
-    }
+// Pick localized text
+export function localize(langs, texts = {}) {
+    if (texts.hasOwnProperty(langs[0]))
+        return texts[langs[0]];
+    if (texts.hasOwnProperty(langs[1]))
+        return texts[langs[1]];
+    return texts[0] ? texts[0] : '';
 }

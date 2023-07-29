@@ -3,6 +3,7 @@
  * Copyright(c) 2023 - Giancarlo Trevisan
  * MIT Licensed
  */
+
 // Exit Spin the Web Studio if we are not developers
 if (self != top && document.cookie.split('; ').find(row => row.startsWith('stwDeveloper='))?.split('=')[1] != 'true')
     top.location = self.location;

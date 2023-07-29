@@ -11,7 +11,7 @@ export default class Form extends Content {
 		super(name, template, lang, true);
 	}
 
-	Render(socket) {
-		return super.Render(socket, this.renderRow);
+	render(socket) {
+		return super.render(socket, this.renderRow);
 	}
 }

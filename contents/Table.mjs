@@ -12,8 +12,8 @@ export default class Table extends Content {
 		super(name, template, lang, true);
 	}
 
-	Render(socket) {
-		return super.Render(socket, (socket, template) => {
+	render(socket) {
+		return super.render(socket, (socket, template) => {
 			let fragment = '<table>';
 			fragment += '<thead><tr></tr></thead><tbody>'; // TODO: Special handling of l, \t and \n symbols
 			socket.dataset.forEach(function (row, i) {

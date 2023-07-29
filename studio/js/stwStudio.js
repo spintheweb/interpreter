@@ -1,3 +1,8 @@
+/*!
+ * stwStudio.js
+ * Copyright(c) 2023 - Giancarlo Trevisan
+ * MIT Licensed
+ */
 const stwStudio = {
     visibilityEnum: {
         'LV': '<i class="fas fa-fw fa-square-check" title="Local visibility"></i>',
@@ -354,12 +359,12 @@ const stwStudio = {
                     fetch('/studio/wbdl/persist', { method: 'PUT' })
                         .catch(err => console.log(err));
 
-                /* } else if (event.target.dataset.action === 'trashed') {
-                    if (event.target.className === 'fa-solid fa-fw fa-trash-can')
-                        event.target.className = 'fa-regular fa-fw fa-trash-can';
-                    else
-                        event.target.className = 'fa-solid fa-fw fa-trash-can';
-                    event.currentTarget.querySelector('ul').classList.toggle('stwT'); */
+                    /* } else if (event.target.dataset.action === 'trashed') {
+                        if (event.target.className === 'fa-solid fa-fw fa-trash-can')
+                            event.target.className = 'fa-regular fa-fw fa-trash-can';
+                        else
+                            event.target.className = 'fa-solid fa-fw fa-trash-can';
+                        event.currentTarget.querySelector('ul').classList.toggle('stwT'); */
 
                 } else if (parent) {
                     fetch(`/studio/wbdl/${stwStudio.settings.lang}/${parent.dataset.id}/${event.target.dataset.action}`,

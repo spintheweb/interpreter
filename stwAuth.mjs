@@ -8,7 +8,7 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 
-import { WEBBASE, PATH, INDEX, STUDIO_DIR, WEBO_DIR } from './elements/Miscellanea.mjs';
+import { WEBBASE, INDEX, STUDIO_DIR, WEBO_DIR } from './elements/Miscellanea.mjs';
 
 const router = express.Router();
 
@@ -26,7 +26,7 @@ router.post('/logon/:_id?', async (req, res) => {
         req.session.roles = ['guests'];
         res.cookie('stwDeveloper', false);
     }
-    res.redirect(req.app[WEBBASE][INDEX].get(req.params[1] || res.locals.cookie.stwPage)?.permalink(req.session.lang) || '.');
+    res.redirect(req.app[WEBBASE].index.get(req.params[1] || res.locals.cookie.stwPage)?.permalink(req.session.lang) || '.');
 });
 
 router.post('/logoff/:_id?', async (req, res) => {
@@ -34,7 +34,7 @@ router.post('/logoff/:_id?', async (req, res) => {
     req.session.roles = ['guests'];
     res.cookie('stwDeveloper', false);
 
-    res.redirect(req.app[WEBBASE][INDEX].get(req.params[1] || res.locals.cookie.stwPage)?.permalink(req.session.lang) || '.');
+    res.redirect(req.app[WEBBASE].index.get(req.params[1] || res.locals.cookie.stwPage)?.permalink(req.session.lang) || '.');
 });
 
 router.post('/setpwd/:id?', async (req, res) => {

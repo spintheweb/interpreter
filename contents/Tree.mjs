@@ -11,8 +11,8 @@ export default class Tree extends Content {
 		super(name, template, lang, true);
 	}
 
-	Render(socket) {
-		return super.Render(socket, (socket, template) => {
+	render(socket) {
+		return super.render(socket, (socket, template) => {
 			let fragment = '<ul>';
 
 			if (!this.datasource()) { // TODO: set the content datasource, query and template

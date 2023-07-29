@@ -3,7 +3,7 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from '../elements/Miscellanea.mjs';
+import { WEBBASE, localize } from '../elements/Miscellanea.mjs';
 import Content from '../elements/Content.mjs';
 
 // Plain text, i.e., renders layout as plain text if there is a datasource @ and @@ substitutions are performed
@@ -13,9 +13,9 @@ export default class Text extends Content {
 		this.cssClass = null;
 	}
 
-	Render(req, res, next) {
+	render(req, res, next) {
 		if (this.granted(req.session.roles) & 0b01) {
-			let fragment = this.Layout(req.session.lang);
+			let fragment = localize([req.session.lang, req.app[WEBBASE].lang], this.layout);
 
 			if (this.dsn) {
 

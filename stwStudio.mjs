@@ -8,7 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import git from 'simple-git';
 
-import { WEBBASE, PATH, INDEX, STUDIO_DIR, WEBO_DIR } from './elements/Miscellanea.mjs';
+import { WEBBASE, INDEX, PATH, STUDIO_DIR, WEBO_DIR } from './elements/Miscellanea.mjs';
 import Area from './elements/Area.mjs';
 import Page from './elements/Page.mjs';
 import Text from './contents/Text.mjs';
@@ -46,7 +46,7 @@ router.get('/public/*', (req, res) => {
 });
 
 router.get('/wbdl/permalink/:_id', (req, res) => {
-    let element = req.app[WEBBASE][INDEX].get(req.params._id);
+    let element = req.app[WEBBASE].index.get(req.params._id);
     res.send(element ? element.permalink(req.session.lang) : '');
 });
 
@@ -56,7 +56,7 @@ router.post('/wbdl/search/:lang', (req, res) => {
         pattern = new RegExp(`"\\w+?":".*?${req.body.text}.*?"`,
             (req.body.ignoreCase ? 'i' : ''));
 
-    req.app[WEBBASE][INDEX].forEach(obj => {
+    req.app[WEBBASE].index.forEach(obj => {
         let search = {
             name: obj.name,
             keywords: obj.keywords,
@@ -89,7 +89,7 @@ router.get('/wbdl/visibility/:_id?', (req, res) => {
     if (!req.params || !/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(req.params._id))
         localVisibility = req.app[WEBBASE].visibility;
     else
-        localVisibility = req.app[WEBBASE][INDEX].get(req.params._id).visibility;
+        localVisibility = req.app[WEBBASE].index.get(req.params._id).visibility;
 
     if (req.params._id)
         for (let role in visibility)
@@ -99,7 +99,7 @@ router.get('/wbdl/visibility/:_id?', (req, res) => {
                 visibility[role] = 'LI';
             else {
                 visibility[role] = 'II';
-                for (let parent = req.app[WEBBASE][INDEX].get(req.app[WEBBASE][INDEX].get(req.params._id)._idParent); parent; parent = req.app[WEBBASE][INDEX].get(parent._idParent))
+                for (let parent = req.app[WEBBASE].index.get(req.app[WEBBASE].index.get(req.params._id)._idParent); parent; parent = req.app[WEBBASE].index.get(parent._idParent))
                     if (parent.visibility[role]) {
                         visibility[role] = parent.visibility[role] ? 'IV' : 'II';
                         break;
@@ -110,15 +110,15 @@ router.get('/wbdl/visibility/:_id?', (req, res) => {
 });
 
 router.get('/wbdl(/*)?', (req, res) => {
-    res.json(req.app[WEBBASE][INDEX].get(req.params[1]) || req.app[WEBBASE]);
+    res.json(req.app[WEBBASE].index.get(req.params[1]) || req.app[WEBBASE]);
 });
 
 router.post('/wbdl/visibility/:_id', (req, res) => {
     try {
-        if (!/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(req.params._id) || !req.app[WEBBASE][INDEX].get(req.params._id))
+        if (!/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(req.params._id) || !req.app[WEBBASE].index.get(req.params._id))
             throw 406; // 406 Not Acceptable
 
-        let node = req.app[WEBBASE][INDEX].get(req.params._id),
+        let node = req.app[WEBBASE].index.get(req.params._id),
             status = req.body;
 
         status.role = status.role.replace(/[^a-zA-Z]/g, '').toLowerCase();
@@ -135,7 +135,7 @@ router.post('/wbdl/visibility/:_id', (req, res) => {
 
 router.post('/wbdl/:lang/:_id/:type?', (req, res) => {
     try {
-        if (!/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(req.params._id) || !req.app[WEBBASE][INDEX].get(req.params._id))
+        if (!/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(req.params._id) || !req.app[WEBBASE].index.get(req.params._id))
             throw 406; // 406 Not Acceptable
 
         let node,
@@ -148,17 +148,17 @@ router.post('/wbdl/:lang/:_id/:type?', (req, res) => {
                 case 'Page': node = new Page({ name: 'New Page' }); break;
                 case 'Content': node = new Text({ name: 'New Text' }); break;
             }
-            req.app[WEBBASE][INDEX].get(req.params._id).add(node);
+            req.app[WEBBASE].index.get(req.params._id).add(node);
 
         } else
-            node = req.app[WEBBASE][INDEX].get(req.body._id);
+            node = req.app[WEBBASE].index.get(req.body._id);
 
         if (newNode.status === 'T' && node.status === 'T') {
-            let i = req.app[WEBBASE][INDEX].get(node._idParent).children.findIndex(child => child._id === node._id);
-            req.app[WEBBASE][INDEX].get(node._idParent).children.splice(i, 1);
-            req.app[WEBBASE][INDEX].clear();
+            let i = req.app[WEBBASE].index.get(node._idParent).children.findIndex(child => child._id === node._id);
+            req.app[WEBBASE].index.get(node._idParent).children.splice(i, 1);
+            req.app[WEBBASE].index.clear();
             req.app[WEBBASE].createIndex(req.app[WEBBASE]);
-            node = req.app[WEBBASE][INDEX].get(newNode._idParent);
+            node = req.app[WEBBASE].index.get(newNode._idParent);
 
         } else
             for (let obj in newNode)

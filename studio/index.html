@@ -5,12 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STW Studio</title>
+    <script>
+        // Exit Spin the Web Studio if we are not developers
+        if (document.cookie.split('; ').find(row => row.startsWith('stwDeveloper='))?.split('=')[1] != 'true')
+            location = '..';
+    </script>
+
     <link rel="icon" type="image/png" href="/studio/favicon.ico">
     <link rel="stylesheet" href="/studio/css/studio.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
         integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="/studio/js/studio.js"></script>
+    <script src="/studio/js/stwStudio.js"></script>
 </head>
 
 <body class="stwDark">
@@ -26,7 +32,8 @@
             data-panel="/studio/panels/sourcecontrol.html"></i>
         <i tabindex="0" role="link" class="fa fa-fw fa-database" title="Datasources"
             data-panel="/studio/panels/datasources.html"></i>
-        <i tabindex="0" role="link" class="fa fa-fw fa-street-view" title="Roles" data-panel="/studio/panels/roles.html"></i>
+        <i tabindex="0" role="link" class="fa fa-fw fa-street-view" title="Roles"
+            data-panel="/studio/panels/roles.html"></i>
         <span></span>
         <i tabindex="0" role="link" class="fa fa-fw fa-cog" title="Settings"
             data-panel="/studio/panels/settings.html"></i>
@@ -42,7 +49,7 @@
                 <i tabindex="0" role="link" class="fa fa-fw fa-arrow-right" title="Forward" data-action="forward"></i>
                 <i tabindex="0" role="link" class="fa-solid fa-fw fa-rotate-right" title="Refresh (F5)"
                     data-action="refresh"></i>
-                    <i tabindex="0" role="link" class="fa-solid fa-sitemap specialColor" title="Locate page in webbase"
+                <i tabindex="0" role="link" class="fa-solid fa-sitemap specialColor" title="Locate page in webbase"
                     data-action="locate"></i>
                 <i tabindex="0" role="link" class="fa fa-fw fa-house" title="Home" data-action="home"></i>
                 <input id="BrowseURL" type="url" name="url" placeholder="URL" onchange="stwStudio.setURL(event)"
@@ -51,7 +58,8 @@
             <iframe id="Browse" title="Webo"></iframe>
         </div>
     </section>
-    <section class="stwStatusbar"><span></span><span><i class="fa fa-fw fa-triangle-exclamation"></i> This project is under
+    <section class="stwStatusbar"><span></span><span><i class="fa fa-fw fa-triangle-exclamation"></i> This project is
+            under
             development</span><span></span></section>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.0/ace.min.js"

@@ -12,18 +12,18 @@ export default class Languages extends Content {
         super(name, template, lang);
     }
 
-    Render(req, res, next) {
-        return super.Render(req, res, necxt, () => {
-            if (this[WEBBASE].langs.length == 1)
+    render(req, res, next) {
+        return super.render(req, res, next, () => {
+            if (req.app[WEBBASE].langs.length == 1)
                 return '';
 
             let fragment = '';
-            if (this[WEBBASE].langs.length <= 3) {
-                for (let lang of this[WEBBASE].langs)
+            if (req.app[WEBBASE].langs.length <= 3) {
+                for (let lang of req.app[WEBBASE].langs)
                     fragment += `&nbsp;<a href="/" onclick="stwHref(event)">${lang.toUpperCase()}</a>`;
             } else {
-                fragment += '<select href="" onchange="stwHref(event)">'
-                for (let lang of this[WEBBASE].langs)
+                fragment += '<i class="fa-solid fa-language"></i> <select onchange="">'
+                for (let lang of req.app[WEBBASE].langs)
                     fragment += `<option>${lang.toUpperCase()}</option>`;
                 fragment += '</select>';
             }

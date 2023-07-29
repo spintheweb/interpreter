@@ -30,7 +30,7 @@ export default class Group extends Content {
         child.Section(this.id);
         return this;
     }
-    Render(req, res, next) {
+    render(req, res, next) {
         return ' ';
     }
 }

@@ -15,10 +15,10 @@ export default class Breadcrumbs extends Content {
 		delete this.layout;
 	}
 
-	Render(req, res, next) {
-		return super.Render(req, res, next, () => {
+	render(req, res, next) {
+		return super.render(req, res, next, () => {
 			let lang = req.session.lang;
-			let element = this[WEBBASE][INDEX].get(res.locals.cookie.stwPage);
+			let element = req.app[WEBBASE].index.get(res.locals.cookie.stwPage);
 			let fragment = element.localizedName(lang);
 
 			for (element = element.parent; element.type != 'Webo'; element = element.parent)

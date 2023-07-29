@@ -4,30 +4,45 @@
  * MIT Licensed
  */
 import { v1 } from 'uuid';
-
 import { WEBBASE, INDEX } from './Miscellanea.mjs';
 
 export default class Base {
-	constructor(params = {}) {
-		params.lang = params.lang || 'en';
+	static [WEBBASE] = {};
 
-		this._id = v1();
+	constructor(params = {}) {
+		this._id = params._id || v1();
+		Object.defineProperty(this, '_idParent', { value: null, writable: true });
+
 		this.type = this.constructor.name;
-		this.status = 'U';
-		this.name = { [params.lang]: params.name || this.constructor.name };
-		this.slug = { [params.lang]: this.name[params.lang].replace(/[^a-z0-9_]/gi, '').toLowerCase() };
+		this.status = params.status || 'U';
+		this.name = params.name || { [this.lang || 'en']: this.constructor.name };
+		this.slug = params.slug || { [this.lang || 'en']: this.name[this.lang || 'en'].replace(/[^a-z0-9_]/gi, '').toLowerCase() };
 		this.children = [];
 		this.visibility = params.visibility || {}; // [role: { false | true }] Role Based Visibilities
-		
-		this[WEBBASE] = this.constructor.name === 'Webo' ? this : null;
+
+		if (this.constructor.name === 'Webo') {
+			Base[WEBBASE] = this;
+			Object.defineProperty(Base[WEBBASE], 'index', { value: new Map(), writable: true });
+			Base[WEBBASE].index.set(this._id, this);
+		}
 	}
 
 	get parent() {
-		return this[WEBBASE][INDEX].get(this._idParent);
+		return Base[WEBBASE].index.get(this._idParent);
 	}
 
 	localizedName(lang) {
 		return this.name[lang] || this.name[0];
+	}
+
+	// NOTE: Role management is allowed only to the administrators role
+	role(name, enabled) {
+		if (this.users[this.user()].roles.indexOf('administrators') !== -1)
+			return -1;
+		if (!this.visibility[name])
+			this.visibility[name] = {};
+		this.visibility[name].enabled = (enabled || name === 'administrators' || name === 'guests') ? true : false;
+		return 0;
 	}
 
 	// Grant a role access control, if no access control is specified remove the role from the RBV list (Role Based Visibility).
@@ -43,7 +58,7 @@ export default class Base {
 	granted(roles, role = null, recurse = false) {
 		let ac = null;
 
-		if (this.constructor.name === 'Page' && this[WEBBASE].mainpage === this._id)
+		if (this.constructor.name === 'Page' && Base[WEBBASE].mainpage === this._id)
 			ac = recurse ? 0b11 : 0b01; // Home page always visible
 
 		if (role) {
@@ -68,18 +83,15 @@ export default class Base {
 	// Add child to element, note, we are adding a child not moving it
 	add(child) {
 		if (child && child.constructor.name !== 'Webo' && child !== this && this.children.indexOf(child) === -1) {
-			Object.defineProperty(child, '_idParent', { value: 'static', writable: true });
-			child._idParent = _idParent;
+			child._idParent = this._id;
 
-			child[WEBBASE] = this[WEBBASE];
+			if (child.type === 'Link')
+				this.links.push(child);
+			else {
+				this.children.push(child);
 
-			//			if (this instanceof Content)
-			//				this.links.push({ _id: child })
-			//			then
-			this.children.push(child);
-
-			if (this[WEBBASE])
-				this[WEBBASE][INDEX].set(child._id, child);
+				Base[WEBBASE].index.set(child._id, child);
+			}
 		}
 		return child;
 	}

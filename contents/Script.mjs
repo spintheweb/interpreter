@@ -11,7 +11,7 @@ export default class Script extends Content {
 		super(name, template || '', lang);
 	}
 
-	Render(socket) {
+	render(socket) {
 		let fragment;
 		if (this.granted(socket.target.user) & 0b01) {
 			fragment = this.template(socket.target.lang);

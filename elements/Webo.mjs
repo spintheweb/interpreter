@@ -3,72 +3,38 @@
  * Copyright(c) 2020 Giancarlo Trevisan
  * MIT Licensed
  */
-import fs from 'fs';
 import path from 'path';
 import language from 'accept-language-parser';
 
-import { WEBBASE, PATH, INDEX } from './Miscellanea.mjs';
+import { WEBBASE, INDEX, } from './Miscellanea.mjs';
+import Base from './Base.mjs';
 import Area from './Area.mjs';
-import Page from './Page.mjs';
-
-import contentFactory from '../contents/contentFactory.mjs';
+import CreateElement from './Element.mjs';
 
 export default class Webo extends Area {
     constructor(params = {}) {
         super(params);
         delete this.slug;
+
         this.url = params.url;
-        this.lang = params.lang;
-        this.langs = new Array(params.lang);
+        this.lang = params.lang || 'en';
+        this.langs = new Array(params.lang || 'en');
 
-        this[WEBBASE][INDEX] = new Map();
-        this[WEBBASE][PATH] = params.webbase;
-
-        this.visibility = params.visibility || { // Predefined roles
+        // Predefined roles
+        Object.assign(this.visibility, params.visibility, { 
             administrators: true, // Everything except development
             developers: true, // Manage webbase
             translators: false, // Modify texts in webbase
-            guests: true, // Use public parts of webbase
+            guests: false, // Use public parts of webbase
             users: true, // Use webbase
             webmasters: false // Add data
-        };
+        });
         this.datasources = params.datasources || {
-            json: { mime: 'application/json', data: {} }
+            example: { mime: 'application/json', data: [{ name: 'WBDL', desc: 'Webbase Description Language' }, { name: 'WBLL', desc: 'Webbase Layout Language' }] }
         };
 
-        // Import webbase
-        let webbase;
-        if (params.webbase && fs.existsSync(params.webbase))
-            webbase = fs.readFileSync(params.webbase);
-        else
-            webbase = '{"_id":"169ecfb0-2916-11ee-ad92-6bd31f953e80","type":"Webo","status":"M","name":{"en":"Hello World"},"slug":{"en":"Webo"},"children":[{"_id":"169ecfb1-2916-11ee-ad92-6bd31f953e80","type":"Page","status":"U","name":{"en":"Home"},"slug":{"en":"Home"},"children":[{"_id":"169ecfb2-2916-11ee-ad92-6bd31f953e80","type":"Content","status":"U","name":{"en":"Hello World"},"slug":{"en":"HelloWorld"},"children":[],"visibility":{},"subtype":"Text","cssClass":null,"section":"","sequence":1,"dsn":"","query":"","params":"","layout":{"en":"Hello World from Spin The Web&trade;!"},"_clientHandler":null,"_serverHandler":null,"_idParent":"169ecfb1-2916-11ee-ad92-6bd31f953e80"}],"visibility":{},"keywords":{},"description":{},"contentType":"text/html","template":"index.html","_idParent":"169ecfb0-2916-11ee-ad92-6bd31f953e80"}],"visibility":{"administrators":true,"developers":true,"translators":false,"guests":true,"users":true,"webmasters":false},"mainpage":"169ecfb1-2916-11ee-ad92-6bd31f953e80","langs":["en"],"datasources":{"json":{"mime":"application/json","data":{}}}}';
-
-        this[WEBBASE] = Object.assign(this[WEBBASE], JSON.parse(webbase));
-
-        let createIndex = (obj, _idParent = null) => {
-            delete obj._idParent;
-            Object.defineProperty(obj, '_idParent', { value: 'static', writable: true });
-            obj._idParent = _idParent;
-
-            this[WEBBASE][INDEX].set(obj._id, obj);
-            if (obj.children)
-                for (let i = 0; i < obj.children.length; ++i) {
-                    let typedChild;
-                    if (obj.children[i].type === 'Area')
-                        typedChild = new Area();
-                    else if (obj.children[i].type === 'Page')
-                        typedChild = new Page();
-                    else
-                        typedChild = contentFactory.create(obj.children[i].subtype);
-
-                    if (typedChild)
-                        obj.children[i] = Object.assign(typedChild, obj.children[i]);
-
-                    createIndex(obj.children[i], obj._id);
-                    obj.children[i][WEBBASE] = this[WEBBASE];
-                }
-        }
-        createIndex(this[WEBBASE]);
+        for (let child of params.children)
+            this.add(CreateElement(this, child));
     }
 
     // [TODO] https://www.npmjs.com/package/locale
@@ -78,16 +44,6 @@ export default class Webo extends Area {
         if (value.search(/^[a-z][a-z](-[a-z][a-z])?$/i) !== -1)
             this.langs[0] = code.toLowerCase();
         return this;
-    }
-
-    // NOTE: Role management is allowed only to the administrators role
-    role(name, enabled) {
-        if (this.users[this.user()].roles.indexOf('administrators') !== -1)
-            return -1;
-        if (!this.visibility[name])
-            this.visibility[name] = {};
-        this.visibility[name].enabled = (enabled || name === 'administrators' || name === 'guests') ? true : false;
-        return 0;
     }
 
     datasource(name, obj) {
@@ -103,13 +59,13 @@ export default class Webo extends Area {
     // Determine the requested webbase element given the url
     route(pathname, lang) {
         if (!pathname || pathname === '/')
-            pathname = this.Mainpage();
+            pathname = this.mainpage;
 
         if (typeof pathname === 'object')
             return pathname;
 
         if (/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(pathname))
-            return this[WEBBASE][INDEX].get(pathname);
+            return Base[WEBBASE].index.get(pathname);
 
         return (function walk(slugs, node) {
             node = node.children.find(child => child.slug[lang] == slugs[0]);
@@ -122,22 +78,22 @@ export default class Webo extends Area {
         })(pathname.split('/'), this);
     }
 
-    Render(req, res, next) {
+    render(req, res, next) {
         const lang = language.pick(this.langs, req.headers['accept-language']);
 
         if (req.method === 'GET') {
             if (req.url === '/sitemap.xml')
-                return this.Sitemap(req);
+                return this.sitemap(req);
             else if (req.url.search(/\.[a-z0-9]{1,4}$/i) !== -1)
                 return path.join(process.cwd(), 'public', req.url);
 
-            return (this.route(req.url, lang)).Render(req, res);
+            return (this.route(req.url, lang)).render(req, res);
         }
         next();
     }
 
     // Build a site map (https://www.sitemaps.org/index.html) that includes the urls of the visible pages in the webbase, if no language is specified in the url return the sitemap index
-    Sitemap(req, res) {
+    sitemap(req, res) {
         let lang = parse(req.url).query, fragment = '';
 
         if (lang) {

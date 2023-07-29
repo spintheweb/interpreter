@@ -11,8 +11,8 @@ export default class List extends Content {
 		super(name, template, lang, true);
 	}
 
-	Render(socket) {
-		return super.Render(socket, (socket, template) => {
+	render(req, res, next) {
+		return super.render(req, res, next, () => {
 			let fragment = '<ul>';
 
 			if (!this.datasource()) { // TODO: set the content datasource, query amd template
@@ -29,9 +29,9 @@ export default class List extends Content {
 					socket.emit('content', element.id);
 				};
 
-				let id = socket.data.searchParams.id || this[WEBBASE].id;
-				let el = this[WEBBASE].getElementById(id); // Roled Based Visibility
-				for (let role in this[WEBBASE].roles) {
+				let id = socket.data.searchParams.id || req.app[WEBBASE].id;
+				let el = req.app[WEBBASE].getElementById(id); // Roled Based Visibility
+				for (let role in req.app[WEBBASE].roles) {
 					let granted = el.granted(socket.target.user, role);
 					fragment += `<li class="stwRBVIcn${granted}" onclick="stwListRoles(event)" data-ref="${granted}"> ${role}</li>`;
 				}

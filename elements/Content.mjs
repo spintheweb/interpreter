@@ -20,7 +20,8 @@ export default class Content extends Base {
         this.dsn = params.dsn || '';
         this.query = params.query || '';
         this.params = params.params || '';
-        this.layout = { [params.lang]: params.layout };
+        this.layout = params.layout || {};
+		this.links = params.links || [];
     }
 
     get CSSClass() {
@@ -52,26 +53,20 @@ export default class Content extends Base {
         this.params = value;
         return this;
     }
-    Layout(lang) {
-        if (typeof value === 'undefined')
-            return localize(lang, this.layout);
-        this.layout[lang] = value;
-        return this;
-    }
-    add(child) {
-        if (!child || child == this || child.constructor.name === 'Webo')
+    add(link) {
+        if (!link || link == this || link.constructor.name === 'Webo')
             return this;
 
-        if (child instanceof Content)
-            child.Section(this.id); //this.permalink());
+        if (link instanceof Content)
+            link.Section(this.id); //this.permalink());
         else
-            child = new Reference(child);
+            link = new Reference(link);
 
-        if (this.children.indexOf(child) === -1) {
-            if (child.parent)
-                child = new Reference(child);
-            child.parent = this;
-            this.children.push(child);
+        if (this.children.indexOf(link) === -1) {
+            if (link.parent)
+                link = new Reference(link);
+            link.parent = this;
+            this.links.push(link);
         }
         return this;
     }
@@ -80,14 +75,14 @@ export default class Content extends Base {
             return this.query(req);
         return JSON.parse(this.query || '[{}]');
     }
-    async Render(req, res, next, body) {
+    async render(req, res, next, body) {
         body = body || this.renderRow;
 
         let fragment = '';
         if (this.granted(req.session.roles) & 0b01) {
             req.dataset = await this.getData(req); // TODO: Retrieve data asynchronously
 
-            let layout = lexer(this.Layout(req.session.lang));
+            let layout = lexer(localize([req.session.lang, req.app[WEBBASE].lang], this.layout));
 
             if (typeof layout === 'object') {
                 // TODO: Evaluate layout.settings
