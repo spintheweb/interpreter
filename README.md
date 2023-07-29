@@ -18,7 +18,7 @@ The term _webbase_ was first used in 1998, a name given to a relational database
 * Templated
 
 ## Elements
-Spin the Web addresses three issues to ease web develpments: describe, interpret and build. It is based on pillars of web development, HTML (SVG), CSS, Javascript, to name a few, it is not for the faint of heart, a good dose of knowhow is necessary, full stack development knowhow.
+Spin the Web addresses three issues to ease web develpments: describe, interpret and build. It is based on pillars of web development, HTML (SVG), CSS, Javascript, to name a few, it is not for the faint of heart, a good dose of know-how is necessary, full stack development know-how.
 
 A _webbase_ is an hierachically organized structure of three base elements, plus one: _areas_, _pages_ and _contents_, the additional element is _reference_, it points to any of the three base elements; at the root of the hierarchy there is always a fifth element, the _webo_. The file system analogy may be of help: the _webo_ is the drive, _areas_ are folders, _pages_ are files, _contents_ and _references_, are something else! Like the file system, a webbase also addresses security, role level security, based on a simple inherited visibility paradigm.
 
