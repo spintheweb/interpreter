@@ -13,7 +13,7 @@ import { WEBBASE, INDEX, STUDIO_DIR, WEBO_DIR } from './elements/Miscellanea.mjs
 const router = express.Router();
 
 router.post('/logon/:_id?', async (req, res) => {
-    let users = JSON.parse(fs.readFileSync(path.join(WEBO_DIR, '/data/basicAuth.json')));
+    let users = JSON.parse(fs.readFileSync(path.join(WEBO_DIR, '/.data/basicAuth.json')));
 
     let user = users.find(user => user.enabled && user.name === req.body.user && user.pwd == decrypt(req.body.password));
     if (user) {
@@ -43,7 +43,7 @@ router.post('/setpwd/:id?', async (req, res) => {
         return;
     }
 
-    let users = JSON.parse(fs.readFileSync(path.join(WEBO_DIR, '/data/basicAuth.json')));
+    let users = JSON.parse(fs.readFileSync(path.join(WEBO_DIR, '/.data/basicAuth.json')));
 
     let user = users.find(user => user.enabled && user.name === req.session.user);
     if (req.body.pwd1 === req.body.pwd2) {
