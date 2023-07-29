@@ -17,11 +17,11 @@ import Webo from './elements/Webo.mjs';
 import stwStudio from './stwStudio.mjs';
 import stwAuth from './stwAuth.mjs';
 
-let settings = JSON.parse(fs.readFileSync(path.join(WEBO_DIR, 'settings.json')) || '{"protocol":"http","hostname":"127.0.0.0","port":"80"}');
+let settings = JSON.parse(fs.readFileSync(path.join(WEBO_DIR, '.settings')) || '{"protocol":"http","hostname":"127.0.0.0","port":"80"}');
 
 const app = express();
 
-let webbase = path.join(WEBO_DIR, settings.webbase || 'data/webbase.json');
+let webbase = path.join(WEBO_DIR, settings.webbase || '.data/webbase.json');
 if (fs.existsSync(webbase))
     webbase = fs.readFileSync(webbase);
 else
@@ -29,7 +29,7 @@ else
 
 new Webo(JSON.parse(webbase));
 app[WEBBASE] = Base[WEBBASE];
-app[WEBBASE][PATH] = path.join(WEBO_DIR, settings.webbase || 'data/webbase.json');
+app[WEBBASE][PATH] = path.join(WEBO_DIR, settings.webbase || '.data/webbase.json');
 
 app.use(express.text());
 app.use(express.json());

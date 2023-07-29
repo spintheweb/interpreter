@@ -2,5 +2,8 @@
 node_modules
 !.gitignore
 trash
-public/cert/*.pem
+public/.cert/*.pem
+!public/.cert
+!public/.data
+!public/.settings
 package-lock.json
