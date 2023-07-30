@@ -16,19 +16,18 @@ export default class Page extends Base {
 		this.contentType = params.contentType || 'text/html';
 		this.template = params.template || 'index.html';
 
-		for (let child of params.children)
-			this.add(createElement(this, child));
+		if (params.children)
+			for (let child of params.children)
+				this.add(createElement(this, child));
 	}
 
-	ContentType(value) {
-		if (typeof value === 'undefined') return this.contentType;
-		this.contentType = value;
-		return this;
-	}
-	Template(value) {
-		if (typeof value === 'undefined')
-			return this.template;
-		this.template = value;
+	patch(lang, params = {}) {
+		super.patch(lang, params);
+		this.keywords = { [lang]: params.keywords };
+		this.description = { [lang]: params.description };
+		this.contentType = params.contentType;
+		this.template = params.template;
+
 		return this;
 	}
 
@@ -48,7 +47,7 @@ export default class Page extends Base {
 			res.cookie('stwPage', this._id);
 			res.cookie('stwContents', contents.join(','));
 			res.header('Content-Type', this.contentType);
-			res.sendFile(join(process.cwd(), 'public', this.Template()));
+			res.sendFile(join(process.cwd(), 'public', this.template));
 		} else
 			res.sendStatus(204); // 204 No content
 	}

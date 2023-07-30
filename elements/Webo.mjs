@@ -21,7 +21,7 @@ export default class Webo extends Area {
         this.langs = new Array(params.lang || 'en');
 
         // Predefined roles
-        Object.assign(this.visibility, params.visibility, { 
+        Object.assign(this.visibility, params.visibility, {
             administrators: true, // Everything except development
             developers: true, // Manage webbase
             translators: false, // Modify texts in webbase
@@ -33,8 +33,9 @@ export default class Webo extends Area {
             example: { mime: 'application/json', data: [{ name: 'WBDL', desc: 'Webbase Description Language' }, { name: 'WBLL', desc: 'Webbase Layout Language' }] }
         };
 
-        for (let child of params.children)
-            this.add(createElement(this, child));
+        if (params.children)
+            for (let child of params.children)
+                this.add(createElement(this, child));
     }
 
     // TODO: https://www.npmjs.com/package/locale

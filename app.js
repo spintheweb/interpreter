@@ -42,17 +42,18 @@ const sessionConfig = {
     saveUninitialized: false,
     cookie: { sameSite: 'strict' }
 };
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV.trim() !== 'dev') {
     app.set('trust proxy', 1);
     sessionConfig.cookie.secure = true;
 }
 app.use(session(sessionConfig));
 app.use((req, res, next) => {
     if (!req.session.user) {
-        req.session.user = 'guest';
-        req.session.roles = ['guests'];
+        req.session.user = process.env.NODE_ENV.trim() === 'dev' ? 'developer' : 'guest';
+        req.session.roles = process.env.NODE_ENV.trim() === 'dev' ? ['users', 'developers'] : ['guests'];
         req.session.lang = language.pick(req.app[WEBBASE].langs, req.headers['accept-language']);
-        res.cookie('stwDeveloper', false);
+        req.session.developer = process.env.NODE_ENV.trim() === 'dev';
+        res.cookie('stwDeveloper', req.session.developer);
     }
 
     const { headers: { cookie } } = req;

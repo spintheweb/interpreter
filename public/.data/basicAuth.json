@@ -1,7 +1,7 @@
 [
     {
         "name": "administrator",
-        "pwd": "password",
+        "pwd": "pwd",
         "enabled": true,
         "roles": [
             "administrators"
@@ -9,7 +9,7 @@
     },
     {
         "name": "user",
-        "pwd": "password",
+        "pwd": "pwd",
         "enabled": true,
         "roles": [
             "users"
@@ -17,7 +17,7 @@
     },
     {
         "name": "developer",
-        "pwd": "password",
+        "pwd": "pwd",
         "enabled": true,
         "roles": [
             "users", "developers"

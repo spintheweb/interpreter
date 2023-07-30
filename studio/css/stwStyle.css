@@ -9,6 +9,9 @@
     --padding: 0.5em;
     --input-height: 1.5em;
     --hideLabels: none;
+    --menu-backcolor: black;
+    --menu-forecolor: white;
+    --menu-hovercolor: rgba(var(--special), 0.6);
 }
 
 .specialColor:hover {
@@ -83,7 +86,9 @@ body {
     grid-template-rows: auto 2em;
 }
 
-.fa-toggle-on, .fas.fa-square-check, .fas.fa-square {
+.fa-toggle-on,
+.fas.fa-square-check,
+.fas.fa-square {
     color: var(--specialColor);
 }
 
@@ -366,6 +371,8 @@ li[data-type=ds]>div>span:nth-child(2)::before {
 
 .stwMenu {
     display: inline-block;
+    background-color: var(--menu-backcolor);
+    color: var(--menu-forecolor);
 }
 
 .stwMenu ul {
@@ -394,6 +401,7 @@ li[data-type=ds]>div>span:nth-child(2)::before {
 }
 
 .stwMenu ul>li:hover>ul {
+    background-color: var(--menu-hovercolor);
     display: block;
 }
 
@@ -427,31 +435,37 @@ li[data-type=ds]>div>span:nth-child(2)::before {
 }
 
 .stwMenu li:hover>div {
-    background-color: var(--menu-background-color);
+    background-color: var(--menu-backcolor);
     color: var(--menu-hover-color);
     opacity: 1;
 }
 
 .stwMenu ul {
-    background-color: var(--menu-background-color);
+    background-color: var(--menu-backcolor);
     color: var(--menu-color);
-    opacity: 1;
+    opacity: 1;specialColor
 }
 
-#searchMode, #replaceMode {
+#searchMode,
+#replaceMode {
     position: absolute;
     right: var(--padding);
     line-height: 1.5em;
 }
-#searchMode span, #replace span {
+
+#searchMode span,
+#replace span {
     display: inline-block;
     width: 1.4em;
     text-align: center;
     padding: 0.25em;
 }
+
 #searchMode span[selected] {
     color: var(--specialColor);
 }
-#searchMode span:hover, #replaceMode span:hover {
+
+#searchMode span:hover,
+#replaceMode span:hover {
     background-color: var(--light);
 }

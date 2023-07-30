@@ -78,15 +78,16 @@ const stwStudio = {
             document.querySelector('#properties i[data-action="expand"]').click();
             event.preventDefault();
         }
-        /* if (event.key == 'Delete' && event.ctrlKey && document.getElementById('properties')) {
-            document.querySelector('#properties i[data-action="trash"]').click();
-            event.preventDefault();
-        } */
         if (event.key == 'F5') {
             document.getElementById('Browse').src = document.getElementById('BrowseURL').value;
             event.preventDefault();
             event.stopPropagation();
         }
+
+        /* if (event.key == 'Delete' && event.ctrlKey && document.getElementById('properties')) {
+            document.querySelector('#properties i[data-action="trash"]').click();
+            event.preventDefault();
+        } */
     },
     click: event => {
         let target = event.target;
@@ -129,9 +130,9 @@ const stwStudio = {
         if (data.hasOwnProperty('slug') && data.slug === '')
             data.slug = data.name.toLowerCase().replace(/[^a-z]/g, '');
 
-        fetch(`/studio/wbdl/${stwStudio.settings.lang}/${data._id}`,
+        fetch(`/studio/wbdl/${data._id}`,
             {
-                method: 'POST',
+                method: 'PATCH',
                 body: JSON.stringify(data),
                 headers: { 'Content-type': 'application/json' }
             })
@@ -367,7 +368,7 @@ const stwStudio = {
                         event.currentTarget.querySelector('ul').classList.toggle('stwT'); */
 
                 } else if (parent) {
-                    fetch(`/studio/wbdl/${stwStudio.settings.lang}/${parent.dataset.id}/${event.target.dataset.action}`,
+                    fetch(`/studio/wbdl/${parent.dataset.id}/${event.target.dataset.action}`,
                         {
                             method: 'POST'
                         })
@@ -639,6 +640,11 @@ const stwStudio = {
                 document.getElementById('Browse').src = location.origin;
                 break;
         }
+    },
+    manageContextMenu: event => {
+        return;
+        event.preventDefault();
+        event.stopPropagation();
     },
     setURL: event => {
         let target = event.target;

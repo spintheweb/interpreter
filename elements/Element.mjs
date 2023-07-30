@@ -27,7 +27,7 @@ const contents = {
 }
 
 export default function createElement(parent, element) {
-    element._idParent = parent._idParent;
+    element._idParent = parent._id;
 
     switch (element.type) {
         case 'Area':

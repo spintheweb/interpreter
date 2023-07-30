@@ -11,7 +11,7 @@ export default class Base {
 
 	constructor(params = {}) {
 		this._id = params._id || v1();
-		Object.defineProperty(this, '_idParent', { value: null, writable: true });
+		this._idParent = params._idParent;
 
 		this.type = this.constructor.name;
 		this.status = params.status || 'U';
@@ -25,6 +25,14 @@ export default class Base {
 			Object.defineProperty(Base[WEBBASE], 'index', { value: new Map(), writable: true });
 			Base[WEBBASE].index.set(this._id, this);
 		}
+	}
+
+	patch(lang, params = {}) {
+		this.status = params.status;
+		this.name = { [lang]: params.name };
+		this.slug = { [lang]: params.slug.replace(/[^a-z0-9_]/gi, '').toLowerCase() };
+
+		return this;
 	}
 
 	get parent() {

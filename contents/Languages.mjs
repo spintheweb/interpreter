@@ -19,8 +19,7 @@ export default class Languages extends Content {
     behaviors(req) {
         this.behavior = true;
 
-        req.app.get('/stw/setlanguage/:lang', (req, res, next) => {
-            req.app[WEBBASE]
+        req.app.get('/stwc/setlanguage/:lang', (req, res, next) => {
             req.session.lang = req.params.lang;
             res.redirect('back');
         });
@@ -37,9 +36,9 @@ export default class Languages extends Content {
             let fragment = '';
             if (req.app[WEBBASE].langs.length <= 3) {
                 for (let lang of req.app[WEBBASE].langs)
-                    fragment += `&nbsp;<a href="/stw/setlanguage/${lang}">${lang.toUpperCase()}</a>&nbsp;`;
+                    fragment += `&nbsp;<a href="/stwc/setlanguage/${lang}">${lang.toUpperCase()}</a>&nbsp;`;
             } else {
-                fragment += `<i class="fa-solid fa-language"></i> <select onchange="location.href='/stw/setlanguage/${lang}'">`
+                fragment += `<i class="fa-solid fa-language"></i> <select onchange="location.href='/stwc/setlanguage/${lang}'">`
                 for (let lang of req.app[WEBBASE].langs)
                     fragment += `<option>${lang.toUpperCase()}</option>`;
                 fragment += '</select>';

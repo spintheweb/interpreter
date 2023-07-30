@@ -1,4 +1,5 @@
-<article class="stwTree" id="webbase" onclick="stwStudio.manageWebbase(event)">
+<article class="stwTree" id="webbase" onclick="stwStudio.manageWebbase(event)"
+    oncontextmenu="stwStudio.manageContextMenu(event)">
     <h1><i class="fa fa-fw fa-nothing"></i> webbase
         <span>
             <!--i class="fa-solid fa-fw fa-rotate" title="Refresh" data-action="refresh"></i-->
@@ -28,9 +29,11 @@
         <input type="hidden" name="status">
         <ul>
             <li><label>Name</label><input type="text" name="name" placeholder="Name" title="Name" required></li>
-            <li><label>Slug</label><input type="text" name="slug" placeholder="Slug" title="Slug" style="font-style: italic;"></li>
+            <li><label>Slug</label><input type="text" name="slug" placeholder="Slug" title="Slug"
+                    style="font-style: italic;"></li>
 
-            <li><label>URL</label><input type="url" name="url" placeholder="URL" title="URL" style="font-style: italic;" required></li>
+            <li><label>URL</label><input type="url" name="url" placeholder="URL" title="URL" style="font-style: italic;"
+                    required></li>
             <li><label>Icon</label><input type="text" name="icon" placeholder="icon" title="Icon"></li>
             <li><label>Image</label><input type="text" name="image" placeholder="image" title="Image"></li>
 
@@ -48,12 +51,12 @@
             </li>
 
             <li><label>Default language</label><select name="lang" title="Default language" required>
-                <option value="de">deutsch</option>
-                <option value="en">english</option>
-                <option value="es">español</option>
-                <option value="fr">français</option>
-                <option value="it">italiano</option>
-            </select></li>
+                    <option value="de">deutsch</option>
+                    <option value="en">english</option>
+                    <option value="es">español</option>
+                    <option value="fr">français</option>
+                    <option value="it">italiano</option>
+                </select></li>
             <li><label>Documentation</label>
                 <textarea name="description" placeholder="description" title="Description"></textarea>
                 <input type="text" name="keywords" placeholder="keywords" title="Keywords">
@@ -106,3 +109,24 @@
     <ul style="display: none; max-height: 10em;"></ul>
 </article>
 <div>&nbsp;</div>
+
+<!--nav id="contextMenu" class="stwMenu" style="position:absolute; top: 100px; left: 100px; z-index: 10;">
+    <ul>
+        <li><div><a href="">Menu</a></div>
+            <ul>
+                <li>
+                    <div><a href="">Cut<span>CTRL+X</span></a></div>
+                </li>
+                <li>
+                    <div><a href="">Copy<span>CTRL+C</span></a></div>
+                </li>
+                <li>
+                    <div><a href="">Paste<span>CTRL+V</span></a></div>
+                </li>
+                <li>
+                    <div><a href="">Delete<span>DEL</span></a></div>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</nav-->

@@ -24,19 +24,35 @@ export default class Content extends Base {
         this.query = params.query || '';
         this.params = params.params || '';
         this.layout = params.layout || {};
-		this.links = params.links || [];
     }
+
+    patch(lang, params = {}) {
+        super.patch(lang, params);
+        // TODO: Subtype!
+        this.cssClass = params.cssClass;
+        this.section = params.section;
+        this.sequence = params.sequence;
+        this.dns = params.dns;
+        this.query = params.query;
+        this.params = params.params;
+        this.layout = { [lang]: params.layout };
+
+		return this;
+	}
 
     get CSSClass() {
         return this.cssClass ? `class="${this.cssClass}"` : '';
     }
-    Sequence(value) {
-        if (typeof value === 'undefined') return this.sequence;
-        this.sequence = isNaN(value) || value < 1 ? 1 : value;
-        if (this.parent) // Order by section, sequence
-            this.parent.children.sort((a, b) =>
-                a._section + ('0000' + a._sequence.toFixed(2)).slice(-5) > b._section + ('0000' + b._sequence.toFixed(2)).slice(-5));
-        return this;
+    set Sequence(value) {
+        this.sequence = isNaN(value) ? null : value;
+        this.parent?.children.sort((a, b) => {
+            let sa = (a.section ?? '-') + (a.sequence ?? '-'),
+                sb = (b.section ?? '-') + (b.sequence ?? '-');
+
+            if (sa > sb) return 1;
+            if (sa < sb) return -1;
+            return 0;
+        });
     }
     Datasource(name, query, params) {
         this.Query(query);
@@ -57,9 +73,9 @@ export default class Content extends Base {
         return this;
     }
     changeSubtype(newSubtype) {
-//        this.subtype = newSubtype;
-//        this = createElement(this, this); // Replace
-//        return this;
+        //        this.subtype = newSubtype;
+        //        this = createElement(this, this); // Replace
+        //        return this;
     }
     add(link) {
         if (!link || link == this || link.constructor.name === 'Webo')
@@ -84,6 +100,8 @@ export default class Content extends Base {
         return JSON.parse(this.query || '[{}]');
     }
     async render(req, res, next, body) {
+        let timestamp = Date.now();
+
         body = body || this.renderRow;
 
         let fragment = '';
@@ -103,14 +121,14 @@ export default class Content extends Base {
                     fragment += `<h1>${layout.settings.caption}</h1>`;
                 if (layout.settings.header)
                     fragment += `<header>${layout.settings.header}</header>`;
-                fragment += `<div>${body(req, this.id, layout)}</div>`;
+                fragment += body(req, this.id, layout);
                 if (layout.settings.footer)
                     fragment += `<footer>${layout.settings.footer}</footer>`;
             } else
                 fragment = body(req, layout);
 
             res.set('Cache-Control', 'max-age=0, no-store');
-            res.send({ id: this._id, section: this.section, sequence: this.sequence, body: fragment });
+            res.send({ id: this._id, section: this.section, sequence: this.sequence, body: `<article id="${this._id}" ${this.CSSClass} data-ms="${Date.now() - timestamp}ms" data-seq="${this.sequence}">${fragment}</article>` });
 
         } else
             res.sendStatus(204); // 204 No content

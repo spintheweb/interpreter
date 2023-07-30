@@ -12,6 +12,13 @@ export default class Link extends Base {
 		delete this.children;
 	}
 
+	patch(lang, params = {}) {
+		super.patch(lang, params);
+		this.ref = params.ref;
+
+		return this;
+	}
+
 	render(req, res, next) {
 		if (this.ref.constructor.name !== 'Webo' && this.granted(socket.target.user) & 0b01)
 			return this.ref.render(socket);

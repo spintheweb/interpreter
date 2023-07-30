@@ -3,15 +3,27 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from '../elements/Miscellanea.mjs';
 import Content from '../elements/Content.mjs';
 
 export default class Keypad extends Content {
-	constructor(name, template, lang) {
-		super(name, template || 'abcdefghijklmnopqrstuvwxyz', lang);
+	constructor(params) {
+		super(params);
 	}
 
+    // Content specific behaviors
+    behaviors(req) {
+        this.behavior = true;
+
+		// TODO: Candidate socket
+        req.app.get('/stwc/keypad/:key', (req, res, next) => {
+            res.redirect('back'); // 206 Partial Content
+        });
+    }
+
 	render(req, res, next) {
+        if (!this.behavior) 
+            this.behaviors(req);
+
 		return super.render(req, res, next, () => {
 			let fragment = '';
 			this.template(res.session.lang).split('').forEach((c, i) => {
@@ -19,7 +31,7 @@ export default class Keypad extends Content {
 					return fragment += '<br>';
 				return fragment += `<li data-ref="${c}">${c}</a></li>`;
 			});
-			return `<ul class="stwBody">${fragment}</ul>`;
+			return `<ul class="stwBody" onclick="location.href='/stwc/keypad/'">${fragment}</ul>`;
 		});
 	}
 }

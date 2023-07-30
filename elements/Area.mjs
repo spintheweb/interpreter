@@ -15,9 +15,17 @@ export default class Area extends Base {
 		this.description = params.description || {};
 		this.mainpage = params.mainpage || '';
 
-		if (this.constructor.name === 'Area')
+		if (this.constructor.name === 'Area' && params.children)
 			for (let child of params.children)
 				this.add(createElement(this, child));
+	}
+
+	patch(lang, params = {}) {
+		super.patch(lang, params);
+		this.keywords = { [lang]: params.keywords };
+		this.description = { [lang]: params.description };
+
+		return this;
 	}
 
 	add(child) {
