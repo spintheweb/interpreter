@@ -9,7 +9,7 @@ if (self != top && document.cookie.split('; ').find(row => row.startsWith('stwDe
     top.location = self.location;
 
 else {
-    window.onload = function () {
+    window.onload = () => {
         // Request page contents
         let stwContents = decodeURIComponent(document.cookie.split('; ').find(row => row.startsWith('stwContents='))?.split('=')[1]);
 
@@ -29,6 +29,13 @@ else {
                     console.log(err);
                 });
         });
+    }
+    window.onkeydown = event => {
+        if (self == top && event.ctrlKey && event.key === 'F12') {
+            event.preventDefault();
+            event.stopPropagation();
+            location.href = '/studio';
+        }
     }
 }
 

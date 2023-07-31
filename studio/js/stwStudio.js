@@ -59,6 +59,13 @@ const stwStudio = {
             document.querySelector(':root').style.setProperty('--hideLabels', event.target.value === 'true' ? 'none' : 'inherit');
     },
     keydown: event => {
+        if (event.ctrlKey && event.key === 'F12') {
+            event.preventDefault();
+            event.stopPropagation();
+            location.href = document.getElementById('BrowseURL').value;
+            return;
+        }
+    
         if (document.activeElement.className === 'ace_text-input' && event.key == 's' && event.ctrlKey) {
             event.stopPropagation();
             event.preventDefault();

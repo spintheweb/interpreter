@@ -3,6 +3,12 @@
  * Copyright(c) 2023 Giancarlo Trevisan
  * MIT Licensed
  */
+if (process.env.NODE_ENV != 'production' && process.env.NODE_ENV != 'development') {
+    console.log('Please set process.env.NODE_ENV={production | development}');
+    process.exit();
+}
+console.log(`process.env.NODE_ENV='${process.env.NODE_ENV}'\n`);
+
 import http from 'http';
 import https from 'https';
 import fs from 'fs';
@@ -35,6 +41,7 @@ app.use(express.text());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// TODO: Set production MemoryStory
 const sessionConfig = {
     secret: settings.secret || 'Spin the Web',
     name: 'stw',
@@ -42,17 +49,19 @@ const sessionConfig = {
     saveUninitialized: false,
     cookie: { sameSite: 'strict' }
 };
-if (process.env.NODE_ENV.trim() !== 'dev') {
+
+if (process.env.NODE_ENV == 'production') {
     app.set('trust proxy', 1);
-    sessionConfig.cookie.secure = true;
+//    sessionConfig.cookie.secure = true;
 }
+
 app.use(session(sessionConfig));
 app.use((req, res, next) => {
     if (!req.session.user) {
-        req.session.user = process.env.NODE_ENV.trim() === 'dev' ? 'developer' : 'guest';
-        req.session.roles = process.env.NODE_ENV.trim() === 'dev' ? ['users', 'developers'] : ['guests'];
+        req.session.user = process.env.NODE_ENV == 'development' ? 'developer' : 'guest';
+        req.session.roles = process.env.NODE_ENV == 'development' ? ['users', 'developers'] : ['guests'];
         req.session.lang = language.pick(req.app[WEBBASE].langs, req.headers['accept-language']);
-        req.session.developer = process.env.NODE_ENV.trim() === 'dev';
+        req.session.developer = process.env.NODE_ENV == 'development';
         res.cookie('stwDeveloper', req.session.developer);
     }
 
@@ -91,5 +100,5 @@ else
     server = http.createServer(app);
 
 server.listen(settings.port, settings.hostname, () => {
-    console.log(`Spin the Web running at ${settings.protocol}://${settings.hostname}:${settings.port}/`);
+    console.log(`\nSpin the Web running at ${settings.protocol}://${settings.hostname}:${settings.port}/`);
 });

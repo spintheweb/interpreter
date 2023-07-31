@@ -22,7 +22,7 @@ export default class Breadcrumbs extends Content {
 			let fragment = element.localizedName(lang);
 
 			for (element = element.parent; element.type != 'Webo'; element = element.parent)
-				fragment = `<a href="${element.permalink(lang) || '/'}">${element.localizedName(lang)}</a><i class="fas fa-fw fa-angle-right"></i>${fragment}` 
+				fragment = `<a href="${element.permalink(lang) || '/'}">${element.localizedName(lang)}</a>/${fragment}` 
 
 			return `<nav ${this.CSSClass}">${fragment}</nav>`;
 		});
