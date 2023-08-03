@@ -38,7 +38,7 @@ export default class Area extends Base {
 	}
 
 	render(req, res, next) {
-		let page = req.app[WEBBASE].index.get(this.mainpage);
+		let page = Base[WEBBASE].index.get(this.mainpage);
 		if (page)
 			return page.render(req, res, next);
 

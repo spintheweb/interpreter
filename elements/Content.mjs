@@ -28,10 +28,11 @@ export default class Content extends Base {
 
     patch(lang, params = {}) {
         super.patch(lang, params);
-        // TODO: Subtype!
+//        Object.setPrototypeOf(this, )
+        this.subtype = params.subtype; // TODO: Subtype!
         this.cssClass = params.cssClass;
         this.section = params.section;
-        this.sequence = params.sequence;
+        this.Sequence(params.sequence);
         this.dns = params.dns;
         this.query = params.query;
         this.params = params.params;
@@ -43,7 +44,7 @@ export default class Content extends Base {
     get CSSClass() {
         return this.cssClass ? `class="${this.cssClass}"` : '';
     }
-    set Sequence(value) {
+    Sequence(value) {
         this.sequence = isNaN(value) ? null : value;
         this.parent?.children.sort((a, b) => {
             let sa = (a.section ?? '-') + (a.sequence ?? '-'),
@@ -72,26 +73,30 @@ export default class Content extends Base {
         this.params = value;
         return this;
     }
-    changeSubtype(newSubtype) {
-        //        this.subtype = newSubtype;
-        //        this = createElement(this, this); // Replace
-        //        return this;
+/*    
+    set subtype(newSubtype) {
+        this.subtype = newSubtype;
+        createElement(this, this); // Replace
+        return this;
     }
+*/
     add(link) {
-        if (!link || link == this || link.constructor.name === 'Webo')
+        /*
+        if (!link || link._id === this._id || link.constructor.name === 'Webo')
             return this;
 
         if (link instanceof Content)
             link.Section(this.id); //this.permalink());
         else
-            link = new Reference(link);
+            link = new Link(link);
 
         if (this.children.indexOf(link) === -1) {
             if (link.parent)
-                link = new Reference(link);
+                link = new Link(link);
             link.parent = this;
             this.links.push(link);
         }
+        */
         return this;
     }
     async getData(req, callback) { // TODO: Request data asynchronously
@@ -108,7 +113,7 @@ export default class Content extends Base {
         if (this.granted(req.session.roles) & 0b01) {
             req.dataset = await this.getData(req); // TODO: Retrieve data asynchronously
 
-            let layout = lexer(pickText([req.session.lang, req.app[WEBBASE].lang], this.layout));
+            let layout = lexer(pickText([req.session.lang, Base[WEBBASE].lang], this.layout));
 
             if (typeof layout === 'object') {
                 // TODO: Evaluate layout.settings

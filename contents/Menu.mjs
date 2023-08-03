@@ -5,7 +5,7 @@
  */
 import { WEBBASE } from '../elements/Miscellanea.mjs';
 import Content from '../elements/Content.mjs';
-import Reference from '../elements/Reference.mjs';
+import Link from '../elements/Link.mjs';
 
 export default class Menu extends Content {
 	constructor(name, template, lang) {
@@ -15,7 +15,7 @@ export default class Menu extends Content {
 	add(child) {
 		if (child && child !== this && this.children.indexOf(child) === -1) {
 			if (child.parent || child.constructor.name === 'Webo')
-				child = new Reference(child);
+				child = new Link(child);
 			child.parent = this;
 			child.webbase = this.webbase;
 			this.children.push(child);
@@ -27,7 +27,7 @@ export default class Menu extends Content {
 		return super.render(socket, (socket, template) => {
 			let options = '';
 			this.children.forEach(option => {
-				if (option.constructor.name === 'Reference') {
+				if (option.constructor.name === 'Link') {
 					if (option.ref.constructor.name === 'Page') {
 						if (option.granted(socket.target.user) & 0b01)
 							options += `<li class="stwMenuOption"><a href="/${option.slug}" onclick="stwHref(event)">${option.localizedName()}</a></li>`;

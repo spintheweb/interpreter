@@ -4,38 +4,43 @@
  * MIT Licensed
  */
 
-// Exit Spin the Web Studio if we are not developers
-if (self != top && document.cookie.split('; ').find(row => row.startsWith('stwDeveloper='))?.split('=')[1] != 'true')
-    top.location = self.location;
+window.onload = () => {
+    document.cookie = `stwBrowseURL=${location.pathname}; path=/`;
 
-else {
-    window.onload = () => {
-        // Request page contents
-        let stwContents = decodeURIComponent(document.cookie.split('; ').find(row => row.startsWith('stwContents='))?.split('=')[1]);
+    // Request page contents
+    let stwContents = decodeURIComponent(document.cookie.split('; ').find(row => row.startsWith('stwContents='))?.split('=')[1]);
 
-        stwContents.split(',').forEach(_id => {
-            // TODO: Manage sub sequence rendering
+    stwContents.split(',').forEach(_id => {
+        // TODO: Manage sub sequence rendering
 
-            fetch(`/${_id}?${location.search}`)
-                .then(res => {
-                    if (res.ok)
-                        return res.json();
-                })
-                .then(content => {
-                    let section = document.getElementById(content.section);
-                    section.insertAdjacentHTML('beforeend', content.body);
-                })
-                .catch(err => {
-                    console.log(err);
-                });
-        });
+        fetch(`/${_id}?${location.search}`)
+            .then(res => {
+                if (res.ok)
+                    return res.json();
+            })
+            .then(content => {
+                let section = document.getElementById(content.section);
+                section.insertAdjacentHTML('beforeend', content.body);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    });
+}
+window.onkeydown = event => {
+    const isDeveloper = document.cookie.indexOf('stwDeveloper=true') != -1;
+
+    if (isDeveloper && event.ctrlKey && event.key === 'F12') {
+        event.preventDefault();
+        event.stopPropagation();
+        if (self == top)
+            top.location.href = `${top.location.origin}/studio${top.location.pathname}`;
+        else
+            top.location.href = self.location.href;
     }
-    window.onkeydown = event => {
-        if (self == top && event.ctrlKey && event.key === 'F12') {
-            event.preventDefault();
-            event.stopPropagation();
-            location.href = '/studio';
-        }
+    if (isDeveloper && event.ctrlKey && event.key === 'l' && self != top) {
+        event.preventDefault();
+        event.stopPropagation();
+        top.document.querySelector('[data-action="locate"]').click();
     }
 }
-

@@ -4,11 +4,12 @@
  * MIT Licensed
  */
 import { WEBBASE } from '../elements/Miscellanea.mjs';
+import Base from '../elements/Base.mjs';
 import Content from '../elements/Content.mjs';
 
 export default class List extends Content {
-	constructor(name, template, lang) {
-		super(name, template, lang, true);
+	constructor(params = {}) {
+		super(params);
 	}
 
 	render(req, res, next) {
@@ -29,9 +30,9 @@ export default class List extends Content {
 					socket.emit('content', element.id);
 				};
 
-				let id = socket.data.searchParams.id || req.app[WEBBASE].id;
-				let el = req.app[WEBBASE].getElementById(id); // Roled Based Visibility
-				for (let role in req.app[WEBBASE].roles) {
+				let id = socket.data.searchParams.id || Base[WEBBASE].id;
+				let el = Base[WEBBASE].getElementById(id); // Roled Based Visibility
+				for (let role in Base[WEBBASE].roles) {
 					let granted = el.granted(socket.target.user, role);
 					fragment += `<li class="stwRBVIcn${granted}" onclick="stwListRoles(event)" data-ref="${granted}"> ${role}</li>`;
 				}

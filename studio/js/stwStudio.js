@@ -44,6 +44,7 @@ const stwStudio = {
                     dataListInput.value = event.target.getAttribute('placeholder');
             });
         });
+        document.getElementById('Browse').src = '/' + decodeURIComponent(document.cookie.split('; ').find(row => row.startsWith('stwBrowseURL='))?.split('=')[1]);
     },
     manageSettings: event => {
         // TODO: Persist locally
@@ -65,12 +66,15 @@ const stwStudio = {
             location.href = document.getElementById('BrowseURL').value;
             return;
         }
-    
+
         if (document.activeElement.className === 'ace_text-input' && event.key == 's' && event.ctrlKey) {
             event.stopPropagation();
             event.preventDefault();
 
             let tab = document.activeElement.parentElement;
+
+            stwStudio.statusBar(`Save ${tab.id}...`);
+
             fetch(`/studio/fs/${tab.id}`,
                 {
                     method: 'POST',
@@ -90,11 +94,39 @@ const stwStudio = {
             event.preventDefault();
             event.stopPropagation();
         }
-
-        /* if (event.key == 'Delete' && event.ctrlKey && document.getElementById('properties')) {
-            document.querySelector('#properties i[data-action="trash"]').click();
+        if (event.ctrlKey && event.key == 'l') {
+            document.querySelector('[data-action="locate"]').click();
             event.preventDefault();
-        } */
+            event.stopPropagation();
+        }
+
+        if (event.target.closest('article')?.id == 'webbase' && document.getElementById('properties')) {
+            if (event.key == 'x' && event.ctrlKey) {
+                stwStudio.statusBar('Cut element...');
+            } else if (event.key == 'c' && event.ctrlKey) {
+                stwStudio.statusBar('Copy element...');
+            } else if (event.key == 'v' && event.ctrlKey && event.altkey) {
+                stwStudio.statusBar('Paste link...');
+            } else if (event.key == 'v' && event.ctrlKey) {
+                stwStudio.statusBar('Paste element...');
+                // if cut then move
+                // if copy then add
+            } else if (event.key == 'Delete') {
+                stwStudio.statusBar('Delete element...');
+                fetch(`/studio/wbdl/${document.getElementById('properties').dataset.id}`,
+                    {
+                        method: 'DELETE'
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        stwStudio.renderPanel('/studio/panels/webbase.html', data._id);
+                        stwStudio.loadForm(document.querySelector('#properties form'), data);
+                    })
+                    .catch(err => { console.log(err) });
+            }
+            event.preventDefault();
+            event.stopPropagation();
+        }
     },
     click: event => {
         let target = event.target;
@@ -126,6 +158,8 @@ const stwStudio = {
     submitForm: event => {
         if (!event.target.form.reportValidity())
             return;
+
+        stwStudio.statusBar('Save properties...');
 
         let data = {};
         for (let input of event.target.form)
@@ -227,6 +261,7 @@ const stwStudio = {
                             document.getElementById('webbase').lastElementChild.remove();
                             document.getElementById('webbase').insertAdjacentHTML('beforeend', `<ul>${stwStudio.renderTree(json)}</ul>`);
                             document.querySelector('li[data-type=Webo]>div').click();
+                            document.querySelector('[data-action="locate"]').click();
                         }
                     })
                     .catch(err => {
@@ -332,10 +367,7 @@ const stwStudio = {
     },
     managePanels: event => {
         let target = event.target;
-        if (target.tagName === 'I' && target.dataset.panel === 'stwMenu') {
-            // [TODO]
-
-        } else if (target.tagName === 'I' && target.hasAttribute('selected')) {
+        if (target.tagName === 'I' && target.hasAttribute('selected')) {
             target.removeAttribute('selected');
             event.currentTarget.nextElementSibling.innerHTML = '';
 
@@ -364,15 +396,9 @@ const stwStudio = {
                     stwStudio.loadFile('/studio/panels/webbase.html', document.querySelector('section.stwPanel'), stwStudio.renderPanel);
 
                 } else if (event.target.dataset.action === 'persist') {
+                    stwStudio.statusBar('Upload webbase...');
                     fetch('/studio/wbdl/persist', { method: 'PUT' })
                         .catch(err => console.log(err));
-
-                    /* } else if (event.target.dataset.action === 'trashed') {
-                        if (event.target.className === 'fa-solid fa-fw fa-trash-can')
-                            event.target.className = 'fa-regular fa-fw fa-trash-can';
-                        else
-                            event.target.className = 'fa-solid fa-fw fa-trash-can';
-                        event.currentTarget.querySelector('ul').classList.toggle('stwT'); */
 
                 } else if (parent) {
                     fetch(`/studio/wbdl/${parent.dataset.id}/${event.target.dataset.action}`,
@@ -435,6 +461,21 @@ const stwStudio = {
                     properties.querySelector('h1>i').click();
                 }
                 break;
+        }
+    },
+    locateElement: id => {
+        let element = document.querySelector(`li[data-id="${id}"]`), li;
+        if (element) {
+            document.getElementById('webbase').querySelector('[selected]').removeAttribute('selected');
+            element.setAttribute('selected', '');
+            element.firstChild.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
+
+            element.querySelector('ul').style.display = '';
+            for (let ul = element.closest('ul'); ul; ul = ul.parentElement.closest('ul')) {
+                ul.style.display = '';
+                element.querySelector('.fa-angle-right')?.classList.replace('fa-angle-right', 'fa-angle-down');
+                element = element.parentElement.closest('li');
+            }
         }
     },
     manageSearch: event => {
@@ -553,17 +594,6 @@ const stwStudio = {
 
         if (target.tagName === 'H1' && event.target.dataset.action) {
             switch (event.target.dataset.action) {
-                /* case 'trash':
-                    if (what === 'webbase' && event.currentTarget.querySelector('form')._idParent.value != '') {
-                        if (event.currentTarget.querySelector('form').status.value != 'T')
-                            event.currentTarget.querySelector('form').status.value = 'T';
-                        else
-                            if (!confirm(`Are you sure you want do delete permanently the selected object with all it's underling hierarchy and references?`))
-                                return;
-                        stwStudio.submitForm({ target: { form: event.currentTarget.querySelector('form') } });
-                    }
-                    break; */
-
                 case 'clone':
                     // TODO: Deep clone node
                     break;
@@ -641,7 +671,7 @@ const stwStudio = {
                 document.getElementById('Browse').src = document.getElementById('BrowseURL').value;
                 break;
             case 'locate':
-                alert(document.getElementById('BrowseURL').value.replace(location.origin, ''));
+                stwStudio.locateElement(document.cookie.split('; ').find(row => row.startsWith('stwPage='))?.split('=')[1]);
                 break;
             case 'home':
                 document.getElementById('Browse').src = location.origin;
@@ -659,13 +689,24 @@ const stwStudio = {
             target.parentElement.nextElementSibling.src = target.value;
         else if (target.tagName === 'IFRAME')
             target.previousElementSibling.querySelector('[name=url]').value = target.ownerDocument.location.origin;
+    },
+    statusTimeout: null,
+    statusBar: (text, span = 1) => {
+        if (stwStudio.statusTimeout && span === 1)
+            clearTimeout(stwStudio.statusTimeout);
+        document.getElementById('statusbar').children[span].innerHTML = '<i class="fa-solid fa-rotate fa-spin"></i> ' + text;
+        if (span === 1)
+            stwStudio.statusTimeout = setTimeout(() => { document.getElementById('statusbar').children[1].innerHTML = '' }, 2000);
     }
 }
 
 window.addEventListener('load', () => {
     stwStudio.setup();
     document.getElementById('Browse').addEventListener('load', event => {
-        document.getElementById('BrowseURL').value = event.currentTarget.contentDocument.location.href;
+        if (event.currentTarget.contentDocument.location.host)
+            document.getElementById('BrowseURL').value = event.currentTarget.contentDocument.location.href;
+        else
+            event.currentTarget.contentDocument.location = location.origin + '/';
     });
 }, { once: true });
 window.addEventListener('click', stwStudio.click);

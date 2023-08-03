@@ -10,6 +10,7 @@ import git from 'simple-git';
 
 import { WEBBASE, PATH, STUDIO_DIR, WEBO_DIR } from './elements/Miscellanea.mjs';
 import createElement from './elements/Element.mjs';
+import Base from './elements/Base.mjs';
 
 const router = express.Router();
 
@@ -18,20 +19,10 @@ router.all('/*', (req, res, next) => {
     if (req.session.developer)
         next();
     else
-        res.redirect('../');
+        res.redirect('/studio');
 });
 
 router.use(express.static(STUDIO_DIR));
-
-// Persist webbase
-router.put('/wbdl/persist', (req, res, next) => {
-    const webbase = JSON.stringify(req.app[WEBBASE]);
-    fs.writeFile(req.app[WEBBASE][PATH], webbase, { flag: 'w+' }, err => {
-        if (err)
-            throw 503; // 503 Service Unavailable
-    });
-    res.sendStatus(204); // 204 No Content 
-});
 
 router.get('/', (req, res, next) => {
     res.sendFile(path.join(STUDIO_DIR, 'index.html'));
@@ -43,8 +34,18 @@ router.get('/public/*', (req, res) => {
     res.sendFile(path.join(WEBO_DIR, req.params[0]));
 });
 
+// Persist webbase
+router.put('/wbdl/persist', (req, res, next) => {
+    const webbase = JSON.stringify(Base[WEBBASE]);
+    fs.writeFile(Base[WEBBASE][PATH], webbase, { flag: 'w+' }, err => {
+        if (err)
+            throw 503; // 503 Service Unavailable
+    });
+    res.sendStatus(204); // 204 No Content 
+});
+
 router.get('/wbdl/permalink/:_id', (req, res) => {
-    let element = req.app[WEBBASE].index.get(req.params._id);
+    let element = Base[WEBBASE].index.get(req.params._id);
     res.send(element ? element.permalink(req.session.lang) : '');
 });
 
@@ -54,7 +55,7 @@ router.post('/wbdl/search/:lang', (req, res) => {
         pattern = new RegExp(`"\\w+?":".*?${req.body.text}.*?"`,
             (req.body.ignoreCase ? 'i' : ''));
 
-    req.app[WEBBASE].index.forEach(obj => {
+    Base[WEBBASE].index.forEach(obj => {
         let search = {
             name: obj.name,
             keywords: obj.keywords,
@@ -69,11 +70,11 @@ router.post('/wbdl/search/:lang', (req, res) => {
 
 router.get('/wbdl/datasources/:name?', (req, res) => {
     let datasources = [];
-    for (let datasource in req.app[WEBBASE].datasources)
+    for (let datasource in Base[WEBBASE].datasources)
         datasources.push({
             name: datasource,
             type: 'ds',
-            description: req.app[WEBBASE].datasources[datasource]
+            description: Base[WEBBASE].datasources[datasource]
         });
 
     if (req.params.name)
@@ -84,11 +85,11 @@ router.get('/wbdl/datasources/:name?', (req, res) => {
 
 // Manage Spin the Web content visibility
 router.get('/wbdl/visibility/:_id?', (req, res) => {
-    let visibility = structuredClone(req.app[WEBBASE].visibility), localVisibility;
+    let visibility = structuredClone(Base[WEBBASE].visibility), localVisibility;
     if (!req.params || !/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(req.params._id))
-        localVisibility = req.app[WEBBASE].visibility;
+        localVisibility = Base[WEBBASE].visibility;
     else
-        localVisibility = req.app[WEBBASE].index.get(req.params._id).visibility;
+        localVisibility = Base[WEBBASE].index.get(req.params._id).visibility;
 
     if (req.params._id)
         for (let role in visibility)
@@ -98,7 +99,7 @@ router.get('/wbdl/visibility/:_id?', (req, res) => {
                 visibility[role] = 'LI';
             else {
                 visibility[role] = 'II';
-                for (let parent = req.app[WEBBASE].index.get(req.app[WEBBASE].index.get(req.params._id)._idParent); parent; parent = req.app[WEBBASE].index.get(parent._idParent))
+                for (let parent = Base[WEBBASE].index.get(Base[WEBBASE].index.get(req.params._id)._idParent); parent; parent = Base[WEBBASE].index.get(parent._idParent))
                     if (parent.visibility[role]) {
                         visibility[role] = parent.visibility[role] ? 'IV' : 'II';
                         break;
@@ -108,10 +109,10 @@ router.get('/wbdl/visibility/:_id?', (req, res) => {
 });
 router.post('/wbdl/visibility/:_id', (req, res) => {
     try {
-        if (!/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(req.params._id) || !req.app[WEBBASE].index.get(req.params._id))
+        if (!/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(req.params._id) || !Base[WEBBASE].index.get(req.params._id))
             throw 406; // 406 Not Acceptable
 
-        let node = req.app[WEBBASE].index.get(req.params._id),
+        let node = Base[WEBBASE].index.get(req.params._id),
             status = req.body;
 
         status.role = status.role.replace(/[^a-zA-Z]/g, '').toLowerCase();
@@ -128,24 +129,24 @@ router.post('/wbdl/visibility/:_id', (req, res) => {
 
 // Manage Spin the Web elements
 router.get('/wbdl(/*)?', (req, res) => {
-    res.json(req.app[WEBBASE].index.get(req.params[1]) || req.app[WEBBASE]);
+    res.json(Base[WEBBASE].index.get(req.params[1]) || Base[WEBBASE]);
 });
 router.post('/wbdl/:_idParent/:type', (req, res, next) => {
-    let parent = req.app[WEBBASE].index.get(req.params._idParent) || req.app[WEBBASE];
+    let parent = Base[WEBBASE].index.get(req.params._idParent) || Base[WEBBASE];
     let element = parent.add(createElement(parent, { type: req.params.type }));
     res.json(element);
 });
 router.patch('/wbdl/:_id', (req, res, next) => {
-    let element = req.app[WEBBASE].index.get(req.params._id);
+    let element = Base[WEBBASE].index.get(req.params._id);
     res.json(element.patch(req.session.lang, req.body));
 });
 router.delete('/wbdl/:_id', (req, res, next) => {
-    let element = req.app[WEBBASE].index.get(req.params._id);
+    let element = Base[WEBBASE].index.get(req.params._id);
     if (element.status !== 'T')
         element.status = 'T'; // Trash it
     else
-        element.move(); // Move to oblivion
-    res.sendStatus(200); // 200 OK
+        element = Base.remove(element); // Move to oblivion
+    res.json(element);
 });
 
 // Manage webo folder
@@ -169,6 +170,11 @@ router.get('/git/status', async (req, res) => {
         if (/^[^/]*?\.(js|json|wbdl)$/.test(files[i].path))
             files.splice(i, 1);
     res.json(files);
+});
+
+router.get('/*', (req, res) => {
+    res.cookie('stwBrowseURL', req.params[0]);
+    res.redirect('/studio');
 });
 
 async function getDir(dirpath = '.', gitStatus) {

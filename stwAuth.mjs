@@ -9,6 +9,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { WEBBASE, STUDIO_DIR, WEBO_DIR } from './elements/Miscellanea.mjs';
+import Base from './elements/Base.mjs';
 
 const router = express.Router();
 
@@ -29,7 +30,7 @@ router.post('/logon/:_id?', async (req, res) => {
         res.cookie('stwDeveloper', false);
         res.statusCode = 401; // 401 Unauthorized
     }
-    res.redirect(req.app[WEBBASE].index.get(req.params[1] || res.locals.cookie.stwPage)?.permalink(req.session.lang) || '.');
+    res.redirect(Base[WEBBASE].index.get(req.params[1] || res.locals.cookie.stwPage)?.permalink(req.session.lang) || '.');
 });
 
 router.post('/logoff/:_id?', async (req, res) => {
@@ -38,7 +39,7 @@ router.post('/logoff/:_id?', async (req, res) => {
     req.session.developer = false;
     res.cookie('stwDeveloper', false);
 
-    res.redirect(req.app[WEBBASE].index.get(req.params[1] || res.locals.cookie.stwPage)?.permalink(req.session.lang) || '.');
+    res.redirect(Base[WEBBASE].index.get(req.params[1] || res.locals.cookie.stwPage)?.permalink(req.session.lang) || '.');
 });
 
 router.post('/setpwd/:id?', async (req, res) => {

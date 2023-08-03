@@ -4,15 +4,16 @@
  * MIT Licensed
  */
 import { WEBBASE } from '../elements/Miscellanea.mjs';
+import Base from '../elements/Base.mjs';
 import Content from '../elements/Content.mjs';
 
 // https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
 export default class Languages extends Content {
-    constructor(name, template, lang) {
-        super(name, template, lang);
+    constructor(params = {}) {
+        super(params);
         delete this.params;
         delete this.layout;
-		delete this.links;
+        delete this.links;
     }
 
     // Content specific behaviors
@@ -26,20 +27,20 @@ export default class Languages extends Content {
     }
 
     render(req, res, next) {
-        if (!this.behavior) 
+        if (!this.behavior)
             this.behaviors(req);
 
         return super.render(req, res, next, () => {
-            if (req.app[WEBBASE].langs.length == 1)
+            if (Base[WEBBASE].langs.length == 1)
                 return '';
 
             let fragment = '';
-            if (req.app[WEBBASE].langs.length <= 3) {
-                for (let lang of req.app[WEBBASE].langs)
+            if (Base[WEBBASE].langs.length <= 3)
+                for (let lang of Base[WEBBASE].langs)
                     fragment += `&nbsp;<a href="/stwc/setlanguage/${lang}">${lang.toUpperCase()}</a>&nbsp;`;
-            } else {
+            else {
                 fragment += `<i class="fa-solid fa-language"></i> <select onchange="location.href='/stwc/setlanguage/${lang}'">`
-                for (let lang of req.app[WEBBASE].langs)
+                for (let lang of Base[WEBBASE].langs)
                     fragment += `<option>${lang.toUpperCase()}</option>`;
                 fragment += '</select>';
             }

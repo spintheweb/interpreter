@@ -4,11 +4,12 @@
  * MIT Licensed
  */
 import { WEBBASE } from '../elements/Miscellanea.mjs';
+import Base from '../elements/Base.mjs';
 import Content from '../elements/Content.mjs';
 
 export default class Breadcrumbs extends Content {
-	constructor(name, template, lang) {
-		super(name, template, lang, true);
+	constructor(params = {}) {
+		super(params);
 		delete this.dsn;
 		delete this.query;
 		delete this.params;
@@ -18,7 +19,7 @@ export default class Breadcrumbs extends Content {
 	render(req, res, next) {
 		return super.render(req, res, next, () => {
 			let lang = req.session.lang;
-			let element = req.app[WEBBASE].index.get(res.locals.cookie.stwPage);
+			let element = Base[WEBBASE].index.get(res.locals.cookie.stwPage);
 			let fragment = element.localizedName(lang);
 
 			for (element = element.parent; element.type != 'Webo'; element = element.parent)

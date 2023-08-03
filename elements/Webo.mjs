@@ -33,6 +33,10 @@ export default class Webo extends Area {
             example: { mime: 'application/json', data: [{ name: 'WBDL', desc: 'Webbase Description Language' }, { name: 'WBLL', desc: 'Webbase Layout Language' }] }
         };
 
+        Base[WEBBASE] = this;
+        Object.defineProperty(Base[WEBBASE], 'index', { value: new Map(), writable: true });
+        Base[WEBBASE].index.set(this._id, this);
+
         if (params.children)
             for (let child of params.children)
                 this.add(createElement(this, child));

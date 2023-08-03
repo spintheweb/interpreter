@@ -7,7 +7,7 @@ import { v1 } from 'uuid';
 import { WEBBASE } from './Miscellanea.mjs';
 
 export default class Base {
-	static [WEBBASE] = {};
+    static [WEBBASE] = {};
 
 	constructor(params = {}) {
 		this._id = params._id || v1();
@@ -19,12 +19,6 @@ export default class Base {
 		this.slug = params.slug || { [this.lang || 'en']: this.name[this.lang || 'en'].replace(/[^a-z0-9_]/gi, '').toLowerCase() };
 		this.children = [];
 		this.visibility = params.visibility || {}; // [role: { false | true }] Role Based Visibilities
-
-		if (this.constructor.name === 'Webo') {
-			Base[WEBBASE] = this;
-			Object.defineProperty(Base[WEBBASE], 'index', { value: new Map(), writable: true });
-			Base[WEBBASE].index.set(this._id, this);
-		}
 	}
 
 	patch(lang, params = {}) {
@@ -107,30 +101,37 @@ export default class Base {
 	// TODO: Deep copy element, note, the webbase cannot be copied, use write() instead
 	// _id and _idParent should be remapped as well as permalinks that point to cloned elements
 	clone() {
-//		let element;
-//		if (this.constructor.name !== 'Webo') {
-//			element = new createElement(this.parent, this);
-//		}
-//		return element;
+		//		let element;
+		//		if (this.constructor.name !== 'Webo') {
+		//			element = new createElement(this.parent, this);
+		//		}
+		//		return element;
 	}
 
-	// Move and Remove element
 	move(parent) {
-		if (this !== parent) {
-			let i = this.parent.children.indexOf(this);
-			if (i !== -1)
-				this.parent.children.splice(i, 1);
-			if (parent)
-				parent.children.push(this);
-			else {
-				// TODO: while visiting the site remove shortcuts that point to nothing
-				delete this;
-			// TODO: Dissociate from webbase and remove index
-//			[WEBBASE].index.delete(child._id);
-//			this.children.splice(this.children.findIndex(element => element._id == child._id), 1);
-				return;
+		if (this.constructor.name != 'Webo' && this !== parent) {
+			if (parent instanceof Content) {
+				// TODO: manage links
+			} else {
+				let i = this.parent.children.indexOf(this);
+				if (i !== -1)
+					this.parent.children.splice(i, 1);
+				if (parent)
+					parent.children.push(this);
 			}
 		}
+	}
+
+	static remove(element) {
+		let parent = element.parent;
+		if (element.children)
+			for (let child = element.children.pop(); child; child = element.children.pop()) {
+				this.remove(child);
+				Base[WEBBASE].index.delete(child._id);
+			}
+		parent.children.splice(parent.children.findIndex(child => child._id === element._id), 1);
+		Base[WEBBASE].index.delete(element._id);
+		return parent;
 	}
 
 	permalink(lang) {

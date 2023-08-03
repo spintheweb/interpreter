@@ -4,6 +4,7 @@
  * MIT Licensed
  */
 import { WEBBASE, pickText } from '../elements/Miscellanea.mjs';
+import Base from '../elements/Base.mjs';
 import Content from '../elements/Content.mjs';
 
 // Plain text, i.e., renders layout as plain text if there is a datasource @ and @@ substitutions are performed
@@ -15,7 +16,7 @@ export default class Text extends Content {
 
 	render(req, res, next) {
 		if (this.granted(req.session.roles) & 0b01) {
-			let fragment = pickText([req.session.lang, req.app[WEBBASE].lang], this.layout);
+			let fragment = pickText([req.session.lang, Base[WEBBASE].lang], this.layout);
 
 			if (this.dsn) {
 
