@@ -14,7 +14,7 @@ import https from 'https';
 import fs from 'fs';
 import path from 'path';
 import express from 'express';
-import session from 'cookie-session';
+import session from 'express-session';
 import language from 'accept-language-parser';
 
 import { WEBBASE, PATH, WEBO_DIR } from './elements/Miscellanea.mjs';
@@ -62,6 +62,7 @@ app.use((req, res, next) => {
         req.session.lang = language.pick(Base[WEBBASE].langs, req.headers['accept-language']);
         req.session.developer = process.env.NODE_ENV == 'development';
         res.cookie('stwDeveloper', req.session.developer);
+        console.log('New session');
     }
 
     const { headers: { cookie } } = req;

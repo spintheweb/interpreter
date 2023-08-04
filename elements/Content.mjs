@@ -26,10 +26,24 @@ export default class Content extends Base {
         this.layout = params.layout || {};
     }
 
+    static changeSubtype(content, subtype) {
+        Base[WEBBASE].index.delete(content._id);
+
+        content.subtype = subtype;
+        let newContent = createElement({ _id: content._idParent }, content);
+        Base[WEBBASE].index.set(newContent._id, newContent);
+
+        for (let i = 0; i < content.parent.children.length; ++i)
+            if (content.parent.children[i] === content) {
+                content.parent.children[i] = newContent;
+                break;
+            }
+
+        return newContent;
+    }
+
     patch(lang, params = {}) {
         super.patch(lang, params);
-//        Object.setPrototypeOf(this, )
-        this.subtype = params.subtype; // TODO: Subtype!
         this.cssClass = params.cssClass;
         this.section = params.section;
         this.Sequence(params.sequence);
@@ -38,8 +52,11 @@ export default class Content extends Base {
         this.params = params.params;
         this.layout = { [lang]: params.layout };
 
-		return this;
-	}
+        if (this.subtype != (params.subtype || 'Text'))
+            return Content.changeSubtype(this, params.subtype || 'Text');
+
+        return this;
+    }
 
     get CSSClass() {
         return this.cssClass ? `class="${this.cssClass}"` : '';
@@ -73,13 +90,13 @@ export default class Content extends Base {
         this.params = value;
         return this;
     }
-/*    
-    set subtype(newSubtype) {
-        this.subtype = newSubtype;
-        createElement(this, this); // Replace
-        return this;
-    }
-*/
+    /*    
+        set subtype(newSubtype) {
+            this.subtype = newSubtype;
+            createElement(this, this); // Replace
+            return this;
+        }
+    */
     add(link) {
         /*
         if (!link || link._id === this._id || link.constructor.name === 'Webo')

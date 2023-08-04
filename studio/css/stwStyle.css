@@ -57,7 +57,7 @@ i[selected] {
     background-color: var(--specialColor);
 }
 
-[tabindex]:hover {
+[tabindex]:not(.stwTree):hover {
     color: white;
     background-color: var(--specialHover);
 }
@@ -313,6 +313,9 @@ article:has(> :last-child:nth-child(4)) {
     margin: 0;
     padding: 0;
     cursor: pointer;
+}
+.stwTree ul:focus-visible {
+    outline:none;
 }
 
 .stwTree li>div {

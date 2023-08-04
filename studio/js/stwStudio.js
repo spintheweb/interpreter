@@ -4,6 +4,8 @@
  * MIT Licensed
  */
 const stwStudio = {
+    stwCopyElement: undefined,
+
     visibilityEnum: {
         'LV': '<i class="fas fa-fw fa-square-check" title="Local visibility"></i>',
         'LI': '<i class="fas fa-fw fa-square" title="Local invisibility"></i>',
@@ -102,9 +104,11 @@ const stwStudio = {
 
         if (event.target.closest('article')?.id == 'webbase' && document.getElementById('properties')) {
             if (event.key == 'x' && event.ctrlKey) {
-                stwStudio.statusBar('Cut element...');
+                stwStudio.stwCopyElement = document.querySelector('li[data-id][selected]').dataset.id;
+                stwStudio.statusBar('Cut element...' + stwStudio.stwCopyElement);
             } else if (event.key == 'c' && event.ctrlKey) {
-                stwStudio.statusBar('Copy element...');
+                stwStudio.stwCopyElement = document.querySelector('li[data-id][selected]').dataset.id;
+                stwStudio.statusBar('Copy element...' + stwStudio.stwCopyElement);
             } else if (event.key == 'v' && event.ctrlKey && event.altkey) {
                 stwStudio.statusBar('Paste link...');
             } else if (event.key == 'v' && event.ctrlKey) {
@@ -352,16 +356,16 @@ const stwStudio = {
 
             if (node.children && node.children.length) {
                 if (!depth)
-                    html = `<li ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div tabindex="0" role="link"><span></span><span>${name}</span><span>${node.status || ''}</span></div><ul>`;
+                    html = `<li ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span></span><span>${name}</span><span>${node.status || ''}</span></div><ul>`;
                 else if (show)
-                    show = false, html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div tabindex="0" role="link"><span>${'&emsp;'.repeat(depth - 1)}<i class="fa fa-fw fa-angle-down"></i></span><span>${name}</span><span>${node.status}</span></div><ul>`;
+                    show = false, html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span>${'&emsp;'.repeat(depth - 1)}<i class="fa fa-fw fa-angle-down"></i></span><span>${name}</span><span>${node.status}</span></div><ul>`;
                 else
-                    html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div tabindex="0" role="link"><span>${'&emsp;'.repeat(depth - 1)}<i class="fa fa-fw fa-angle-right"></i></span><span>${name}</span><span>${node.status}</span></div><ul style="display:none">`;
+                    html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span>${'&emsp;'.repeat(depth - 1)}<i class="fa fa-fw fa-angle-right"></i></span><span>${name}</span><span>${node.status}</span></div><ul style="display:none">`;
                 for (let child of node.children)
                     html += stwStudio.renderTree(child, depth + 1);
                 html += '</ul>';
             } else
-                html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div tabindex="0" role="link"><span>${'&emsp;'.repeat(depth)}&nbsp;</span><span>${name}</span><span>${node.status || ''}</span></div>`;
+                html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span>${'&emsp;'.repeat(depth)}&nbsp;</span><span>${name}</span><span>${node.status || ''}</span></div>`;
         }
         return `${html || '<li data-type="nothing"><div><span></span><span>Empty</span><span></span></div>'}</li>`;
     },
@@ -664,11 +668,12 @@ const stwStudio = {
         let target = event.target;
         switch (target.dataset.action) {
             case 'back':
-                // document.querySelector('iframe').window.history.back(-1); Does not work
+                document.querySelector('iframe').contentWindow.history.back();
                 break;
             case 'forward': // TODO: Hide when history not present
+                document.querySelector('iframe').contentWindow.history.forward();
                 break;
-            case 'refresh': // TODO: Animate when loading
+            case 'refresh':
                 document.getElementById('Browse').src = document.getElementById('BrowseURL').value;
                 break;
             case 'locate':
@@ -706,9 +711,9 @@ window.addEventListener('keydown', stwStudio.keydown);
 window.addEventListener('load', () => {
     stwStudio.setup();
     document.getElementById('Browse').addEventListener('load', event => {
-        if (event.currentTarget.contentDocument?.location.host)
-            document.getElementById('BrowseURL').value = event.currentTarget.contentDocument.location.href;
+        if (event.currentTarget.contentWindow.origin && event.currentTarget.contentWindow?.location.origin != 'null')
+            document.getElementById('BrowseURL').value = event.currentTarget.contentWindow.location.href;
         else
-            event.currentTarget.contentDocument.location = location.origin + '/';
+            event.currentTarget.contentWindow.location = location.origin + '/';
     });
 });
