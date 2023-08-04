@@ -37,8 +37,8 @@ window.onkeydown = event => {
             top.location.href = `${top.location.origin}/studio${top.location.pathname}`;
         else
             top.location.href = self.location.href;
-    }
-    if (isDeveloper && event.ctrlKey && event.key === 'l' && self != top) {
+            
+    } else if (isDeveloper && event.ctrlKey && event.key === 'l' && self != top) {
         event.preventDefault();
         event.stopPropagation();
         top.document.querySelector('[data-action="locate"]').click();

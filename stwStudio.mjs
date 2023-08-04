@@ -24,7 +24,7 @@ router.all('/*', (req, res, next) => {
 
 router.use(express.static(STUDIO_DIR));
 
-router.get('/', (req, res, next) => {
+router.get('/?', (req, res, next) => {
     res.sendFile(path.join(STUDIO_DIR, 'index.html'));
     next();
 });

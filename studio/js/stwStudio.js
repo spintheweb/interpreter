@@ -468,13 +468,14 @@ const stwStudio = {
         if (element) {
             document.getElementById('webbase').querySelector('[selected]').removeAttribute('selected');
             element.setAttribute('selected', '');
-            element.firstChild.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
+            element.firstElementChild.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
 
             element.querySelector('ul').style.display = '';
-            for (let ul = element.closest('ul'); ul; ul = ul.parentElement.closest('ul')) {
-                ul.style.display = '';
-                element.querySelector('.fa-angle-right')?.classList.replace('fa-angle-right', 'fa-angle-down');
-                element = element.parentElement.closest('li');
+            for (let node = element; node.tagName === 'LI'; node = node.parentElement) {
+                if (node.firstElementChild.firstElementChild.firstElementChild)
+                    node.firstElementChild.firstElementChild.firstElementChild.classList.replace('fa-angle-right', 'fa-angle-down');
+                node = node.closest('ul')
+                node.style.display = '';
             }
         }
     },
@@ -700,14 +701,14 @@ const stwStudio = {
     }
 }
 
+window.addEventListener('click', stwStudio.click);
+window.addEventListener('keydown', stwStudio.keydown);
 window.addEventListener('load', () => {
     stwStudio.setup();
     document.getElementById('Browse').addEventListener('load', event => {
-        if (event.currentTarget.contentDocument.location.host)
+        if (event.currentTarget.contentDocument?.location.host)
             document.getElementById('BrowseURL').value = event.currentTarget.contentDocument.location.href;
         else
             event.currentTarget.contentDocument.location = location.origin + '/';
     });
-}, { once: true });
-window.addEventListener('click', stwStudio.click);
-window.addEventListener('keydown', stwStudio.keydown);
+});

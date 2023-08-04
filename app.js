@@ -14,7 +14,7 @@ import https from 'https';
 import fs from 'fs';
 import path from 'path';
 import express from 'express';
-import session from 'express-session';
+import session from 'cookie-session';
 import language from 'accept-language-parser';
 
 import { WEBBASE, PATH, WEBO_DIR } from './elements/Miscellanea.mjs';
