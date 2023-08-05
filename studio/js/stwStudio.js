@@ -46,7 +46,7 @@ const stwStudio = {
                     dataListInput.value = event.target.getAttribute('placeholder');
             });
         });
-        document.getElementById('Browse').src = '/' + decodeURIComponent(document.cookie.split('; ').find(row => row.startsWith('stwBrowseURL='))?.split('=')[1]);
+        document.getElementById('Browse').src = decodeURIComponent(document.cookie.split('; ').find(row => row.startsWith('stwBrowseURL='))?.split('=')[1]) || '/';
     },
     manageSettings: event => {
         // TODO: Persist locally
@@ -183,8 +183,7 @@ const stwStudio = {
             })
             .then(res => res.json())
             .then(data => {
-                stwStudio.renderPanel('/studio/panels/webbase.html', data._id);
-                stwStudio.loadForm(document.querySelector('#properties form'), data);
+                stwStudio.renderPanel('/studio/panels/webbase.html', data._idParent, data._id);
             })
             .catch(err => { console.log(err) });
     },
@@ -246,7 +245,7 @@ const stwStudio = {
                 console.log(err);
             });
     },
-    renderPanel: (panel, subpath) => {
+    renderPanel: (panel, subpath, selectId) => {
         switch (panel) {
             case '/studio/panels/webbase.html':
                 fetch(`/studio/wbdl${subpath ? '/' + subpath : ''}`)
@@ -260,7 +259,7 @@ const stwStudio = {
                             for (var depth = -1; ul; ul = ul.parentElement.closest('ul'), ++depth);
                             document.querySelector(`[data-id="${subpath}"]`).insertAdjacentHTML('afterend', stwStudio.renderTree(json, depth, true));
                             document.querySelector(`[data-id="${subpath}"]`).remove();
-                            document.querySelector(`[data-id="${subpath}"]>div`).click();
+                            document.querySelector(`[data-id="${selectId || subpath}"]>div`).click();
                         } else {
                             document.getElementById('webbase').lastElementChild.remove();
                             document.getElementById('webbase').insertAdjacentHTML('beforeend', `<ul>${stwStudio.renderTree(json)}</ul>`);
@@ -702,7 +701,7 @@ const stwStudio = {
             clearTimeout(stwStudio.statusTimeout);
         document.getElementById('statusbar').children[span].innerHTML = '<i class="fa-solid fa-rotate fa-spin"></i> ' + text;
         if (span === 1)
-            stwStudio.statusTimeout = setTimeout(() => { document.getElementById('statusbar').children[1].innerHTML = '' }, 2000);
+            stwStudio.statusTimeout = setTimeout(() => { document.getElementById('statusbar').children[1].innerHTML = '' }, 1500);
     }
 }
 

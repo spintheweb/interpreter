@@ -31,7 +31,7 @@ let webbase = path.join(WEBO_DIR, settings.webbase || '.data/webbase.json');
 if (fs.existsSync(webbase))
     webbase = fs.readFileSync(webbase);
 else
-    webbase = '{"_id":"169ecfb0-2916-11ee-ad92-6bd31f953e80","type":"Webo","status":"M","name":{"en":"Hello World"},"slug":{"en":"Webo"},"children":[{"_id":"169ecfb1-2916-11ee-ad92-6bd31f953e80","type":"Page","status":"U","name":{"en":"Home"},"slug":{"en":"Home"},"children":[{"_id":"169ecfb2-2916-11ee-ad92-6bd31f953e80","type":"Content","status":"U","name":{"en":"Hello World"},"slug":{"en":"HelloWorld"},"children":[],"visibility":{},"subtype":"Text","cssClass":null,"section":"","sequence":1,"dsn":"","query":"","params":"","layout":{"en":"Hello World from Spin The Web&trade;!"},"_clientHandler":null,"_serverHandler":null,"_idParent":"169ecfb1-2916-11ee-ad92-6bd31f953e80"}],"visibility":{},"keywords":{},"description":{},"contentType":"text/html","template":"index.html","_idParent":"169ecfb0-2916-11ee-ad92-6bd31f953e80"}],"visibility":{"administrators":true,"developers":true,"translators":false,"guests":true,"users":true,"webmasters":false},"mainpage":"169ecfb1-2916-11ee-ad92-6bd31f953e80","langs":["en"],"datasources":{"json":{"mime":"application/json","data":{}}}}';
+    webbase = '{}';
 
 new Webo(JSON.parse(webbase));
 Base[WEBBASE][PATH] = path.join(WEBO_DIR, settings.webbase || '.data/webbase.json');

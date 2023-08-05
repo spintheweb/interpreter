@@ -14,7 +14,7 @@ import Base from './elements/Base.mjs';
 
 const router = express.Router();
 
-// Only developers are allowed to use the studio
+// Only developers are allowed to use the Spin the Web Studio API
 router.all('/*', (req, res, next) => {
     if (req.session.developer)
         next();
@@ -44,6 +44,7 @@ router.put('/wbdl/persist', (req, res, next) => {
     res.sendStatus(204); // 204 No Content 
 });
 
+// Determine permalink of given element
 router.get('/wbdl/permalink/:_id', (req, res) => {
     let element = Base[WEBBASE].index.get(req.params._id);
     res.send(element ? element.permalink(req.session.lang) : '');
@@ -68,6 +69,7 @@ router.post('/wbdl/search/:lang', (req, res) => {
     res.json({ children: found });
 });
 
+//#region Manage datasources
 router.get('/wbdl/datasources/:name?', (req, res) => {
     let datasources = [];
     for (let datasource in Base[WEBBASE].datasources)
@@ -82,8 +84,9 @@ router.get('/wbdl/datasources/:name?', (req, res) => {
     else
         res.json({ children: datasources });
 });
+//#endregion
 
-// Manage Spin the Web content visibility
+//#region Manage Spin the Web content visibility
 router.get('/wbdl/visibility/:_id?', (req, res) => {
     let visibility = structuredClone(Base[WEBBASE].visibility), localVisibility;
     if (!req.params || !/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(req.params._id))
@@ -126,15 +129,30 @@ router.post('/wbdl/visibility/:_id', (req, res) => {
         res.end(err);
     }
 });
+//#endregion
 
-// Manage Spin the Web elements
+//#region Manage Spin the Web elements
 router.get('/wbdl(/*)?', (req, res) => {
     res.json(Base[WEBBASE].index.get(req.params[1]) || Base[WEBBASE]);
 });
+
 router.post('/wbdl/:_idParent/:type', (req, res, next) => {
     let parent = Base[WEBBASE].index.get(req.params._idParent) || Base[WEBBASE];
     let element = parent.add(createElement(parent, { type: req.params.type }));
-    res.json(element);
+    res.sendStatus(200); // 200 OK
+});
+router.put('/wbdl/:_idParent/:_idChild', (req, res, next) => {
+    let parent = Base[WEBBASE].index.get(req.params._idParent) || Base[WEBBASE];
+    let child = Base[WEBBASE].index.get(req.params._idChild);
+
+    // Move child
+    child.parent.children.splice(child.parent.children.findIndex(element => element._id == req.params._idChild), 1);
+    parent.children.push(child);
+    res.sendStatus(200); // 200 OK
+
+    // Copy child
+    parent.add(child.clone());
+    res.sendStatus(200); // 200 OK
 });
 router.patch('/wbdl/:_id', (req, res, next) => {
     let element = Base[WEBBASE].index.get(req.params._id);
@@ -146,10 +164,11 @@ router.delete('/wbdl/:_id', (req, res, next) => {
         element.status = 'T'; // Trash it
     else
         element = Base.remove(element); // Move to oblivion
-    res.json(element);
+        res.sendStatus(200); // 200 OK
 });
+//#endregion
 
-// Manage webo folder
+//#region Manage webo folder
 router.get('/fs(/:path)?', async (req, res) => {
     res.json(await getDir(req.params.path || 'public', (await git().status()).files));
 });
@@ -162,8 +181,9 @@ router.post('/fs/public(/*)', (req, res) => {
     });
     res.sendStatus(204); // 204 No content
 });
+//#endregion
 
-// Manage git
+//#region Manage git
 router.get('/git/status', async (req, res) => {
     let files = (await git().status()).files;
     for (let i = files.length - 1; i >= 0; --i)
@@ -171,6 +191,7 @@ router.get('/git/status', async (req, res) => {
             files.splice(i, 1);
     res.json(files);
 });
+//#endregion
 
 router.get('/*', (req, res) => {
     res.cookie('stwBrowseURL', req.params[0]);

@@ -12,11 +12,11 @@ import Area from './Area.mjs';
 import createElement from './Element.mjs';
 
 export default class Webo extends Area {
-    constructor(params = {}) {
+    constructor(params = { name: 'Hello World', domain: 'helloworld.com' }) {
         super(params);
         delete this.slug;
 
-        this.url = params.url;
+        this.domain = params.domain;
         this.lang = params.lang || 'en';
         this.langs = new Array(params.lang || 'en');
 
