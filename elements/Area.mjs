@@ -5,7 +5,7 @@
  */
 import { WEBBASE } from './Miscellanea.mjs';
 import Base from './Base.mjs';
-import Page from './Unit.mjs';
+import Unit from './Unit.mjs';
 import createElement from './Element.mjs';
 
 export default class Area extends Base {
@@ -13,7 +13,7 @@ export default class Area extends Base {
 		super(params);
 		this.keywords = params.keywords || {};
 		this.description = params.description || {};
-		this.mainpage = params.mainpage || '';
+		this.mainunit = params.mainunit || '';
 
 		if (this.constructor.name === 'Area' && params.children)
 			for (let child of params.children)
@@ -31,16 +31,16 @@ export default class Area extends Base {
 	add(child) {
 		super.add(child);
 
-		if (child instanceof Page && !this.mainpage)
-			this.mainpage = child._id;
+		if (child instanceof Unit && !this.mainunit)
+			this.mainunit = child._id;
 
 		return child;
 	}
 
 	render(req, res, next) {
-		let page = Base[WEBBASE].index.get(this.mainpage);
-		if (page)
-			return page.render(req, res, next);
+		let unit = Base[WEBBASE].index.get(this.mainunit);
+		if (unit)
+			return unit.render(req, res, next);
 
 		res.sendStatus(204); // 204 No content
 	}

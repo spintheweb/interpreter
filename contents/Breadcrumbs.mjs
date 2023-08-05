@@ -19,7 +19,7 @@ export default class Breadcrumbs extends Content {
 	render(req, res, next) {
 		return super.render(req, res, next, () => {
 			let lang = req.session.lang;
-			let element = Base[WEBBASE].index.get(res.locals.cookie.stwPage);
+			let element = Base[WEBBASE].index.get(res.locals.cookie.stwUnit);
 			let fragment = element.localizedName(lang);
 
 			for (element = element.parent; element.type != 'Webo'; element = element.parent)

@@ -1,5 +1,5 @@
 /*!
- * Page
+ * Unit
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
@@ -8,7 +8,7 @@ import createElement from './Element.mjs';
 
 import { join } from 'path';
 
-export default class Page extends Base {
+export default class Unit extends Base {
 	constructor(params = {}) {
 		super(params);
 		this.keywords = params.keywords || {};
@@ -44,7 +44,7 @@ export default class Page extends Base {
 			}
 			walk(this.parent, contents);
 
-			res.cookie('stwPage', this._id);
+			res.cookie('stwUnit', this._id);
 			res.cookie('stwContents', contents.join(','));
 			res.header('Content-Type', this.contentType);
 			res.sendFile(join(process.cwd(), 'public', this.template));

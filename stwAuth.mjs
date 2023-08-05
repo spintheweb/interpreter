@@ -30,7 +30,7 @@ router.post('/logon/:_id?', async (req, res) => {
         res.cookie('stwDeveloper', false);
         res.statusCode = 401; // 401 Unauthorized
     }
-    res.redirect(Base[WEBBASE].index.get(req.params[1] || res.locals.cookie.stwPage)?.permalink(req.session.lang) || '.');
+    res.redirect(Base[WEBBASE].index.get(req.params[1] || res.locals.cookie.stwUnit)?.permalink(req.session.lang) || '.');
 });
 
 router.post('/logoff/:_id?', async (req, res) => {
@@ -39,7 +39,7 @@ router.post('/logoff/:_id?', async (req, res) => {
     req.session.developer = false;
     res.cookie('stwDeveloper', false);
 
-    res.redirect(Base[WEBBASE].index.get(req.params[1] || res.locals.cookie.stwPage)?.permalink(req.session.lang) || '.');
+    res.redirect(Base[WEBBASE].index.get(req.params[1] || res.locals.cookie.stwUnit)?.permalink(req.session.lang) || '.');
 });
 
 router.post('/setpwd/:id?', async (req, res) => {

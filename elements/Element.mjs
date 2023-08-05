@@ -6,7 +6,7 @@
 import { WEBBASE } from './Miscellanea.mjs';
 import Base from './Base.mjs';
 import Area from './Area.mjs';
-import Page from './Unit.mjs';
+import Unit from './Unit.mjs';
 import Link from './Link.mjs';
 
 /*
@@ -32,8 +32,8 @@ export default function createElement(parent, element) {
     switch (element.type) {
         case 'Area':
             return new Area(element);
-        case 'Page':
-            return new Page(element);
+        case 'Unit':
+            return new Unit(element);
         case 'Link':
             return new Link(element)
         case 'Content':

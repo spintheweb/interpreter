@@ -7,7 +7,7 @@
 window.onload = () => {
     document.cookie = `stwBrowseURL=${location.pathname}; path=/`;
 
-    // Request page contents
+    // Request unit contents
     let stwContents = decodeURIComponent(document.cookie.split('; ').find(row => row.startsWith('stwContents='))?.split('=')[1]);
 
     stwContents.split(',').forEach(_id => {

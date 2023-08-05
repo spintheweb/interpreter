@@ -20,7 +20,7 @@ article.stwContent {position:relative; padding:0.25em; border: thin dashed trans
 .stwCaption .fa-times {float:right; line-height: 1.25em; cursor:pointer; font-size: smaller;}
 .stwHeader {display: block; margin:0.25em 0; padding: 0.25em 0.5em; }
 .stwFooter {display: block; margin:0.25em 0; padding: 0.25em 0.5em; }
-.stwPager {display: block;}
+.stwUnitr {display: block;}
 
 .stwRBV0 {color: var(--faint); font-weight: bold;}
 .stwRBV1 {color: var(--fore); font-weight: bold;}

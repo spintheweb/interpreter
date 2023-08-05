@@ -145,14 +145,12 @@ router.put('/wbdl/:_idParent/:_idChild', (req, res, next) => {
     let parent = Base[WEBBASE].index.get(req.params._idParent) || Base[WEBBASE];
     let child = Base[WEBBASE].index.get(req.params._idChild);
 
-    // Move child
-    child.parent.children.splice(child.parent.children.findIndex(element => element._id == req.params._idChild), 1);
-    parent.children.push(child);
-    res.json(element);
-
-    // Copy child
-    parent.add(child.clone());
-    res.json(element);
+    if (req.body === 'move') {
+        child.parent.children.splice(child.parent.children.findIndex(element => element._id == req.params._idChild), 1);
+        parent.children.push(child);
+    } else
+        child = parent.add(child.clone());
+    res.json(child);
 });
 router.patch('/wbdl/:_id', (req, res, next) => {
     let element = Base[WEBBASE].index.get(req.params._id);

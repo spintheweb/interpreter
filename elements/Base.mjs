@@ -60,8 +60,8 @@ export default class Base {
 	granted(roles, role = null, recurse = false) {
 		let ac = null;
 
-		if (this.constructor.name === 'Page' && Base[WEBBASE].mainpage === this._id)
-			ac = recurse ? 0b11 : 0b01; // Home page always visible
+		if (this.constructor.name === 'Unit' && Base[WEBBASE].mainunit === this._id)
+			ac = recurse ? 0b11 : 0b01; // Home unit always visible
 
 		if (role) {
 			if (this.visibility[role] !== undefined)
@@ -75,7 +75,7 @@ export default class Base {
 			let obj = this.parent;
 			if (obj)
 				ac = 0b10 | obj.granted(roles, role, true);
-			else if (['Webo', 'Area', 'Page'].indexOf(this.constructor.name) === -1) // Content
+			else if (['Webo', 'Area', 'Unit'].indexOf(this.constructor.name) === -1) // Content
 				ac = 0b10; // NOTE: this covers contents without a parent nor a RBV, it's in limbo!
 		}
 
@@ -106,6 +106,7 @@ export default class Base {
 		//			element = new createElement(this.parent, this);
 		//		}
 		//		return element;
+		return this;
 	}
 
 	move(parent) {

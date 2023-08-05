@@ -28,12 +28,12 @@ export default class Menu extends Content {
 			let options = '';
 			this.children.forEach(option => {
 				if (option.constructor.name === 'Link') {
-					if (option.ref.constructor.name === 'Page') {
+					if (option.ref.constructor.name === 'Unit') {
 						if (option.granted(socket.target.user) & 0b01)
 							options += `<li class="stwMenuOption"><a href="/${option.slug}" onclick="stwHref(event)">${option.localizedName()}</a></li>`;
 					} else if (['Webo', 'Area'].indexOf(option.ref.constructor.name) !== -1) {
 						option.ref.children.forEach(suboption => {
-							if (suboption.constructor.name === 'Page' && suboption.granted(socket.target.user) & 0b01)
+							if (suboption.constructor.name === 'Unit' && suboption.granted(socket.target.user) & 0b01)
 								options += `<li class="stwMenuOption"><a href="/${suboption.slug}" onclick="stwHref(event)">${suboption.localizedName()}</a></li>`;
 						});
 					}

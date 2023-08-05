@@ -40,7 +40,7 @@
     "bugs": {
         "url": "https://github.com/spintheweb/project/issues"
     },
-    "homepage": "https://www.spintheweb.org",
+    "homeunit": "https://www.spintheweb.org",
     "optionalDependencies": {
         "bufferutil": "^4.0.1",
         "utf-8-validate": "^5.0.2"

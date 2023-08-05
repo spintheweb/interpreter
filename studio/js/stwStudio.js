@@ -105,32 +105,49 @@ const stwStudio = {
         if (event.target.closest('article')?.id == 'webbase' && document.getElementById('properties')) {
             let selectedElement = document.querySelector('li[data-id][selected]');
 
-            if (event.key == 'x' && event.ctrlKey) {
+            if (event.key == 'ArrowUp')
+                selectedElement.previousSibling?.firstChild.click();
+            else if (event.key == 'PageUp')
+                selectedElement.parentElement.closest('li').firstChild.click();
+            else if (event.key == 'ArrowDown')
+                selectedElement.nextSibling?.firstChild.click();
+            else if (event.key == 'PageDown')
+                selectedElement.querySelector('ul>li').firstChild.click();
+            else if (event.key == 'x' && event.ctrlKey) {
                 if (stwStudio.stwCopyElement)
-                    event.target.querySelector('span[class]').className = '';
+                    event.target.querySelectorAll('span[class]').forEach(element => element.className = '');
                 selectedElement.querySelector('div span:last-of-type').className = 'cut';
-                stwStudio.stwCopyElement = selectedElement.dataset.id;
-                stwStudio.statusBar('Cutting element...' + stwStudio.stwCopyElement);
+                stwStudio.stwCopyElement = selectedElement;
+                stwStudio.statusBar('Cutting element...' + stwStudio.stwCopyElement.dataset.id);
 
             } else if (event.key == 'c' && event.ctrlKey) {
                 if (stwStudio.stwCopyElement)
-                    event.target.querySelector('span[class]').className = '';
+                    event.target.querySelectorAll('span[class]').forEach(element => element.className = '');
                 selectedElement.querySelector('div span:last-of-type').className = 'copy';
-                stwStudio.stwCopyElement = selectedElement.dataset.id;
-                stwStudio.statusBar('Copying element...' + stwStudio.stwCopyElement);
+                stwStudio.stwCopyElement = selectedElement;
+                stwStudio.statusBar('Copying element...' + stwStudio.stwCopyElement.dataset.id);
 
             } else if (stwStudio.stwCopyElement && selectedElement.dataset.type === 'Content' && event.key == 'v' && event.ctrlKey) {
                 stwStudio.statusBar('Pasting link...');
 
             } else if (stwStudio.stwCopyElement && event.key == 'v' && event.ctrlKey) {
                 stwStudio.statusBar('Pasting element...');
-                // if cut then move
-                // if copy then add
+                fetch(`/studio/wbdl/${selectedElement.dataset.id}/${stwStudio.stwCopyElement.dataset.id}`,
+                    {
+                        method: 'PUT',
+                        body: stwStudio.stwCopyElement.querySelector('span[class]').className
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        stwStudio.renderPanel('/studio/panels/webbase.html', data._parentId.id, data._id);
+                        stwStudio.loadForm(document.querySelector('#properties form'), data);
+                    })
+                    .catch(err => { console.log(err) });
 
             } else if (event.key == 'Delete') {
                 if (selectedElement.firstChild.lastChild.innerText.endsWith('T') && !confirm('Are you sure you want to delete the element permanently? There is no going back.'))
                     return;
-                if (stwStudio.stwCopyElement === selectedElement.dataset.id)
+                if (stwStudio.stwCopyElement.dataset.id === selectedElement.dataset.id)
                     stwStudio.stwCopyElement = undefined;
                 stwStudio.statusBar('Deleting element...');
                 fetch(`/studio/wbdl/${document.getElementById('properties').dataset.id}`,
@@ -215,8 +232,8 @@ const stwStudio = {
                 if (li) li.style.display = '';
             }
 
-            if (input.name === 'permalink' && data.mainpage) {
-                fetch(`/studio/wbdl/permalink/${data.mainpage}`)
+            if (input.name === 'permalink' && data.mainunit) {
+                fetch(`/studio/wbdl/permalink/${data.mainunit}`)
                     .then(res => res.text())
                     .then(text => { input.value = text })
                     .catch(err => { console.log(err) });
@@ -692,7 +709,7 @@ const stwStudio = {
                 document.getElementById('Browse').src = document.getElementById('BrowseURL').value;
                 break;
             case 'locate':
-                stwStudio.locateElement(document.cookie.split('; ').find(row => row.startsWith('stwPage='))?.split('=')[1]);
+                stwStudio.locateElement(document.cookie.split('; ').find(row => row.startsWith('stwUnit='))?.split('=')[1]);
                 break;
             case 'home':
                 document.getElementById('Browse').src = location.origin;
@@ -717,7 +734,7 @@ const stwStudio = {
             clearTimeout(stwStudio.statusTimeout);
         document.getElementById('statusbar').children[span].innerHTML = '<i class="fa-solid fa-rotate fa-spin"></i> ' + text;
         if (span === 1)
-            stwStudio.statusTimeout = setTimeout(() => { document.getElementById('statusbar').children[1].innerHTML = '' }, 1500);
+            stwStudio.statusTimeout = setTimeout(() => { document.getElementById('statusbar').children[1].innerHTML = '' }, 1000);
     }
 }
 

@@ -4,9 +4,9 @@
         <span>
             <!--i class="fa-solid fa-fw fa-rotate" title="Refresh" data-action="refresh"></i-->
             <i class="fa-solid fa-fw fa-cloud-arrow-up" title="Persist webbase" data-action="persist"></i>
-            <i class="fa-regular fa-fw fa-folder" title="New area" data-action="Area"></i>
-            <i class="fa-regular fa-fw fa-file" title="New page" data-action="Page"></i>
-            <i class="fa-regular fa-fw fa-square" title="New content" data-action="Content"></i>
+            <i class="fa-solid fa-fw fa-boxes-stacked" title="New area" data-action="Area"></i>
+            <i class="fa-solid fa-fw fa-box" title="New unit" data-action="Unit"></i>
+            <i class="fa-solid fa-fw fa-square" title="New content" data-action="Content"></i>
             <!--i class="fa-regular fa-fw fa-trash-can" title="Show/Hide trashed nodes" data-action="trashed"></i-->
         </span>
     </h1>
@@ -42,10 +42,10 @@
             <li><label></label><input type="text" name="visible" placeholder="callback():Boolean"
                     title="Programmatic visibility"></li>
 
-            <li><label>Main page</label>
+            <li><label>Main unit</label>
                 <div style="display: flex; align-items: center;">
-                    <input name="permalink" title="Main page" readonly>
-                    <input type="hidden" name="mainpage">
+                    <input name="permalink" title="Main unit" readonly>
+                    <input type="hidden" name="mainunit">
                     <i class="fa fa-fw fa-bars" style="margin-left: 0.25em; cursor: pointer;"></i>
                 </div>
             </li>
@@ -84,7 +84,7 @@
                     <option value="-600" disabled>Graph</option>
                     <option value="" disabled>Map</option>
                     <option value="" disabled>Menu</option>
-                    <option value="-102" disabled>Page links</option>
+                    <option value="-102" disabled>Unit links</option>
                     <option value="-101" disabled>Area links</option>
                     <option value="-103" disabled>Indexed links</option>
                     <option value="Breadcrumbs" data-value="-104">Breadcrumbs</option>
