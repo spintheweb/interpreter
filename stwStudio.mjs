@@ -139,7 +139,7 @@ router.get('/wbdl(/*)?', (req, res) => {
 router.post('/wbdl/:_idParent/:type', (req, res, next) => {
     let parent = Base[WEBBASE].index.get(req.params._idParent) || Base[WEBBASE];
     let element = parent.add(createElement(parent, { type: req.params.type }));
-    res.sendStatus(200); // 200 OK
+    res.json(element);
 });
 router.put('/wbdl/:_idParent/:_idChild', (req, res, next) => {
     let parent = Base[WEBBASE].index.get(req.params._idParent) || Base[WEBBASE];
@@ -148,11 +148,11 @@ router.put('/wbdl/:_idParent/:_idChild', (req, res, next) => {
     // Move child
     child.parent.children.splice(child.parent.children.findIndex(element => element._id == req.params._idChild), 1);
     parent.children.push(child);
-    res.sendStatus(200); // 200 OK
+    res.json(element);
 
     // Copy child
     parent.add(child.clone());
-    res.sendStatus(200); // 200 OK
+    res.json(element);
 });
 router.patch('/wbdl/:_id', (req, res, next) => {
     let element = Base[WEBBASE].index.get(req.params._id);
@@ -164,7 +164,7 @@ router.delete('/wbdl/:_id', (req, res, next) => {
         element.status = 'T'; // Trash it
     else
         element = Base.remove(element); // Move to oblivion
-        res.sendStatus(200); // 200 OK
+    res.json(element);
 });
 //#endregion
 

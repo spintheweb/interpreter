@@ -103,20 +103,36 @@ const stwStudio = {
         }
 
         if (event.target.closest('article')?.id == 'webbase' && document.getElementById('properties')) {
+            let selectedElement = document.querySelector('li[data-id][selected]');
+
             if (event.key == 'x' && event.ctrlKey) {
-                stwStudio.stwCopyElement = document.querySelector('li[data-id][selected]').dataset.id;
-                stwStudio.statusBar('Cut element...' + stwStudio.stwCopyElement);
+                if (stwStudio.stwCopyElement)
+                    event.target.querySelector('span[class]').className = '';
+                selectedElement.querySelector('div span:last-of-type').className = 'cut';
+                stwStudio.stwCopyElement = selectedElement.dataset.id;
+                stwStudio.statusBar('Cutting element...' + stwStudio.stwCopyElement);
+
             } else if (event.key == 'c' && event.ctrlKey) {
-                stwStudio.stwCopyElement = document.querySelector('li[data-id][selected]').dataset.id;
-                stwStudio.statusBar('Copy element...' + stwStudio.stwCopyElement);
-            } else if (event.key == 'v' && event.ctrlKey && event.altkey) {
-                stwStudio.statusBar('Paste link...');
-            } else if (event.key == 'v' && event.ctrlKey) {
-                stwStudio.statusBar('Paste element...');
+                if (stwStudio.stwCopyElement)
+                    event.target.querySelector('span[class]').className = '';
+                selectedElement.querySelector('div span:last-of-type').className = 'copy';
+                stwStudio.stwCopyElement = selectedElement.dataset.id;
+                stwStudio.statusBar('Copying element...' + stwStudio.stwCopyElement);
+
+            } else if (stwStudio.stwCopyElement && selectedElement.dataset.type === 'Content' && event.key == 'v' && event.ctrlKey) {
+                stwStudio.statusBar('Pasting link...');
+
+            } else if (stwStudio.stwCopyElement && event.key == 'v' && event.ctrlKey) {
+                stwStudio.statusBar('Pasting element...');
                 // if cut then move
                 // if copy then add
+
             } else if (event.key == 'Delete') {
-                stwStudio.statusBar('Delete element...');
+                if (selectedElement.firstChild.lastChild.innerText.endsWith('T') && !confirm('Are you sure you want to delete the element permanently? There is no going back.'))
+                    return;
+                if (stwStudio.stwCopyElement === selectedElement.dataset.id)
+                    stwStudio.stwCopyElement = undefined;
+                stwStudio.statusBar('Deleting element...');
                 fetch(`/studio/wbdl/${document.getElementById('properties').dataset.id}`,
                     {
                         method: 'DELETE'
@@ -366,7 +382,7 @@ const stwStudio = {
             } else
                 html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span>${'&emsp;'.repeat(depth)}&nbsp;</span><span>${name}</span><span>${node.status || ''}</span></div>`;
         }
-        return `${html || '<li data-type="nothing"><div><span></span><span>Empty</span><span></span></div>'}</li>`;
+        return `${html || '<li data-type="nothing"><div><span></span><span>Empty</span><span class="undefined"></span></div>'}</li>`;
     },
     managePanels: event => {
         let target = event.target;

@@ -57,9 +57,20 @@ i[selected] {
     background-color: var(--specialColor);
 }
 
-[tabindex]:not(.stwTree):hover {
+[tabindex]:not(.stwTree):hover, .stwTree li>div:hover {
     color: white;
     background-color: var(--specialHover);
+}
+
+span.cut::before {
+    content: "\f0c4";
+    font: normal normal normal 1em/1 FontAwesome;
+    padding-right: 0.5em;
+}
+span.copy::before {
+    content: "\f24d";
+    font: normal normal normal 1em/1 FontAwesome;
+    padding-right: 0.5em;
 }
 
 textarea {
@@ -338,22 +349,22 @@ ul.stwT li.stwT:not([selected]) ul.stwT li:not(.stwT)>div {
 li[data-type]>div>span:nth-child(2)::before {
     display: inline-block;
     padding-right: 0.5em;
-    font-family: FontAwesome, "Font Awesome 6 Pro";
+    font: normal normal normal 1em/1 FontAwesome;
     text-align: center;
 }
 
 li[data-type=Webo]>div>span:nth-child(2)::before {
-    content: "\f0ac";
+    content: "\f0c2";
 }
 
 li[data-type=Area]>div>span:nth-child(2)::before,
 li[data-type=dir]>div>span:nth-child(2)::before {
-    content: "\f07b";
+    content: "\f468";
 }
 
 li[data-type=Page]>div>span:nth-child(2)::before,
 li[data-type=file]>div>span:nth-child(2)::before {
-    content: "\f15c";
+    content: "\f466";
 }
 
 li[data-type^=Content]>div>span:nth-child(2)::before {
@@ -424,15 +435,13 @@ li[data-type=ds]>div>span:nth-child(2)::before {
 }
 
 .stwMenu div.checked:after {
-    font-family: FontAwesome, "Font Awesome 6 Pro";
-    font-weight: 900;
+    font: normal normal normal 1em/1 FontAwesome;
     content: "\f00c";
     float: right;
 }
 
 .stwMenu li>ul>li>div:not(:last-child):after {
-    font-family: FontAwesome, "Font Awesome 6 Pro";
-    font-weight: 900;
+    font: normal normal normal 1em/1 FontAwesome;
     content: "\f0da";
     float: right;
 }
@@ -446,7 +455,7 @@ li[data-type=ds]>div>span:nth-child(2)::before {
 .stwMenu ul {
     background-color: var(--menu-backcolor);
     color: var(--menu-color);
-    opacity: 1;specialColor
+    opacity: 1;
 }
 
 #searchMode,
