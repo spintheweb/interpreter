@@ -3,11 +3,7 @@
  * Copyright(c) 2023 Giancarlo Trevisan
  * MIT Licensed
  */
-if (process.env.NODE_ENV != 'production' && process.env.NODE_ENV != 'development') {
-    console.log('Please set process.env.NODE_ENV={production | development}');
-    process.exit();
-}
-console.log(`process.env.NODE_ENV='${process.env.NODE_ENV}'\n`);
+const IS_DEV = process.env.NODE_ENV === 'development';
 
 import http from 'http';
 import https from 'https';
@@ -49,7 +45,7 @@ const sessionConfig = {
     cookie: { sameSite: 'strict' }
 };
 
-if (process.env.NODE_ENV == 'production') {
+if (!IS_DEV) {
     app.set('trust proxy', 1);
 //    sessionConfig.cookie.secure = true;
 }
@@ -57,12 +53,11 @@ if (process.env.NODE_ENV == 'production') {
 app.use(session(sessionConfig));
 app.use((req, res, next) => {
     if (!req.session.user) {
-        req.session.user = process.env.NODE_ENV == 'development' ? 'developer' : 'guest';
-        req.session.roles = process.env.NODE_ENV == 'development' ? ['users', 'developers'] : ['guests'];
+        req.session.user = IS_DEV ? 'developer' : 'guest';
+        req.session.roles = IS_DEV ? ['users', 'developers'] : ['guests'];
         req.session.lang = language.pick(Base[WEBBASE].langs, req.headers['accept-language']);
-        req.session.developer = process.env.NODE_ENV == 'development';
+        req.session.developer = IS_DEV;
         res.cookie('stwDeveloper', req.session.developer);
-        console.log('New session');
     }
 
     const { headers: { cookie } } = req;

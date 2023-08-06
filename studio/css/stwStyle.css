@@ -360,12 +360,12 @@ li[data-type=Webo]>div>span:nth-child(2)::before {
 
 li[data-type=Area]>div>span:nth-child(2)::before,
 li[data-type=dir]>div>span:nth-child(2)::before {
-    content: "\f468";
+    content: "\f07b";
 }
 
 li[data-type=Unit]>div>span:nth-child(2)::before,
 li[data-type=file]>div>span:nth-child(2)::before {
-    content: "\f466";
+    content: "\f15b";
 }
 
 li[data-type^=Content]>div>span:nth-child(2)::before {

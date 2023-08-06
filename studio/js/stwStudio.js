@@ -105,15 +105,20 @@ const stwStudio = {
         if (event.target.closest('article')?.id == 'webbase' && document.getElementById('properties')) {
             let selectedElement = document.querySelector('li[data-id][selected]');
 
-            if (event.key == 'ArrowUp')
-                selectedElement.previousSibling?.firstChild.click();
-            else if (event.key == 'PageUp')
-                selectedElement.parentElement.closest('li').firstChild.click();
-            else if (event.key == 'ArrowDown')
-                selectedElement.nextSibling?.firstChild.click();
-            else if (event.key == 'PageDown')
-                selectedElement.querySelector('ul>li').firstChild.click();
-            else if (event.key == 'x' && event.ctrlKey) {
+            // TODO: PageUp, PageDown, Home, End and Space
+            if (event.key == 'ArrowUp' || event.key == 'ArrowDown') {
+                let elements = [...document.getElementById('webbase').querySelectorAll('ul:not([style="display: none"])>li')];
+                let i = elements.findIndex(element => element.dataset.id === selectedElement.dataset.id);
+                if (event.key == 'ArrowUp' && i > 0)
+                    elements[--i].firstChild.click();
+                else if (event.key == 'ArrowDown' && i < elements.length - 1)
+                    elements[++i].firstChild.click();
+            } else if (event.key == 'Escape') {
+                if (stwStudio.stwCopyElement)
+                    event.target.querySelectorAll('span[class]').forEach(element => element.className = '');
+                stwStudio.stwCopyElement = undefined;
+
+            } else if (event.key == 'x' && event.ctrlKey) {
                 if (stwStudio.stwCopyElement)
                     event.target.querySelectorAll('span[class]').forEach(element => element.className = '');
                 selectedElement.querySelector('div span:last-of-type').className = 'cut';
@@ -147,7 +152,7 @@ const stwStudio = {
             } else if (event.key == 'Delete') {
                 if (selectedElement.firstChild.lastChild.innerText.endsWith('T') && !confirm('Are you sure you want to delete the element permanently? There is no going back.'))
                     return;
-                if (stwStudio.stwCopyElement.dataset.id === selectedElement.dataset.id)
+                if (stwStudio.stwCopyElement?.dataset.id === selectedElement.dataset.id)
                     stwStudio.stwCopyElement = undefined;
                 stwStudio.statusBar('Deleting element...');
                 fetch(`/studio/wbdl/${document.getElementById('properties').dataset.id}`,
@@ -392,7 +397,7 @@ const stwStudio = {
                 else if (show)
                     show = false, html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span>${'&emsp;'.repeat(depth - 1)}<i class="fa fa-fw fa-angle-down"></i></span><span>${name}</span><span>${node.status}</span></div><ul>`;
                 else
-                    html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span>${'&emsp;'.repeat(depth - 1)}<i class="fa fa-fw fa-angle-right"></i></span><span>${name}</span><span>${node.status}</span></div><ul style="display:none">`;
+                    html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span>${'&emsp;'.repeat(depth - 1)}<i class="fa fa-fw fa-angle-right"></i></span><span>${name}</span><span>${node.status}</span></div><ul style="display: none">`;
                 for (let child of node.children)
                     html += stwStudio.renderTree(child, depth + 1);
                 html += '</ul>';

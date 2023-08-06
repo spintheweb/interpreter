@@ -10,7 +10,7 @@ export default class Base {
     static [WEBBASE] = {};
 
 	constructor(params = {}) {
-		this._id = Base[WEBBASE].hasOwnProperty('index') && Base[WEBBASE].index.get(params._id) ? v1() : params._id;
+		this._id = (Base[WEBBASE].hasOwnProperty('index') && Base[WEBBASE].index.get(params._id) ? v1() : params._id) || v1();
 		this._idParent = params._idParent;
 
 		this.type = this.constructor.name;
