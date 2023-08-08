@@ -13,28 +13,28 @@
 
     <link rel="icon" type="image/png" href="/studio/favicon.ico">
     <link rel="stylesheet" href="/studio/css/stwStyle.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
-        integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://kit.fontawesome.com/a29c3d2fa4.css" crossorigin="anonymous">
     <script src="/studio/js/stwStudio.js"></script>
 </head>
 
 <body class="stwDark">
     <section class="stwPanels" onclick="stwStudio.managePanels(event)">
-        <i tabindex="0" role="link" class="fa fa-fw fa-sitemap" title="Webbase"
+        <i tabindex="0" role="link" class="fa-light fa-fw fa-sitemap" title="Webbase"
             data-panel="/studio/panels/webbase.html"></i>
-        <i tabindex="0" role="link" class="fa fa-fw fa-search" title="Search webbase"
+        <i tabindex="0" role="link" class="fa-light fa-fw fa-search" title="Search webbase"
             data-panel="/studio/panels/search.html"></i>
-        <i tabindex="0" role="link" class="fa fa-fw fa-folder" title="Explorer"
+        <i tabindex="0" role="link" class="fa-light fa-fw fa-folder" title="Explorer"
             data-panel="/studio/panels/explorer.html"></i>
-        <i tabindex="0" role="link" class="fa fa-fw fa-code-branch" title="Source control"
+        <i tabindex="0" role="link" class="fa-light fa-fw fa-code-branch" title="Source control"
             data-panel="/studio/panels/sourcecontrol.html"></i>
-        <i tabindex="0" role="link" class="fa fa-fw fa-database" title="Datasources"
+        <i tabindex="0" role="link" class="fa-light fa-fw fa-bug" title="Debug"
+            data-panel="/studio/panels/debug.html"></i>
+        <i tabindex="0" role="link" class="fa-light fa-fw fa-database" title="Datasources"
             data-panel="/studio/panels/datasources.html"></i>
-        <i tabindex="0" role="link" class="fa fa-fw fa-street-view" title="Roles"
+        <i tabindex="0" role="link" class="fa-light fa-fw fa-street-view" title="Roles"
             data-panel="/studio/panels/roles.html"></i>
         <span></span>
-        <i tabindex="0" role="link" class="fa fa-fw fa-cog" title="Settings"
+        <i tabindex="0" role="link" class="fa-light fa-fw fa-cog" title="Settings"
             data-panel="/studio/panels/settings.html"></i>
     </section>
     <section class="stwPanel"></section>
@@ -44,13 +44,14 @@
         </div>
         <div class="stwTab" selected>
             <div class="stwBrowsebar" onclick="stwStudio.manageBrowse(event)">
-                <i tabindex="0" role="link" class="fa fa-fw fa-arrow-left" title="Back" data-action="back"></i>
-                <i tabindex="0" role="link" class="fa fa-fw fa-arrow-right" title="Forward" data-action="forward"></i>
-                <i tabindex="0" role="link" class="fa-solid fa-fw fa-rotate-right" title="Refresh (F5)"
+                <i tabindex="0" role="link" class="fa-light fa-fw fa-arrow-left" title="Back" data-action="back"></i>
+                <i tabindex="0" role="link" class="fa-light fa-fw fa-arrow-right" title="Forward"
+                    data-action="forward"></i>
+                <i tabindex="0" role="link" class="fa-light fa-fw fa-rotate-right" title="Refresh (F5)"
                     data-action="refresh"></i>
-                <i tabindex="0" role="link" class="fa-solid fa-sitemap maincolor" title="Locate in webbase (CTRL+L)"
+                <i tabindex="0" role="link" class="fa-light fa-sitemap maincolor" title="Locate in webbase (CTRL+L)"
                     data-action="locate"></i>
-                <i tabindex="0" role="link" class="fa fa-fw fa-house" title="Home" data-action="home"></i>
+                <i tabindex="0" role="link" class="fa-light fa-fw fa-house" title="Home" data-action="home"></i>
                 <input id="BrowseURL" type="url" name="url" placeholder="URL" onchange="stwStudio.setURL(event)"
                     pattern="(http|https)://*" require>
             </div>

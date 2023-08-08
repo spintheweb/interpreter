@@ -267,7 +267,7 @@ const stwStudio = {
         else
             form.slug.value = form.slug.value.toLowerCase().replace(/[^a-z]/g, '');
 
-        // document.querySelector('#properties .fa-trash-can').className = data.status === 'T' ? 'fa-solid fa-fw fa-trash-can' : 'fa-regular fa-fw fa-trash-can';
+        // document.querySelector('#properties .fa-trash-can').className = data.status === 'T' ? 'fa-light fa-fw fa-trash-can' : 'fa-light fa-fw fa-trash-can';
     },
     loadFile: (path, destination, callback) => {
         fetch(path)
@@ -409,9 +409,9 @@ const stwStudio = {
                 if (!depth)
                     html = `<li ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span></span><span>${name}</span><span>${node.status || ''}</span></div><ul>`;
                 else if (show)
-                    show = false, html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span>${'&emsp;'.repeat(depth - 1)}<i class="fa fa-fw fa-angle-down"></i></span><span>${name}</span><span>${node.status}</span></div><ul>`;
+                    show = false, html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span>${'&emsp;'.repeat(depth - 1)}<i class="fa-light fa-fw fa-angle-down"></i></span><span>${name}</span><span>${node.status}</span></div><ul>`;
                 else
-                    html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span>${'&emsp;'.repeat(depth - 1)}<i class="fa fa-fw fa-angle-right"></i></span><span>${name}</span><span>${node.status}</span></div><ul style="display: none">`;
+                    html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span>${'&emsp;'.repeat(depth - 1)}<i class="fa-light fa-fw fa-angle-right"></i></span><span>${name}</span><span>${node.status}</span></div><ul style="display: none">`;
                 for (let child of node.children)
                     html += stwStudio.renderTree(child, depth + 1);
                 html += '</ul>';
@@ -638,7 +638,7 @@ const stwStudio = {
                 path = el.firstChild.children[1].innerText + '/' + path;
 
             if (!document.getElementById(path)) {
-                document.querySelector('.stwTabs > div').insertAdjacentHTML('beforeend', `<span tabindex="0" role="link" class="stwTabLabel" title="${path}">${path}<i class="fa fa-times"></i></span>`);
+                document.querySelector('.stwTabs > div').insertAdjacentHTML('beforeend', `<span tabindex="0" role="link" class="stwTabLabel" title="${path}">${path}<i class="fa-light fa-times"></i></span>`);
                 document.querySelector('.stwTabs').insertAdjacentHTML('beforeend', `<div class="stwTab"><div></div><div id="${path}"></div></div>`);
 
                 let editor = ace.edit(path);
@@ -753,7 +753,7 @@ const stwStudio = {
     statusBar: (text, span = 1) => {
         if (stwStudio.statusTimeout && span === 1)
             clearTimeout(stwStudio.statusTimeout);
-        document.getElementById('statusbar').children[span].innerHTML = '<i class="fa-solid fa-rotate fa-spin"></i> ' + text;
+        document.getElementById('statusbar').children[span].innerHTML = '<i class="fa-light fa-rotate fa-spin"></i> ' + text;
         if (span === 1)
             stwStudio.statusTimeout = setTimeout(() => { document.getElementById('statusbar').children[1].innerHTML = '' }, 1000);
     }

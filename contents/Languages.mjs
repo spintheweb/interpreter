@@ -37,7 +37,7 @@ export default class Languages extends Content {
                 for (let lang of Base[WEBBASE].langs)
                     fragment += `&nbsp;<a href="/stwc/setlanguage/${lang}">${lang.toUpperCase()}</a>&nbsp;`;
             else {
-                fragment += `<i class="fa-solid fa-language"></i> <select onchange="location.href='/stwc/setlanguage/${lang}'">`
+                fragment += `<i class="fa-light fa-language"></i> <select onchange="location.href='/stwc/setlanguage/${lang}'">`
                 for (let lang of Base[WEBBASE].langs)
                     fragment += `<option>${lang.toUpperCase()}</option>`;
                 fragment += '</select>';
