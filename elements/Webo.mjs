@@ -9,7 +9,7 @@ import language from 'accept-language-parser';
 import { WEBBASE } from './Miscellanea.mjs';
 import Base from './Base.mjs';
 import Area from './Area.mjs';
-import createElement from './Element.mjs';
+import { createElement } from './Element.mjs';
 
 export default class Webo extends Area {
     constructor(params = { name: 'Hello World', domain: 'helloworld.com' }) {

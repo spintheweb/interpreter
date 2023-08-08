@@ -22,6 +22,7 @@ import stwAuth from './stwAuth.mjs';
 let settings = JSON.parse(fs.readFileSync(path.join(WEBO_DIR, '.settings')) || '{"protocol":"http","hostname":"127.0.0.0","port":"80"}');
 
 const app = express();
+app.disable('x-powered-by');
 
 let webbase = path.join(WEBO_DIR, settings.webbase || '.data/webbase.json');
 if (fs.existsSync(webbase))

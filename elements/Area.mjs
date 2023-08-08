@@ -6,7 +6,7 @@
 import { WEBBASE } from './Miscellanea.mjs';
 import Base from './Base.mjs';
 import Unit from './Unit.mjs';
-import createElement from './Element.mjs';
+import { createElement } from './Element.mjs';
 
 export default class Area extends Base {
 	constructor(params = {}) {

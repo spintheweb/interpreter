@@ -55,11 +55,11 @@ const stwStudio = {
             document.querySelectorAll('.ace_editor').forEach(ace => {
                 ace.editor.setTheme(event.target.value == 'stwDark' ? 'ace/theme/tomorrow_night' : '');
             });
-        } else if (event.target.name === 'specialColor') {
+        } else if (event.target.name === 'mainColor') {
             let color = parseInt(event.target.value.replace('#', ''), 16);
             document.querySelector(':root').style.setProperty('--special', `${color >> 16 & 255},${color >> 8 & 255},${color & 255}`);
         } else if (event.target.name === 'hideLabels')
-            document.querySelector(':root').style.setProperty('--hideLabels', event.target.value === 'true' ? 'none' : 'inherit');
+            document.querySelector(':root').style.setProperty('--hidelabels', event.target.value === 'true' ? 'none' : 'inherit');
     },
     keydown: event => {
         if (event.ctrlKey && event.key === 'F12') {
@@ -105,8 +105,12 @@ const stwStudio = {
         if (event.target.closest('article')?.id == 'webbase' && document.getElementById('properties')) {
             let selectedElement = document.querySelector('li[data-id][selected]');
 
-            // TODO: PageUp, PageDown, Home, End and Space
-            if (event.key == 'ArrowUp' || event.key == 'ArrowDown') {
+            // TODO: PageUp, PageDown, Home and End
+            if (event.key == ' ') {
+                let toggle = selectedElement.querySelector('div>span>i');
+                if (toggle)
+                    stwStudio.click({ isTrusted: true, target: toggle });
+            } else if (event.key == 'ArrowUp' || event.key == 'ArrowDown') {
                 let elements = [...document.getElementById('webbase').querySelectorAll('ul:not([style="display: none"])>li')];
                 let i = elements.findIndex(element => element.dataset.id === selectedElement.dataset.id);
                 if (event.key == 'ArrowUp' && i > 0)
@@ -144,7 +148,9 @@ const stwStudio = {
                     })
                     .then(res => res.json())
                     .then(data => {
-                        stwStudio.renderPanel('/studio/panels/webbase.html', data._parentId.id, data._id);
+                        if (stwStudio.stwCopyElement.querySelector('span[class]').className == 'cut')
+                            stwStudio.stwCopyElement.remove();
+                        stwStudio.renderPanel('/studio/panels/webbase.html', data._idParent, data._id);
                         stwStudio.loadForm(document.querySelector('#properties form'), data);
                     })
                     .catch(err => { console.log(err) });
@@ -165,7 +171,9 @@ const stwStudio = {
                         stwStudio.loadForm(document.querySelector('#properties form'), data);
                     })
                     .catch(err => { console.log(err) });
-            }
+            } else
+                return;
+
             event.preventDefault();
             event.stopPropagation();
         }
@@ -189,6 +197,8 @@ const stwStudio = {
                 parent.parentElement.querySelector('ul').style.display = 'none';
             else
                 parent.nextElementSibling.style.display = 'none';
+                document.getElementById('webbase')?.focus();
+
         } else if (target.classList.contains('fa-angle-right')) {
             target.classList.replace('fa-angle-right', 'fa-angle-down');
             if (parent.parentElement.tagName === 'LI')
@@ -292,6 +302,8 @@ const stwStudio = {
                             return res.json();
                     })
                     .then(json => {
+                        let webbase = document.getElementById('webbase');
+                        let highlighted = [...webbase.querySelectorAll('ul:not([style="display: none"])')].map(element => element.dataset.id);
                         if (subpath) {
                             let ul = document.querySelector(`[data-id="${subpath}"]`).parentElement.closest('ul');
                             for (var depth = -1; ul; ul = ul.parentElement.closest('ul'), ++depth);
@@ -299,11 +311,13 @@ const stwStudio = {
                             document.querySelector(`[data-id="${subpath}"]`).remove();
                             document.querySelector(`[data-id="${selectId || subpath}"]>div`).click();
                         } else {
-                            document.getElementById('webbase').lastElementChild.remove();
-                            document.getElementById('webbase').insertAdjacentHTML('beforeend', `<ul>${stwStudio.renderTree(json)}</ul>`);
+                            webbase.lastElementChild.remove();
+                            webbase.insertAdjacentHTML('beforeend', `<ul>${stwStudio.renderTree(json)}</ul>`);
                             document.querySelector('li[data-type=Webo]>div').click();
                             document.querySelector('[data-action="locate"]').click();
                         }
+                        highlighted.forEach(id => { if (document.getElementById(id)) document.getElementById(id).style.display = '' });
+                        webbase.focus();
                     })
                     .catch(err => {
                         console.log(err);
@@ -375,7 +389,7 @@ const stwStudio = {
             case '/studio/panels/settings.html':
                 let color = '#';
                 document.querySelector(':root').style.getPropertyValue('--special').split(',').forEach(byte => color += parseInt(byte).toString(16));
-                document.getElementById('specialColor').value = color;
+                document.getElementById('mainColor').value = color;
                 break;
         }
     },
@@ -499,9 +513,14 @@ const stwStudio = {
                                 });
                         })
                         .catch(err => console.log(err));
-                    properties.querySelector('h1>i').click();
                 }
                 break;
+        }
+    },
+    dblclick: event => {
+        if (event.detail > 1 && event.target.parentElement.dataset?.id) {
+            document.getElementById('properties').querySelector('h1>i').click();
+            event.preventDefault()
         }
     },
     locateElement: id => {
@@ -636,9 +655,6 @@ const stwStudio = {
 
         if (target.tagName === 'H1' && event.target.dataset.action) {
             switch (event.target.dataset.action) {
-                case 'clone':
-                    // TODO: Deep clone node
-                    break;
                 case 'expand':
                     document.getElementById('properties').classList.toggle('stwFullScreen');
                     break;
@@ -744,6 +760,7 @@ const stwStudio = {
 }
 
 window.addEventListener('click', stwStudio.click);
+window.addEventListener('mousedown', stwStudio.dblclick, false);
 window.addEventListener('keydown', stwStudio.keydown);
 window.addEventListener('load', () => {
     stwStudio.setup();

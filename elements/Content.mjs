@@ -6,7 +6,7 @@
 import { WEBBASE, pickText } from './Miscellanea.mjs';
 import Base from './Base.mjs';
 import { lexer, getValue, renderer } from './WBLL.mjs';
-import createElement from './Element.mjs';
+import { createElement } from './Element.mjs';
 
 export default class Content extends Base {
     static #behavior = false;

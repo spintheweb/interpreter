@@ -2,24 +2,23 @@
     font-family: sans-serif;
     font-size: 10pt;
 
-    --special: 255, 0, 76;
-    --specialColor: rgba(var(--special), 0.6);
-    --specialHover: rgba(var(--special));
-    --light: rgba(150, 150, 150, 0.4);
+    --maincolor: hsl(342, 100%, 50%);
+    --mainhovercolor: hsl(342, 100%, 40%);
+    --light: hsla(0, 0%, 59%, 0.4);
     --padding: 0.5em;
     --input-height: 1.5em;
     --hideLabels: none;
-    --menu-backcolor: black;
-    --menu-forecolor: white;
-    --menu-hovercolor: rgba(var(--special));
+    --menubackcolor: black;
+    --menuforecolor: white;
+    --menuhovercolor: hsl(342, 100%, 40%);
 }
 
 [tabindex="0"]:focus-within {
     outline: 0;
 }
 
-.specialColor:hover {
-    background-color: rgb(var(--special)) !important;
+.maincolor:hover {
+    background-color: var(--mainhovercolor) !important;
 }
 
 .stwDark,
@@ -58,12 +57,12 @@ form.stwHideLabels label {
 li[selected]>div,
 i[selected] {
     color: white;
-    background-color: var(--specialHover);
+    background-color: var(--maincolor);
 }
 
 [tabindex]:not(.stwTree):hover, .stwTree li>div:hover {
     color: white;
-    background-color: var(--specialHover);
+    background-color: var(--mainhovercolor);
 }
 
 span.cut::before {
@@ -104,7 +103,7 @@ body {
 .fa-toggle-on,
 .fas.fa-square-check,
 .fas.fa-square {
-    color: var(--specialColor);
+    color: var(--maincolor);
 }
 
 .stwFullScreen {
@@ -189,7 +188,7 @@ body {
     grid-row: 2;
     grid-template-columns: 2em 1fr 3em;
     color: white;
-    background-color: var(--specialColor);
+    background-color: var(--maincolor);
     padding: 0.5em;
 }
 
@@ -249,7 +248,7 @@ h1>span>i:hover {
 
 .stwForm button {
     color: white;
-    background-color: var(--specialColor);
+    background-color: var(--maincolor);
     border: none;
 }
 
@@ -386,8 +385,8 @@ li[data-type=ds]>div>span:nth-child(2)::before {
 
 .stwMenu {
     display: inline-block;
-    background-color: var(--menu-backcolor);
-    color: var(--menu-forecolor);
+    background-color: var(--menubackcolor);
+    color: var(--menuforecolor);
 }
 
 .stwMenu ul {
@@ -416,7 +415,7 @@ li[data-type=ds]>div>span:nth-child(2)::before {
 }
 
 .stwMenu ul>li:hover>ul {
-    background-color: var(--menu-hovercolor);
+    background-color: var(--menuhovercolor);
     display: block;
 }
 
@@ -448,14 +447,14 @@ li[data-type=ds]>div>span:nth-child(2)::before {
 }
 
 .stwMenu li:hover>div {
-    background-color: var(--menu-backcolor);
-    color: var(--menu-hover-color);
+    background-color: var(--menubackcolor);
+    color: var(--menuhover-color);
     opacity: 1;
 }
 
 .stwMenu ul {
-    background-color: var(--menu-backcolor);
-    color: var(--menu-color);
+    background-color: var(--menubackcolor);
+    color: var(--menucolor);
     opacity: 1;
 }
 
@@ -475,7 +474,7 @@ li[data-type=ds]>div>span:nth-child(2)::before {
 }
 
 #searchMode span[selected] {
-    color: var(--specialColor);
+    color: var(--maincolor);
 }
 
 #searchMode span:hover,

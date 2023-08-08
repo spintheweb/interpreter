@@ -4,7 +4,7 @@
  * MIT Licensed
  */
 import Base from './Base.mjs';
-import createElement from './Element.mjs';
+import { createElement } from './Element.mjs';
 
 import { join } from 'path';
 

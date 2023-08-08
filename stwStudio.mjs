@@ -9,7 +9,7 @@ import path from 'path';
 import git from 'simple-git';
 
 import { WEBBASE, PATH, STUDIO_DIR, WEBO_DIR } from './elements/Miscellanea.mjs';
-import createElement from './elements/Element.mjs';
+import { createElement, cloneElement, removeElement } from './elements/Element.mjs';
 import Base from './elements/Base.mjs';
 
 const router = express.Router();
@@ -145,11 +145,12 @@ router.put('/wbdl/:_idParent/:_idChild', (req, res, next) => {
     let parent = Base[WEBBASE].index.get(req.params._idParent) || Base[WEBBASE];
     let child = Base[WEBBASE].index.get(req.params._idChild);
 
-    if (req.body === 'move') {
+    if (req.body === 'cut') {
         child.parent.children.splice(child.parent.children.findIndex(element => element._id == req.params._idChild), 1);
         parent.children.push(child);
+        child._idParent = parent._id;
     } else
-        child = parent.add(child.clone());
+        child = parent.add(cloneElement(child));
     res.json(child);
 });
 router.patch('/wbdl/:_id', (req, res, next) => {
@@ -161,7 +162,7 @@ router.delete('/wbdl/:_id', (req, res, next) => {
     if (element.status !== 'T')
         element.status = 'T'; // Trash it
     else
-        element = Base.remove(element); // Move to oblivion
+        element = removeElement(element); // Move to oblivion
     res.json(element);
 });
 //#endregion

@@ -26,7 +26,7 @@ const contents = {
     Languages: Languages
 }
 
-export default function createElement(parent, element) {
+export function createElement(parent, element) {
     element._idParent = parent._id;
 
     switch (element.type) {
@@ -42,3 +42,22 @@ export default function createElement(parent, element) {
     }
     return {};
 }
+
+export function cloneElement(element) {
+    if (element.constructor.name !== 'Webo')
+        return new createElement(element.parent, element);
+    return {};
+}
+
+export function removeElement(element) {
+    let parent = element.parent;
+    if (element.children)
+        for (let child = element.children.pop(); child; child = element.children.pop()) {
+            removeElement(child);
+            Base[WEBBASE].index.delete(child._id);
+        }
+    parent.children.splice(parent.children.findIndex(child => child._id === element._id), 1);
+    Base[WEBBASE].index.delete(element._id);
+    return parent;
+}
+

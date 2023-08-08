@@ -7,7 +7,7 @@ import { v1 } from 'uuid';
 import { WEBBASE } from './Miscellanea.mjs';
 
 export default class Base {
-    static [WEBBASE] = {};
+	static [WEBBASE] = {};
 
 	constructor(params = {}) {
 		this._id = (Base[WEBBASE].hasOwnProperty('index') && Base[WEBBASE].index.get(params._id) ? v1() : params._id) || v1();
@@ -98,17 +98,6 @@ export default class Base {
 		return child;
 	}
 
-	// TODO: Deep copy element, note, the webbase cannot be copied, use write() instead
-	// _id and _idParent should be remapped as well as permalinks that point to cloned elements
-	clone() {
-		//		let element;
-		//		if (this.constructor.name !== 'Webo') {
-		//			element = new createElement(this.parent, this);
-		//		}
-		//		return element;
-		return this;
-	}
-
 	move(parent) {
 		if (this.constructor.name != 'Webo' && this !== parent) {
 			if (parent instanceof Content) {
@@ -121,18 +110,6 @@ export default class Base {
 					parent.children.push(this);
 			}
 		}
-	}
-
-	static remove(element) {
-		let parent = element.parent;
-		if (element.children)
-			for (let child = element.children.pop(); child; child = element.children.pop()) {
-				this.remove(child);
-				Base[WEBBASE].index.delete(child._id);
-			}
-		parent.children.splice(parent.children.findIndex(child => child._id === element._id), 1);
-		Base[WEBBASE].index.delete(element._id);
-		return parent;
 	}
 
 	permalink(lang) {

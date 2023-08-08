@@ -23,13 +23,6 @@ export default class Group extends Content {
                 a._section + ('0000' + a._sequence.toFixed(2)).slice(-5) > b._section + ('0000' + b._sequence.toFixed(2)).slice(-5));
         return this;
     }
-    add(child) {
-        super.add(child);
-        if (!(child instanceof Content))
-            this.remove();
-        child.Section(this.id);
-        return this;
-    }
     render(req, res, next) {
         return ' ';
     }
