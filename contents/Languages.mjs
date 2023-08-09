@@ -11,7 +11,6 @@ import Content from '../elements/Content.mjs';
 export default class Languages extends Content {
     constructor(params = {}) {
         super(params);
-        delete this.links;
     }
 
     // Content specific behaviors

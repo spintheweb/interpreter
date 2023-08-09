@@ -26,7 +26,7 @@ window.onload = () => {
                 console.log(err);
             });
     });
-}
+};
 window.onkeydown = event => {
     const isDeveloper = document.cookie.indexOf('stwDeveloper=true') != -1;
 
@@ -43,4 +43,4 @@ window.onkeydown = event => {
         event.stopPropagation();
         top.document.querySelector('[data-action="locate"]').click();
     }
-}
+};

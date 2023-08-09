@@ -7,10 +7,10 @@ const stwStudio = {
     stwCopyElement: undefined,
 
     visibilityEnum: {
-        'LV': '<i class="fas fa-fw fa-square-check" title="Local visibility"></i>',
-        'LI': '<i class="fas fa-fw fa-square" title="Local invisibility"></i>',
-        'IV': '<i class="far fa-fw fa-square-check" title="Inherited visibility"></i>',
-        'II': '<i class="far fa-fw fa-square" title="Inherited invisibility"></i>'
+        'LV': '<i class="fa-solid fa-fw fa-square-check" title="Local visibility"></i>',
+        'LI': '<i class="fa-solid fa-fw fa-square" title="Local invisibility"></i>',
+        'IV': '<i class="fa-light fa-fw fa-square-check" title="Inherited visibility"></i>',
+        'II': '<i class="fa-light fa-fw fa-square" title="Inherited invisibility"></i>'
     },
     setup: (settings = {}) => {
         document.getElementById('BrowseURL').value = document.location.origin;
@@ -57,9 +57,9 @@ const stwStudio = {
             });
         } else if (event.target.name === 'mainColor') {
             let color = parseInt(event.target.value.replace('#', ''), 16);
-            document.querySelector(':root').style.setProperty('--special', `${color >> 16 & 255},${color >> 8 & 255},${color & 255}`);
+            document.documentElement.style.setProperty('--maincolor', `${color >> 16 & 255},${color >> 8 & 255},${color & 255}`);
         } else if (event.target.name === 'hideLabels')
-            document.querySelector(':root').style.setProperty('--hidelabels', event.target.value === 'true' ? 'none' : 'inherit');
+            document.documentElement.style.setProperty('--hidelabels', event.target.value === 'true' ? 'none' : 'inherit');
     },
     keydown: event => {
         if (event.ctrlKey && event.key === 'F12') {
@@ -197,7 +197,7 @@ const stwStudio = {
                 parent.parentElement.querySelector('ul').style.display = 'none';
             else
                 parent.nextElementSibling.style.display = 'none';
-                document.getElementById('webbase')?.focus();
+            document.getElementById('webbase')?.focus();
 
         } else if (target.classList.contains('fa-angle-right')) {
             target.classList.replace('fa-angle-right', 'fa-angle-down');
@@ -388,7 +388,7 @@ const stwStudio = {
                 break;
             case '/studio/panels/settings.html':
                 let color = '#';
-                document.querySelector(':root').style.getPropertyValue('--special').split(',').forEach(byte => color += parseInt(byte).toString(16));
+                getComputedStyle(document.documentElement).getPropertyValue('--maincolor').split(',').forEach(byte => color += parseInt(byte).toString(16));
                 document.getElementById('mainColor').value = color;
                 break;
         }

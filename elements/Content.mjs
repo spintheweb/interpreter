@@ -90,31 +90,8 @@ export default class Content extends Base {
         this.params = value;
         return this;
     }
-    /*    
-        set subtype(newSubtype) {
-            this.subtype = newSubtype;
-            createElement(this, this); // Replace
-            return this;
-        }
-    */
-    add(link) {
-        /*
-        if (!link || link._id === this._id || link.constructor.name === 'Webo')
-            return this;
-
-        if (link instanceof Content)
-            link.Section(this.id); //this.permalink());
-        else
-            link = new Link(link);
-
-        if (this.children.indexOf(link) === -1) {
-            if (link.parent)
-                link = new Link(link);
-            link.parent = this;
-            this.links.push(link);
-        }
-        */
-        return this;
+    add() {
+        return null;
     }
     async getData(req, callback) { // TODO: Request data asynchronously
         if (typeof this.query == 'function')

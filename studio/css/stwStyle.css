@@ -2,15 +2,15 @@
     font-family: sans-serif;
     font-size: 10pt;
 
-    --maincolor: hsl(342, 100%, 50%);
-    --mainhovercolor: hsl(342, 100%, 40%);
+    --maincolor: #ff004c;
+    --mainhovercolor: #cc003d;
     --light: hsla(0, 0%, 59%, 0.4);
     --padding: 0.5em;
     --input-height: 1.5em;
     --hideLabels: none;
     --menubackcolor: black;
     --menuforecolor: white;
-    --menuhovercolor: hsl(342, 100%, 40%);
+    --menuhovercolor: #cc003d;
 }
 
 [tabindex="0"]:focus-within {
@@ -53,14 +53,26 @@ form.stwHideLabels label {
     display: var(--hideLabels);
 }
 
-.stwTabLabel[selected],
-li[selected]>div,
-i[selected] {
+li[selected]>div {
     color: white;
     background-color: var(--maincolor);
 }
 
-[tabindex]:not(.stwTree):hover, .stwTree li>div:hover {
+.stwTabLabel[selected] {
+    border-top: medium solid var(--maincolor);
+    border-right: thin solid var(--light);
+}
+
+.stwPanels i {
+    border-left: medium solid transparent;
+}
+
+.stwPanels i[selected] {
+    border-left: medium solid var(--maincolor);
+}
+
+[tabindex]:not(.stwTree):hover,
+.stwTree li>div:hover {
     color: white;
     background-color: var(--mainhovercolor);
 }
@@ -70,6 +82,7 @@ span.cut::before {
     font: normal normal 100 1em/1 "Font Awesome 6 Pro";
     padding-right: 0.5em;
 }
+
 span.copy::before {
     content: "\f24d";
     font: normal normal 100 1em/1 "Font Awesome 6 Pro";
@@ -98,12 +111,6 @@ body {
     display: grid;
     grid-template-columns: auto auto 1fr;
     grid-template-rows: auto 2em;
-}
-
-.fa-toggle-on,
-.fas.fa-square-check,
-.fas.fa-square {
-    color: var(--maincolor);
 }
 
 .stwFullScreen {
@@ -220,10 +227,11 @@ h1>span>i:hover {
     display: grid;
     grid-template-rows: auto 1fr;
     white-space: nowrap;
-    background-color: rgb(50, 50, 50);
 }
 
 .stwTabLabel {
+    border-top: medium solid transparent;
+    border-right: thin solid var(--light);
     display: inline-block;
     padding: 0.55em 1em;
     white-space: nowrap;
@@ -240,6 +248,8 @@ h1>span>i:hover {
     grid-template-rows: auto 1fr;
     margin: 0 0;
     vertical-align: middle;
+    border-top: thin solid var(--light);
+    padding-top: 0.25em;
 }
 
 .stwTab:not([selected]) {
@@ -362,7 +372,9 @@ li[data-type=dir]>div>span:nth-child(2)::before {
     content: "\f07b";
 }
 
-li[data-type=Unit]>div>span:nth-child(2)::before,
+li[data-type=Unit]>div>span:nth-child(2)::before {
+    content: "\e196";
+}
 li[data-type=file]>div>span:nth-child(2)::before {
     content: "\f15b";
 }

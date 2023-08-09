@@ -54,11 +54,11 @@ export default class Tree extends Content {
 
 				function _webbase(element, level = 0) {
 					if (element.children.length > 0) {
-						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(socket.target.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fas fa-fw fa-angle-${level === 0 ? 'down' : 'right'}"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.localizedName()}</div><ul ${level > 0 ? 'style="display: none"' : ''}>`;
+						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(socket.target.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fa-solid fa-fw fa-angle-${level === 0 ? 'down' : 'right'}"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.localizedName()}</div><ul ${level > 0 ? 'style="display: none"' : ''}>`;
 						element.children.forEach(child => _webbase(child, level + 1));
 						fragment += '</ul></li>';
 					} else {
-						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(socket.target.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fas fa-fw"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.localizedName()}</div></li>`;
+						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(socket.target.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fa-solid fa-fw"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.localizedName()}</div></li>`;
 					}
 				}
 			} else {

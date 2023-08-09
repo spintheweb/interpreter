@@ -40,8 +40,7 @@
     <section class="stwPanel"></section>
     <section class="stwTabs">
         <div onclick="stwStudio.manageTab(event)">
-            <span tabindex="0" role="link" class="stwTabLabel" title="Browse" selected>Browse</span>
-        </div>
+            <span tabindex="0" role="link" class="stwTabLabel" title="Browse" selected>Browse</span></div>
         <div class="stwTab" selected>
             <div class="stwBrowsebar" onclick="stwStudio.manageBrowse(event)">
                 <i tabindex="0" role="link" class="fa-light fa-fw fa-arrow-left" title="Back" data-action="back"></i>
@@ -49,9 +48,9 @@
                     data-action="forward"></i>
                 <i tabindex="0" role="link" class="fa-light fa-fw fa-rotate-right" title="Refresh (F5)"
                     data-action="refresh"></i>
-                <i tabindex="0" role="link" class="fa-light fa-sitemap maincolor" title="Locate in webbase (CTRL+L)"
+                <i tabindex="0" role="link" class="fa-kit fa-fw fa-light-sitemap-circle-arrow-left" title="Locate in webbase (CTRL+L)"
                     data-action="locate"></i>
-                <i tabindex="0" role="link" class="fa-light fa-fw fa-house" title="Home" data-action="home"></i>
+                <i tabindex="0" role="link" class="fa-light fa-fw fa-house-blank" title="Home" data-action="home"></i>
                 <input id="BrowseURL" type="url" name="url" placeholder="URL" onchange="stwStudio.setURL(event)"
                     pattern="(http|https)://*" require>
             </div>
