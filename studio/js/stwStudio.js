@@ -191,6 +191,15 @@ const stwStudio = {
 
         let parent = target.closest('h1') || target.closest('div');
 
+        // Collapse stwAccordion
+        if (target.closest('article')?.classList.contains('stwAccordion')) {
+            let accordion = target.closest('article').parentElement.querySelector('.stwAccordion>h1>.fa-angle-down');
+            if (accordion && accordion != target) {
+                accordion.classList.replace('fa-angle-down', 'fa-angle-right');
+                accordion.parentElement.nextElementSibling.style.display = 'none';
+            }
+        }
+
         if (target.classList.contains('fa-angle-down')) {
             target.classList.replace('fa-angle-down', 'fa-angle-right');
             if (parent.parentElement.tagName === 'LI')
@@ -303,7 +312,7 @@ const stwStudio = {
                     })
                     .then(json => {
                         let webbase = document.getElementById('webbase');
-                        let highlighted = [...webbase.querySelectorAll('ul:not([style="display: none"])')].map(element => element.dataset.id);
+                        let visibles = [...webbase.querySelectorAll('ul:not([style="display: none"])>li:first-of-type')].map(element => element.dataset.id);
                         if (subpath) {
                             let ul = document.querySelector(`[data-id="${subpath}"]`).parentElement.closest('ul');
                             for (var depth = -1; ul; ul = ul.parentElement.closest('ul'), ++depth);
@@ -316,7 +325,11 @@ const stwStudio = {
                             document.querySelector('li[data-type=Webo]>div').click();
                             document.querySelector('[data-action="locate"]').click();
                         }
-                        highlighted.forEach(id => { if (document.getElementById(id)) document.getElementById(id).style.display = '' });
+                        visibles.forEach(id => {
+                            let element = webbase.querySelector(`[data-id="${id}"]`);
+                            element.querySelector('i')?.className.replace('fa-angle-right', 'fa-angle-down');
+                            element.parentElement.style.display = '';
+                        });
                         webbase.focus();
                     })
                     .catch(err => {
@@ -688,6 +701,9 @@ const stwStudio = {
                     });
                 break;
             };
+    },
+    manageLinked: event => {
+
     },
     manageTab: event => {
         let target = event.target, currentTarget = event.currentTarget;
