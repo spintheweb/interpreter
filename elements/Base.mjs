@@ -82,34 +82,16 @@ export default class Base {
 		return ac || 0b00;
 	}
 
-	// Add child to element, note, we are adding a child not moving it
 	add(child) {
-		if (child && child.constructor.name !== 'Webo' && child !== this && this.children.indexOf(child) === -1) {
+		if (this.constructor.name === 'Unit' && (child.constructor === 'Area' || child.constructor.name === 'Unit'))
+			return {};
+
+		if (child && child.constructor.name !== 'Webo' && child._id !== this._id && this.children.indexOf(child) === -1) {
 			child._idParent = this._id;
-
-			if (child.type === 'Link')
-				this.links.push(child);
-			else {
-				this.children.push(child);
-
-				Base[WEBBASE].index.set(child._id, child);
-			}
+			this.children.push(child);
+			Base[WEBBASE].index.set(child._id, child);
 		}
 		return child;
-	}
-
-	move(parent) {
-		if (this.constructor.name != 'Webo' && this !== parent) {
-			if (parent instanceof Content) {
-				// TODO: manage links
-			} else {
-				let i = this.parent.children.indexOf(this);
-				if (i !== -1)
-					this.parent.children.splice(i, 1);
-				if (parent)
-					parent.children.push(this);
-			}
-		}
 	}
 
 	permalink(lang) {

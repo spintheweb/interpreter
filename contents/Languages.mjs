@@ -11,6 +11,10 @@ import Content from '../elements/Content.mjs';
 export default class Languages extends Content {
     constructor(params = {}) {
         super(params);
+		delete this.dsn;
+		delete this.query;
+		delete this.params;
+		delete this.layout;
     }
 
     // Content specific behaviors

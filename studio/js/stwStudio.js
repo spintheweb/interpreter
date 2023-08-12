@@ -192,7 +192,7 @@ const stwStudio = {
         let parent = target.closest('h1') || target.closest('div');
 
         // Collapse stwAccordion
-        if (target.closest('article')?.classList.contains('stwAccordion')) {
+        if (target.className.indexOf('fa-angle') != -1 && target.closest('article')?.classList.contains('stwAccordion')) {
             let accordion = target.closest('article').parentElement.querySelector('.stwAccordion>h1>.fa-angle-down');
             if (accordion && accordion != target) {
                 accordion.classList.replace('fa-angle-down', 'fa-angle-right');
@@ -511,6 +511,20 @@ const stwStudio = {
                         .then(node => {
                             stwStudio.loadForm(properties.querySelector('form'), node);
 
+                            // Fetch node linked
+                            if (node.hasOwnProperty('linked'))
+                                fetch(`/studio/wbdl/linked/${node._id}`)
+                                    .then(res => {
+                                        if (res.ok)
+                                            return res.json();
+                                    })
+                                    .then(linked => {
+                                        document.querySelector('#linked ul').innerHTML = stwStudio.renderTree(linked);
+                                        document.getElementById('linked').style.display = '';
+                                    });
+                            else
+                                document.getElementById('linked').style.display = 'none';
+
                             // Fetch node visibility
                             fetch(`/studio/wbdl/visibility/${node._id}`)
                                 .then(res => {
@@ -703,7 +717,14 @@ const stwStudio = {
             };
     },
     manageLinked: event => {
-
+        fetch(`/studio/wbdl/linked/${document.getElementById('properties').dataset.id}`)
+            .then(res => res.json())
+            .then(data => {
+                // TODO: Render
+            })
+            .catch(err => {
+                console.log(err);
+            });
     },
     manageTab: event => {
         let target = event.target, currentTarget = event.currentTarget;

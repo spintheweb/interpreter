@@ -19,11 +19,13 @@ fs.readdirSync(path.join(process.cwd(), 'contents')).forEach(async module => {
 import Breadcrumbs from '../contents/Breadcrumbs.mjs';
 import Languages from '../contents/Languages.mjs';
 import Text from '../contents/Text.mjs';
+import Menu from '../contents/Menu.mjs';
 
 const contents = {
     Text: Text, // Default content
     Breadcrumbs: Breadcrumbs,
-    Languages: Languages
+    Languages: Languages,
+    Menu: Menu
 }
 
 export function createElement(parent, element) {

@@ -1,9 +1,9 @@
 /*!
  * stwStyle.css
- * Copyright(c) 2017 Giancarlo Trevisan
+ * Copyright(c) 2023 Giancarlo Trevisan
  * MIT Licensed
  */
-:root { --special: rgb(0, 183, 255); --fore: #333333; --faint: #a0a0a0; --back: #ffffff; }
+:root { --special: #00b7ff; --fore: #333333; --faint: #a0a0a0; --back: #ffffff; }
 
 a {color:inherit; text-decoration:none;}
 
@@ -45,10 +45,19 @@ article.stwContent {position:relative; padding:0.25em; border: thin dashed trans
 .stwBreadcrumbs a {padding:0.25em 0; cursor:pointer; }
 .stwBreadcrumbs a:hover {color:var(--special);}
 
-.stwMenu ul {display:flex; align-items:center; list-style-type:none; margin:0; padding:0;}
-.stwMenuOption {display:inline-block; text-align:center;}
-.stwMenuOption a {width:100%; padding:0.5em; margin:0.25em; cursor:pointer; border-radius:0.5em;}
-.stwMenuOption a:hover {background-color:#f0f0f0; color:#000000;}
+.stwMenu nav { display: inline-block; background-color: var(--back); color: var(--fore); }
+.stwMenu nav a { display: inline-block; width: calc(100% - 1em); text-decoration: none; color: inherit; }
+.stwMenu nav ul { display: flex; position: relative; z-index: 1; margin: 0; padding: 0; }
+.stwMenu nav a>span { display: inline-block; padding: 0 0 0 2em; }
+.stwMenu nav ul>li>ul { display: none; border: thin solid; position: absolute; left: 0; }
+.stwMenu nav ul>li>ul>li>ul { left: 100%; top: 0; }
+.stwMenu nav ul>li:hover>ul { display: block; }
+.stwMenu nav li { list-style: none; position: relative; }
+.stwMenu nav li>ul>li { min-width: 12em; }
+.stwMenu nav li>div { padding: 0.75em 1em; white-space: nowrap; }
+.stwMenu nav li>ul>li>div:not(:last-child):after { font-family: "Font Awesome 6 Free"; font-weight: 900; content: "\f0da"; float: right; }
+.stwMenu nav li>div:hover { background-color: var(--special); opacity: 1; }
+.stwMenu nav ul ul { background-color: var(--menu--special); color: var(--fore); opacity: 1; }
 
 .stwTree ul ul {list-style-type:none; margin:0;}
 .stwTree .stwBody>ul {margin:0;}

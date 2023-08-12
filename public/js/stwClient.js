@@ -5,6 +5,11 @@
  */
 
 window.onload = () => {
+    if (self != top && self.location.href.indexOf('/studio') != -1) {
+        top.location.href = self.location.href.replace('/studio', '/');
+        return;
+    }
+
     document.cookie = `stwBrowseURL=${location.pathname}; path=/`;
 
     // Request unit contents
@@ -37,7 +42,7 @@ window.onkeydown = event => {
             top.location.href = `${top.location.origin}/studio${top.location.pathname}`;
         else
             top.location.href = self.location.href;
-            
+
     } else if (isDeveloper && event.ctrlKey && event.key === 'l' && self != top) {
         event.preventDefault();
         event.stopPropagation();

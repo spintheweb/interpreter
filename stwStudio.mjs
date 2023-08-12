@@ -86,6 +86,23 @@ router.get('/wbdl/datasources/:name?', (req, res) => {
 });
 //#endregion
 
+//#region Manage linked elements
+router.get('/wbdl/linked/:_id', (req, res) => {
+    let element = Base[WEBBASE].index.get(req.params._id);
+    if (element?.hasOwnProperty('linked')) {
+        let linked = { children: [] };
+        element.linked.forEach(link => {
+            let element = Base[WEBBASE].index.get(link._id);
+            if (element)
+                linked.children.push({ _id: element._id, type: element.type, name: element.permalink(req.session.lang), status: element.status, sequence: link.sequence });
+        });
+        res.json(linked);
+        return;
+    }
+    res.sendStatus(204); // 204 No content
+});
+//#endregion
+
 //#region Manage Spin the Web content visibility
 router.get('/wbdl/visibility/:_id?', (req, res) => {
     let visibility = structuredClone(Base[WEBBASE].visibility), localVisibility;
