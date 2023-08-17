@@ -13,9 +13,9 @@ import express from 'express';
 import session from 'express-session';
 import language from 'accept-language-parser';
 
-import { WEBBASE, PATH, WEBO_DIR } from './elements/Miscellanea.mjs';
-import Base from './elements/Base.mjs';
-import Webo from './elements/Webo.mjs';
+import { WEBBASE, PATH, WEBO_DIR } from './stwElements/Miscellanea.mjs';
+import Base from './stwElements/Base.mjs';
+import Webo from './stwElements/Webo.mjs';
 import stwStudio from './stwStudio.mjs';
 import stwAuth from './stwAuth.mjs';
 
@@ -74,7 +74,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/studio', stwStudio);
+app.use('/stwStudio', stwStudio);
 app.use('/stw', stwAuth);
 
 app.get('/*', (req, res, next) => {

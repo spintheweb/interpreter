@@ -5,8 +5,14 @@
  */
 
 window.onload = () => {
-    if (self != top && self.location.href.indexOf('/studio') != -1) {
-        top.location.href = self.location.href.replace('/studio', '/');
+    const isDeveloper = document.cookie.indexOf('stwDeveloper=true') != -1;
+
+    if (self != top && self.location.href.indexOf('/stwStudio') != -1) {
+        self.location.href = self.location.href.replace('/stwStudio', '/');
+        return;
+    }
+    if (!isDeveloper && top.location.href.indexOf('/stwStudio') != -1) {
+        top.location.href = top.location.href.replace('/stwStudio', '/');
         return;
     }
 
@@ -39,7 +45,7 @@ window.onkeydown = event => {
         event.preventDefault();
         event.stopPropagation();
         if (self == top)
-            top.location.href = `${top.location.origin}/studio${top.location.pathname}`;
+            top.location.href = `${top.location.origin}/stwStudio${top.location.pathname}`;
         else
             top.location.href = self.location.href;
 

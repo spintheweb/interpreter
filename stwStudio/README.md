@@ -7,7 +7,7 @@ The difference between a regular site and a webo is the presence of a *WBDL* fil
 Spin the Web Studio is a GUI for managing webos.
 
 ## Software as a Service (SaaS)
-To use Spin the Web Studio your need to be logged into a webo as a developer, then visit URL/studio or simply press CTRL+F12 (Spin the Web Developer tool).
+To use Spin the Web Studio your need to be logged into a webo as a developer, then visit URL/stwStudio or simply press CTRL+F12 (Spin the Web Developer tool).
 
 ## Versions
 * STW Studio Ver. 1.x.x (Under development)

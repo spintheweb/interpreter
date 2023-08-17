@@ -4,7 +4,7 @@
         <span>
             <!--<i class="fa-light fa-fw fa-rotate" title="Refresh" data-action="refresh"></i>&nbsp;-->
             <i class="fa-light fa-fw fa-cloud-arrow-up" title="Persist webbase" data-action="persist"></i>&nbsp;
-            <i class="fa-kit fa-fw fa-light-folder-circle-plus" title="New area" data-action="Area"></i>&nbsp;
+            <i class="fa-kit fa-fw fa-light-folder-grid-circle-plus" title="New area" data-action="Area"></i>&nbsp;
             <i class="fa-kit fa-fw fa-light-grid-2-circle-plus" title="New unit" data-action="Unit"></i>&nbsp;
             <i class="fa-kit fa-fw fa-light-square-circle-plus" title="New content" data-action="Content"></i>
             <!--<i class="fa-light fa-fw fa-trash-can" title="Show/Hide trashed nodes" data-action="trashed"></i>-->
@@ -15,7 +15,7 @@
     </div>
 </article>
 <article class="stwForm stwAccordion" id="properties" onclick="stwStudio.manageProperties(event, 'webbase')">
-    <h1><i class="fa-light fa-fw fa-angle-right"></i> properties
+    <h1><i class="fa-light fa-fw fa-angle-down"></i> properties
         <span>
             <i class="fa-light fa-fw fa-expand" title="Expand (Ctrl+E)" data-action="expand"></i>
         </span>
@@ -30,8 +30,8 @@
             <li><label>Slug</label><input type="text" name="slug" placeholder="Slug" title="Slug"
                     style="font-style: italic;"></li>
 
-            <li><label>Domain</label><input type="url" name="domain" placeholder="e.g. domain.com" title="Domain" style="font-style: italic;"
-                    required></li>
+            <li><label>Domain</label><input type="url" name="domain" placeholder="e.g. domain.com" title="Domain"
+                    style="font-style: italic;" required></li>
             <li><label>Icon</label><input type="text" name="icon" placeholder="icon" title="Icon"></li>
             <li><label>Image</label><input type="text" name="image" placeholder="image" title="Image"></li>
 
@@ -110,24 +110,27 @@
     <ul style="display: none; max-height: 10em;"></ul>
 </article>
 <div>&nbsp;</div>
-
-<!--nav id="contextMenu" class="stwMenu" style="position:absolute; top: 100px; left: 100px; z-index: 10;">
+<!--
+<nav id="contextMenu" class="stwMenu stwPopup" style="position:absolute; top: 100px; left: 100px; z-index: 10;">
     <ul>
-        <li><div><a href="">Menu</a></div>
-            <ul>
-                <li>
-                    <div><a href="">Cut<span>CTRL+X</span></a></div>
-                </li>
-                <li>
-                    <div><a href="">Copy<span>CTRL+C</span></a></div>
-                </li>
-                <li>
-                    <div><a href="">Paste<span>CTRL+V</span></a></div>
-                </li>
-                <li>
-                    <div><a href="">Delete<span>DEL</span></a></div>
-                </li>
-            </ul>
+        <li>
+            <div><span>Open</span><span>CTRL+O</span></div>
+        </li>
+        <li style="border-top: thin solid;">
+            <div><span>Cut</span><span>CTRL+X</span></a></div>
+        </li>
+        <li>
+            <div><span>Copy</span><span>CTRL+C</span></a></div>
+        </li>
+        <li>
+            <div><span>Paste</span><span>CTRL+V</span></a></div>
+        </li>
+        <li>
+            <div><span>Delete</span><span>DEL</span></a></div>
+        </li>
+        <li style="border-top: thin solid;">
+            <div><span>Properties</span><span>CTRL+P</span></div>
         </li>
     </ul>
-</nav-->
+</nav>
+-->

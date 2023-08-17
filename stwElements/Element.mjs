@@ -13,13 +13,13 @@ import Link from './Link.mjs';
 const contents = {};
 fs.readdirSync(path.join(process.cwd(), 'contents')).forEach(async module => {
     if (module.endsWith('.mjs'))
-        contents[module.replace('.mjs', '')] = await import('../contents/' + module);
+        contents[module.replace('.mjs', '')] = await import('../stwContents/' + module);
 });
 */
-import Breadcrumbs from '../contents/Breadcrumbs.mjs';
-import Languages from '../contents/Languages.mjs';
-import Text from '../contents/Text.mjs';
-import Menu from '../contents/Menu.mjs';
+import Breadcrumbs from '../stwContents/Breadcrumbs.mjs';
+import Languages from '../stwContents/Languages.mjs';
+import Text from '../stwContents/Text.mjs';
+import Menu from '../stwContents/Menu.mjs';
 
 const contents = {
     Text: Text, // Default content

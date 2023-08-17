@@ -300,7 +300,7 @@ h1>span>i:hover {
     font-family: var(--font-family);
     font-size: inherit;
     min-height: calc(3 * var(--input-height));
-    border: thin solid inherit;
+    border: thin solid;
 }
 
 .stwForm li>label[for] {
@@ -367,7 +367,10 @@ li[data-type=Webo]>div>span:nth-child(2)::before {
     content: "\f0c2";
 }
 
-li[data-type=Area]>div>span:nth-child(2)::before,
+li[data-type=Area]>div>span:nth-child(2)::before {
+    content: "\e188";
+}
+
 li[data-type=dir]>div>span:nth-child(2)::before {
     content: "\f07b";
 }
@@ -414,9 +417,9 @@ li[data-type=ds]>div>span:nth-child(2)::before {
     padding: 0 0 0 2em;
 }
 
-.stwMenu ul>li>ul {
+.stwMenu:not(.stwPopup) ul>li>ul {
     display: none;
-    border: thin solid inherit;
+    border: thin solid;
     position: absolute;
     left: 0;
 }

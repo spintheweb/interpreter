@@ -3,9 +3,9 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from '../elements/Miscellanea.mjs';
-import Content from '../elements/Content.mjs';
-import { renderer } from `../elements/WBLL`;
+import { WEBBASE } from '../stwElements/Miscellanea.mjs';
+import Content from '../stwElements/Content.mjs';
+import { renderer } from `../stwElements/WBLL`;
 
 export default class Table extends Content {
 	constructor(name, template, lang) {

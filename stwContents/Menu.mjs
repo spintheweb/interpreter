@@ -1,11 +1,11 @@
 /*!
  * menu
- * Copyright(c) 2017 Giancarlo Trevisan
+ * Copyright(c) 2023 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE, pickText } from '../elements/Miscellanea.mjs';
-import Base from '../elements/Base.mjs';
-import Content from '../elements/Content.mjs';
+import { WEBBASE, pickText } from '../stwElements/Miscellanea.mjs';
+import Base from '../stwElements/Base.mjs';
+import Content from '../stwElements/Content.mjs';
 
 export default class Menu extends Content {
 	constructor(params = {}) {
@@ -18,6 +18,7 @@ export default class Menu extends Content {
 		this.linked = params.linked || [];
 	}
 
+	// TODO: Mega menu, add contents!
 	add(child) {
 		if (child.constructor.name === 'Area' || child.constructor.name === 'Unit')
 			this.linked.push({ _id: child._id, name: null, params: null, sequence: 0x01000000 });

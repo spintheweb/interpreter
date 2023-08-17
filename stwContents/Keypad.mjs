@@ -3,7 +3,7 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import Content from '../elements/Content.mjs';
+import Content from '../stwElements/Content.mjs';
 
 export default class Keypad extends Content {
 	constructor(params) {

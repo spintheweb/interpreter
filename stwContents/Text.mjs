@@ -3,9 +3,9 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE, pickText } from '../elements/Miscellanea.mjs';
-import Base from '../elements/Base.mjs';
-import Content from '../elements/Content.mjs';
+import { WEBBASE, pickText } from '../stwElements/Miscellanea.mjs';
+import Base from '../stwElements/Base.mjs';
+import Content from '../stwElements/Content.mjs';
 
 // Plain text, i.e., renders layout as plain text if there is a datasource @ and @@ substitutions are performed
 export default class Text extends Content {

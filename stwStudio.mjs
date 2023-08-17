@@ -8,9 +8,9 @@ import fs from 'fs';
 import path from 'path';
 import git from 'simple-git';
 
-import { WEBBASE, PATH, STUDIO_DIR, WEBO_DIR } from './elements/Miscellanea.mjs';
-import { createElement, cloneElement, removeElement } from './elements/Element.mjs';
-import Base from './elements/Base.mjs';
+import { WEBBASE, PATH, STUDIO_DIR, WEBO_DIR } from './stwElements/Miscellanea.mjs';
+import { createElement, cloneElement, removeElement } from './stwElements/Element.mjs';
+import Base from './stwElements/Base.mjs';
 
 const router = express.Router();
 
@@ -19,7 +19,7 @@ router.all('/*', (req, res, next) => {
     if (req.session.developer)
         next();
     else
-        res.redirect('/studio');
+        res.redirect('/');
 });
 
 router.use(express.static(STUDIO_DIR));
@@ -94,7 +94,7 @@ router.get('/wbdl/linked/:_id', (req, res) => {
         element.linked.forEach(link => {
             let element = Base[WEBBASE].index.get(link._id);
             if (element)
-                linked.children.push({ _id: element._id, type: element.type, name: element.permalink(req.session.lang), status: element.status, sequence: link.sequence });
+                linked.children.push({ _id: element._id, type: element.type, name: element.localizedName(req.session.lang), title: element.permalink(req.session.lang), status: element.status, sequence: link.sequence });
         });
         res.json(linked);
         return;
@@ -211,7 +211,7 @@ router.get('/git/status', async (req, res) => {
 
 router.get('/*', (req, res) => {
     res.cookie('stwBrowseURL', req.params[0]);
-    res.redirect('/studio');
+    res.redirect('/stwStudio');
 });
 
 async function getDir(dirpath = '.', gitStatus) {

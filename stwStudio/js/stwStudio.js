@@ -13,6 +13,11 @@ const stwStudio = {
         'II': '<i class="fa-light fa-fw fa-square" title="Inherited invisibility"></i>'
     },
     setup: (settings = {}) => {
+        if (self != top && self.location.href.indexOf('/stwStudio') != -1) {
+            self.location.href = self.location.href.replace('/stwStudio', '');
+            return;
+        }
+
         document.getElementById('BrowseURL').value = document.location.origin;
         document.getElementById('Browse').src = document.location.origin;
 
@@ -77,7 +82,7 @@ const stwStudio = {
 
             stwStudio.statusBar(`Save ${tab.id}...`);
 
-            fetch(`/studio/fs/${tab.id}`,
+            fetch(`/stwStudio/fs/${tab.id}`,
                 {
                     method: 'POST',
                     body: tab.editor.getValue(),
@@ -138,10 +143,19 @@ const stwStudio = {
 
             } else if (stwStudio.stwCopyElement && selectedElement.dataset.type === 'Content' && event.key == 'v' && event.ctrlKey) {
                 stwStudio.statusBar('Pasting link...');
+                fetch(`/stwStudio/wbdl/${selectedElement.dataset.id}/${stwStudio.stwCopyElement.dataset.id}`,
+                    {
+                        method: 'PUT',
+                        body: 'linked'
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                    })
+                    .catch(err => { console.log(err) });
 
             } else if (stwStudio.stwCopyElement && event.key == 'v' && event.ctrlKey) {
                 stwStudio.statusBar('Pasting element...');
-                fetch(`/studio/wbdl/${selectedElement.dataset.id}/${stwStudio.stwCopyElement.dataset.id}`,
+                fetch(`/stwStudio/wbdl/${selectedElement.dataset.id}/${stwStudio.stwCopyElement.dataset.id}`,
                     {
                         method: 'PUT',
                         body: stwStudio.stwCopyElement.querySelector('span[class]').className
@@ -150,7 +164,7 @@ const stwStudio = {
                     .then(data => {
                         if (stwStudio.stwCopyElement.querySelector('span[class]').className == 'cut')
                             stwStudio.stwCopyElement.remove();
-                        stwStudio.renderPanel('/studio/panels/webbase.html', data._idParent, data._id);
+                        stwStudio.renderPanel('/stwStudio/panels/webbase.html', data._idParent, data._id);
                         stwStudio.loadForm(document.querySelector('#properties form'), data);
                     })
                     .catch(err => { console.log(err) });
@@ -161,13 +175,13 @@ const stwStudio = {
                 if (stwStudio.stwCopyElement?.dataset.id === selectedElement.dataset.id)
                     stwStudio.stwCopyElement = undefined;
                 stwStudio.statusBar('Deleting element...');
-                fetch(`/studio/wbdl/${document.getElementById('properties').dataset.id}`,
+                fetch(`/stwStudio/wbdl/${document.getElementById('properties').dataset.id}`,
                     {
                         method: 'DELETE'
                     })
                     .then(res => res.json())
                     .then(data => {
-                        stwStudio.renderPanel('/studio/panels/webbase.html', data._id);
+                        stwStudio.renderPanel('/stwStudio/panels/webbase.html', data._id);
                         stwStudio.loadForm(document.querySelector('#properties form'), data);
                     })
                     .catch(err => { console.log(err) });
@@ -232,7 +246,7 @@ const stwStudio = {
         if (data.hasOwnProperty('slug') && data.slug === '')
             data.slug = data.name.toLowerCase().replace(/[^a-z]/g, '');
 
-        fetch(`/studio/wbdl/${data._id}`,
+        fetch(`/stwStudio/wbdl/${data._id}`,
             {
                 method: 'PATCH',
                 body: JSON.stringify(data),
@@ -240,7 +254,7 @@ const stwStudio = {
             })
             .then(res => res.json())
             .then(data => {
-                stwStudio.renderPanel('/studio/panels/webbase.html', data._idParent, data._id);
+                stwStudio.renderPanel('/stwStudio/panels/webbase.html', data._idParent, data._id);
             })
             .catch(err => { console.log(err) });
     },
@@ -257,7 +271,7 @@ const stwStudio = {
             }
 
             if (input.name === 'permalink' && data.mainunit) {
-                fetch(`/studio/wbdl/permalink/${data.mainunit}`)
+                fetch(`/stwStudio/wbdl/permalink/${data.mainunit}`)
                     .then(res => res.text())
                     .then(text => { input.value = text })
                     .catch(err => { console.log(err) });
@@ -304,8 +318,8 @@ const stwStudio = {
     },
     renderPanel: (panel, subpath, selectId) => {
         switch (panel) {
-            case '/studio/panels/webbase.html':
-                fetch(`/studio/wbdl${subpath ? '/' + subpath : ''}`)
+            case '/stwStudio/panels/webbase.html':
+                fetch(`/stwStudio/wbdl${subpath ? '/' + subpath : ''}`)
                     .then(res => {
                         if (res.ok)
                             return res.json();
@@ -336,8 +350,8 @@ const stwStudio = {
                         console.log(err);
                     });
                 break;
-            case '/studio/panels/explorer.html':
-                fetch('/studio/fs')
+            case '/stwStudio/panels/explorer.html':
+                fetch('/stwStudio/fs')
                     .then(res => {
                         if (res.ok)
                             return res.json();
@@ -350,8 +364,8 @@ const stwStudio = {
                         console.log(err);
                     });
                 break;
-            case '/studio/panels/sourcecontrol.html':
-                fetch('/studio/git/status')
+            case '/stwStudio/panels/sourcecontrol.html':
+                fetch('/stwStudio/git/status')
                     .then(res => {
                         if (res.ok)
                             return res.json();
@@ -367,8 +381,8 @@ const stwStudio = {
                         console.log(err);
                     });
                 break;
-            case '/studio/panels/datasources.html':
-                fetch(`/studio/wbdl/datasources`)
+            case '/stwStudio/panels/datasources.html':
+                fetch(`/stwStudio/wbdl/datasources`)
                     .then(res => {
                         if (res.ok)
                             return res.json();
@@ -381,8 +395,8 @@ const stwStudio = {
                         console.log(err);
                     });
                 break;
-            case '/studio/panels/roles.html':
-                fetch('/studio/wbdl/visibility')
+            case '/stwStudio/panels/roles.html':
+                fetch('/stwStudio/wbdl/visibility')
                     .then(res => {
                         if (res.ok)
                             return res.json();
@@ -399,7 +413,7 @@ const stwStudio = {
                         console.log(err);
                     });
                 break;
-            case '/studio/panels/settings.html':
+            case '/stwStudio/panels/settings.html':
                 let color = '#';
                 getComputedStyle(document.documentElement).getPropertyValue('--maincolor').split(',').forEach(byte => color += parseInt(byte).toString(16));
                 document.getElementById('mainColor').value = color;
@@ -461,21 +475,21 @@ const stwStudio = {
                 var parent = tree.querySelector('li[selected]');
 
                 if (event.target.dataset.action === 'refresh') {
-                    stwStudio.loadFile('/studio/panels/webbase.html', document.querySelector('section.stwPanel'), stwStudio.renderPanel);
+                    stwStudio.loadFile('/stwStudio/panels/webbase.html', document.querySelector('section.stwPanel'), stwStudio.renderPanel);
 
                 } else if (event.target.dataset.action === 'persist') {
                     stwStudio.statusBar('Upload webbase...');
-                    fetch('/studio/wbdl/persist', { method: 'PUT' })
+                    fetch('/stwStudio/wbdl/persist', { method: 'PUT' })
                         .catch(err => console.log(err));
 
                 } else if (parent) {
-                    fetch(`/studio/wbdl/${parent.dataset.id}/${event.target.dataset.action}`,
+                    fetch(`/stwStudio/wbdl/${parent.dataset.id}/${event.target.dataset.action}`,
                         {
                             method: 'POST'
                         })
                         .then(res => res.json())
                         .then(node => {
-                            fetch(`/studio/wbdl/${node._idParent}`)
+                            fetch(`/stwStudio/wbdl/${node._idParent}`)
                                 .then(res => res.json())
                                 .then(parentNode => {
                                     let ul = parent.closest('ul');
@@ -503,7 +517,7 @@ const stwStudio = {
                     delete properties.dataset.idparent;
 
                     // Fetch node
-                    fetch(`/studio/wbdl/${properties.dataset.id}`)
+                    fetch(`/stwStudio/wbdl/${properties.dataset.id}`)
                         .then(res => {
                             if (res.ok)
                                 return res.json();
@@ -513,7 +527,7 @@ const stwStudio = {
 
                             // Fetch node linked
                             if (node.hasOwnProperty('linked'))
-                                fetch(`/studio/wbdl/linked/${node._id}`)
+                                fetch(`/stwStudio/wbdl/linked/${node._id}`)
                                     .then(res => {
                                         if (res.ok)
                                             return res.json();
@@ -526,7 +540,7 @@ const stwStudio = {
                                 document.getElementById('linked').style.display = 'none';
 
                             // Fetch node visibility
-                            fetch(`/studio/wbdl/visibility/${node._id}`)
+                            fetch(`/stwStudio/wbdl/visibility/${node._id}`)
                                 .then(res => {
                                     if (res.ok)
                                         return res.json();
@@ -569,7 +583,7 @@ const stwStudio = {
     manageSearch: event => {
         // TODO: handle whole words, regex and Replace
         let form = event.target.form, settings = form.querySelector('#searchMode');
-        fetch(`/studio/wbdl/search/${stwStudio.settings.lang}`, {
+        fetch(`/stwStudio/wbdl/search/${stwStudio.settings.lang}`, {
             method: 'POST',
             body: JSON.stringify({
                 text: form.search.value,
@@ -602,7 +616,7 @@ const stwStudio = {
         switch (target.tagName) {
             case 'H1':
                 if (event.target.dataset.action === 'refresh') {
-                    stwStudio.renderPanel('/studio/panels/roles.html');
+                    stwStudio.renderPanel('/stwStudio/panels/roles.html');
 
                 } else if (event.target.dataset.action === 'addGroup') {
                     alert('add role');
@@ -634,7 +648,7 @@ const stwStudio = {
         switch (target.tagName) {
             case 'H1':
                 if (event.target.dataset.action === 'refresh') {
-                    stwStudio.renderPanel('/studio/panels/datasources.html');
+                    stwStudio.renderPanel('/stwStudio/panels/datasources.html');
 
                 } else if (event.target.dataset.action === 'addDatasource') {
                     alert('add datasource');
@@ -698,7 +712,7 @@ const stwStudio = {
         let status = event.target.closest('div').querySelector('i').outerHTML;
         for (let key in stwStudio.visibilityEnum)
             if (status === stwStudio.visibilityEnum[key]) {
-                fetch(`/studio/wbdl/visibility/${document.getElementById('properties').dataset.id}`, {
+                fetch(`/stwStudio/wbdl/visibility/${document.getElementById('properties').dataset.id}`, {
                     method: 'POST',
                     body: JSON.stringify({
                         role: event.target.closest('div').innerText,
@@ -717,7 +731,7 @@ const stwStudio = {
             };
     },
     manageLinked: event => {
-        fetch(`/studio/wbdl/linked/${document.getElementById('properties').dataset.id}`)
+        fetch(`/stwStudio/wbdl/linked/${document.getElementById('properties').dataset.id}`)
             .then(res => res.json())
             .then(data => {
                 // TODO: Render

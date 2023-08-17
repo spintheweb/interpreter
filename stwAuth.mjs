@@ -8,8 +8,8 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 
-import { WEBBASE, STUDIO_DIR, WEBO_DIR } from './elements/Miscellanea.mjs';
-import Base from './elements/Base.mjs';
+import { WEBBASE, STUDIO_DIR, WEBO_DIR } from './stwElements/Miscellanea.mjs';
+import Base from './stwElements/Base.mjs';
 
 const router = express.Router();
 

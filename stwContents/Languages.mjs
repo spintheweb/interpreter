@@ -3,9 +3,9 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from '../elements/Miscellanea.mjs';
-import Base from '../elements/Base.mjs';
-import Content from '../elements/Content.mjs';
+import { WEBBASE } from '../stwElements/Miscellanea.mjs';
+import Base from '../stwElements/Base.mjs';
+import Content from '../stwElements/Content.mjs';
 
 // https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
 export default class Languages extends Content {
