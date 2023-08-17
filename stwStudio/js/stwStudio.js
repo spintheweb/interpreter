@@ -13,10 +13,8 @@ const stwStudio = {
         'II': '<i class="fa-light fa-fw fa-square" title="Inherited invisibility"></i>'
     },
     setup: (settings = {}) => {
-        if (self != top && self.location.href.indexOf('/stwStudio') != -1) {
+        if (self != top && self.location.href.indexOf('/stwStudio') != -1)
             self.location.href = self.location.href.replace('/stwStudio', '');
-            return;
-        }
 
         document.getElementById('BrowseURL').value = document.location.origin;
         document.getElementById('Browse').src = document.location.origin;
@@ -70,8 +68,7 @@ const stwStudio = {
         if (event.ctrlKey && event.key === 'F12') {
             event.preventDefault();
             event.stopPropagation();
-            location.href = document.getElementById('BrowseURL').value;
-            return;
+            top.location.href = document.getElementById('BrowseURL').value;
         }
 
         if (document.activeElement.className === 'ace_text-input' && event.key == 's' && event.ctrlKey) {

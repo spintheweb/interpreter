@@ -4,18 +4,14 @@
  * MIT Licensed
  */
 
+const isDeveloper = document.cookie.indexOf('stwDeveloper=true') != -1;
+
+if (self != top && !isDeveloper)
+    top.location.href = location.href; // Reload top
+else if (self != top && location.href.indexOf('/stwStudio') != -1)
+    location.href = '/'; // Reload self
+
 window.onload = () => {
-    const isDeveloper = document.cookie.indexOf('stwDeveloper=true') != -1;
-
-    if (self != top && self.location.href.indexOf('/stwStudio') != -1) {
-        self.location.href = self.location.href.replace('/stwStudio', '/');
-        return;
-    }
-    if (!isDeveloper && top.location.href.indexOf('/stwStudio') != -1) {
-        top.location.href = top.location.href.replace('/stwStudio', '/');
-        return;
-    }
-
     document.cookie = `stwBrowseURL=${location.pathname}; path=/`;
 
     // Request unit contents
@@ -44,10 +40,11 @@ window.onkeydown = event => {
     if (isDeveloper && event.ctrlKey && event.key === 'F12') {
         event.preventDefault();
         event.stopPropagation();
+
         if (self == top)
-            top.location.href = `${top.location.origin}/stwStudio${top.location.pathname}`;
+            location.href = `${top.location.origin}/stwStudio`;
         else
-            top.location.href = self.location.href;
+            top.location.href = decodeURIComponent(document.cookie.split('; ').find(row => row.startsWith('stwBrowseURL='))?.split('=')[1]) || '/';
 
     } else if (isDeveloper && event.ctrlKey && event.key === 'l' && self != top) {
         event.preventDefault();

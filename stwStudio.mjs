@@ -210,8 +210,8 @@ router.get('/git/status', async (req, res) => {
 //#endregion
 
 router.get('/*', (req, res) => {
-    res.cookie('stwBrowseURL', req.params[0]);
-    res.redirect('/stwStudio');
+    res.sendStatus(204);
+//    res.redirect('/');
 });
 
 async function getDir(dirpath = '.', gitStatus) {
