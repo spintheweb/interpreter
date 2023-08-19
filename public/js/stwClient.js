@@ -8,7 +8,7 @@ const isDeveloper = document.cookie.indexOf('stwDeveloper=true') != -1;
 
 if (self != top && !isDeveloper)
     top.location.href = location.href; // Reload top
-else if (self != top && location.href.indexOf('/stwStudio') != -1)
+else if (self != top && location.href.indexOf('/stwstudio') != -1)
     location.href = '/'; // Reload self
 
 window.onload = () => {

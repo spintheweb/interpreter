@@ -9,6 +9,9 @@
         // Exit Spin the Web Studio if not developers
         if (document.cookie.split('; ').find(row => row.startsWith('stwDeveloper='))?.split('=')[1] != 'true')
             location = '..';
+        // Do not allow studio within frame
+        if (self != top)
+            self.location.href = decodeURIComponent(document.cookie.split('; ').find(row => row.startsWith('stwBrowseURL='))?.split('=')[1]) || '/';
     </script>
 
     <link rel="icon" type="image/png" href="/stwStudio/favicon.ico">
@@ -58,6 +61,7 @@
         </div>
     </section>
     <section id="statusbar" class="stwStatusbar"><span></span><span></span><span></span></section>
+    <dialog id="stwPopup"></dialog>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.0/ace.min.js"
         integrity="sha512-e1Y1L6lY7YKDe+zseybZUG8MYUMLA1jxMQAPJqRYiA4L8NPaXfW+h52QQTLurHW4w3b21LxH/u1sZYMBtoB70w=="

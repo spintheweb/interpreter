@@ -15,13 +15,13 @@ export default class Menu extends Content {
 		delete this.params;
 		delete this.layout;
 
-		this.linked = params.linked || [];
+		this.options = params.options || [];
 	}
 
 	// TODO: Mega menu, add contents!
 	add(child) {
 		if (child.constructor.name === 'Area' || child.constructor.name === 'Unit')
-			this.linked.push({ _id: child._id, name: null, params: null, sequence: 0x01000000 });
+			this.options.push({ _id: child._id, name: null, params: null, sequence: 0x01000000 });
 		return this;
 	}
 
@@ -29,11 +29,11 @@ export default class Menu extends Content {
 		return super.render(req, res, next, () => {
 			let fragment = '', mask = 0x3F000000, level = 1, prevLevel;
 
-			this.linked.forEach((link, i) => {
+			this.options.forEach((link, i) => {
 				let element = Base[WEBBASE].index.get(link._id);
 
 				if (!element)
-					this.linked.splice(i, 1);
+					this.options.splice(i, 1);
 				else {
 					if (element.constructor.name === 'Area')
 						element = Base[WEBBASE].index.get(element.mainunit);

@@ -86,17 +86,17 @@ router.get('/wbdl/datasources/:name?', (req, res) => {
 });
 //#endregion
 
-//#region Manage linked elements
-router.get('/wbdl/linked/:_id', (req, res) => {
+//#region Manage options
+router.get('/wbdl/options/:_id', (req, res) => {
     let element = Base[WEBBASE].index.get(req.params._id);
-    if (element?.hasOwnProperty('linked')) {
-        let linked = { children: [] };
-        element.linked.forEach(link => {
-            let element = Base[WEBBASE].index.get(link._id);
+    if (element?.hasOwnProperty('options')) {
+        let options = { children: [] };
+        element.options.forEach(option => {
+            let element = Base[WEBBASE].index.get(option._id);
             if (element)
-                linked.children.push({ _id: element._id, type: element.type, name: element.localizedName(req.session.lang), title: element.permalink(req.session.lang), status: element.status, sequence: link.sequence });
+                options.children.push({ _id: element._id, type: element.type, name: element.localizedName(req.session.lang), title: element.permalink(req.session.lang), status: element.status, sequence: option.sequence });
         });
-        res.json(linked);
+        res.json(options);
         return;
     }
     res.sendStatus(204); // 204 No content
@@ -211,7 +211,6 @@ router.get('/git/status', async (req, res) => {
 
 router.get('/*', (req, res) => {
     res.sendStatus(204);
-//    res.redirect('/');
 });
 
 async function getDir(dirpath = '.', gitStatus) {

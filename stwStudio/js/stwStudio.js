@@ -522,19 +522,19 @@ const stwStudio = {
                         .then(node => {
                             stwStudio.loadForm(properties.querySelector('form'), node);
 
-                            // Fetch node linked
-                            if (node.hasOwnProperty('linked'))
-                                fetch(`/stwStudio/wbdl/linked/${node._id}`)
+                            // Fetch node options
+                            if (node.hasOwnProperty('options'))
+                                fetch(`/stwStudio/wbdl/options/${node._id}`)
                                     .then(res => {
                                         if (res.ok)
                                             return res.json();
                                     })
-                                    .then(linked => {
-                                        document.querySelector('#linked ul').innerHTML = stwStudio.renderTree(linked);
-                                        document.getElementById('linked').style.display = '';
+                                    .then(options => {
+                                        document.querySelector('#options ul').innerHTML = stwStudio.renderTree(options);
+                                        document.getElementById('options').style.display = '';
                                     });
                             else
-                                document.getElementById('linked').style.display = 'none';
+                                document.getElementById('options').style.display = 'none';
 
                             // Fetch node visibility
                             fetch(`/stwStudio/wbdl/visibility/${node._id}`)
@@ -727,15 +727,15 @@ const stwStudio = {
                 break;
             };
     },
-    manageLinked: event => {
-        fetch(`/stwStudio/wbdl/linked/${document.getElementById('properties').dataset.id}`)
-            .then(res => res.json())
-            .then(data => {
-                // TODO: Render
-            })
-            .catch(err => {
-                console.log(err);
+    manageOptions: event => {
+        let li = event.target.closest('li');
+        if (li) {
+            li.setAttribute('selected', '');
+            stwStudio.openPopup('/stwStudio/panels/option.html', {}, event => {
+                stwStudio.statusBar('TODO: Modified option');
+                li.removeAttribute('selected');
             });
+        }
     },
     manageTab: event => {
         let target = event.target, currentTarget = event.currentTarget;
@@ -804,6 +804,18 @@ const stwStudio = {
         document.getElementById('statusbar').children[span].innerHTML = '<i class="fa-light fa-rotate fa-spin"></i> ' + text;
         if (span === 1)
             stwStudio.statusTimeout = setTimeout(() => { document.getElementById('statusbar').children[1].innerHTML = '' }, 1000);
+    },
+    openPopup: (url, data, callback) => {
+        fetch(url)
+            .then(res => {
+                return res.text();
+            })
+            .then(html => {
+                let popup = document.getElementById('stwPopup');
+                popup.onclose = callback;
+                popup.innerHTML = html;
+                popup.showModal();
+            });
     }
 }
 
