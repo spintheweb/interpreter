@@ -3,16 +3,15 @@
  * Copyright(c) 2020 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from './Miscellanea.mjs';
-import Content from './Content.mjs';
+import { WEBBASE } from '../stwElements/Miscellanea.mjs';
+import Content from '../stwElements/Content.mjs';
 
 export default class Group extends Content {
     constructor(params = {}) {
         super(params);
 		delete this.cssClass;
 
-        this.section = params.section || '';
-        this.sequence = params.sequence || 1;
+        this.options = params.options || [];
     }
 
     set Sequence(value) {

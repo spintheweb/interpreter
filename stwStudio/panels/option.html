@@ -1,16 +1,19 @@
-<article class="stwForm">
-    <h1>option<span style="float:right"><i class="fa-thin fa-fw fa-times" title="Close" onclick="this.closest('dialog').close()"></i></span></h1>
+<article class="stwsForm">
+    <h1>option<span style="float:right"><i class="fa-thin fa-fw fa-times" title="Close"
+                onclick="this.closest('dialog').close()"></i></span></h1>
     <form onchange="stwStudio.submitForm(event)">
         <input type="hidden" name="_id">
         <ul>
-            <li><label>URL</label><input type="url" name="url" placeholder="URL" title="URL"></li>
-            <li><label>Query string</label><input type="text" name="params" placeholder="Query string (i.e. key=value)" title="Query string"></li>
+            <li><label>Permalink</label><input type="url" name="url" placeholder="permalink" title="permalink"></li>
+            <li><label>Query string</label><input type="text" name="params" placeholder="Query string (i.e. key=value)"
+                    title="Query string"></li>
             <li><label>Name</label><input type="text" name="name" placeholder="Name" title="Name"></li>
             <li><label>Target</label><select name="target" title="Where to display the URL">
-                <option selected>_self</option>
-                <option>_blank</option>
-                <option>_parent</option>
-                <option>_top</option>
-            </select></li>
+                    <option selected>_self</option>
+                    <option>_blank</option>
+                    <option>_parent</option>
+                    <option>_top</option>
+                </select></li>
         </ul>
+    </form>
 </article>

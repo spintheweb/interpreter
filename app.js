@@ -13,11 +13,12 @@ import express from 'express';
 import session from 'express-session';
 import language from 'accept-language-parser';
 
-import { WEBBASE, PATH, WEBO_DIR } from './stwElements/Miscellanea.mjs';
+import { WEBBASE, PATH, STYLES_DIR, WEBO_DIR } from './stwElements/Miscellanea.mjs';
 import Base from './stwElements/Base.mjs';
 import Webo from './stwElements/Webo.mjs';
 import stwStudio from './stwStudio.mjs';
 import stwAuth from './stwAuth.mjs';
+import stwStyles from './stwStyles.mjs';
 
 let settings = JSON.parse(fs.readFileSync(path.join(WEBO_DIR, '.settings')) || '{"protocol":"http","hostname":"127.0.0.0","port":"80"}');
 
@@ -76,6 +77,7 @@ app.use((req, res, next) => {
 
 app.use('/stwStudio', stwStudio);
 app.use('/stw', stwAuth);
+app.use('/stwStyles', stwStyles);
 
 app.get('/*', (req, res, next) => {
     let el = Base[WEBBASE].route(req.params[0], req.session.lang);

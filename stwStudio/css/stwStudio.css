@@ -21,21 +21,21 @@
     background-color: var(--mainhovercolor) !important;
 }
 
-.stwDark,
-.stwDark .stwPanel,
-.stwDark .stwTabs,
-.stwDark .stwFullScreen,
-.stwDark #stwPopup {
+.stwsDark,
+.stwsDark .stwsPanel,
+.stwsDark .stwsTabs,
+.stwsDark .stwsFullScreen,
+.stwsDark #stwsPopup {
     color: white;
     background-color: rgb(62, 62, 62);
     color-scheme: dark;
 }
 
-.stwLight,
-.stwLight .stwPanel,
-.stwLight .stwTabs,
-.stwLight .stwFullScreen,
-.stwLight #stwPopup {
+.stwsLight,
+.stwsLight .stwsPanel,
+.stwsLight .stwsTabs,
+.stwsLight .stwsFullScreen,
+.stwsLight #stwsPopup {
     color: black;
     background-color: rgb(243, 243, 243);
     color-scheme: light;
@@ -51,7 +51,7 @@ body {
     margin: 0;
 }
 
-form.stwHideLabels label {
+form.stwsHideLabels label {
     display: var(--hideLabels);
 }
 
@@ -60,21 +60,21 @@ li[selected]>div {
     background-color: var(--maincolor);
 }
 
-.stwTabLabel[selected] {
+.stwsTabLabel[selected] {
     border-top: medium solid var(--maincolor);
     border-right: thin solid var(--light);
 }
 
-.stwPanels i {
+.stwsPanels i {
     border-left: medium solid transparent;
 }
 
-.stwPanels i[selected] {
+.stwsPanels i[selected] {
     border-left: medium solid var(--maincolor);
 }
 
-[tabindex]:not(.stwTree):hover,
-.stwTree li>div:hover {
+[tabindex]:not(.stwsTree):hover,
+.stwsTree li>div:hover {
     color: white;
     background-color: var(--mainhovercolor);
 }
@@ -115,7 +115,7 @@ body {
     grid-template-rows: auto 2em;
 }
 
-.stwFullScreen {
+.stwsFullScreen {
     position: absolute;
     z-index: 10;
     top: 0;
@@ -124,12 +124,12 @@ body {
     right: 0;
 }
 
-.stwLoading {
+.stwsLoading {
     text-align: center;
     padding: 2em 0;
 }
 
-.stwPanels {
+.stwsPanels {
     display: grid;
     grid-template-rows: repeat(7, auto) 1fr repeat(1, auto);
     grid-template-columns: auto;
@@ -137,19 +137,20 @@ body {
     color: rgb(128, 128, 128)
 }
 
-.stwPanels i {
+.stwsPanels i {
     padding: 0.5em 0.35em;
     cursor: pointer;
     font-size: 1.6em;
 }
 
-#stwPopup {
+#stwsPopup {
     min-width: 40em;
     min-height: 10em;
     padding: 0 0 1em 0;
     border: thin solid var(--light);
 }
-#stwPopup h1 {
+
+#stwsPopup h1 {
     background-color: var(--maincolor);
     font-size: 1.1em;
     font-variant: small-caps;
@@ -157,16 +158,21 @@ body {
     padding: 0.5em;
     margin: 0 0 0.5em 0;
 }
+#stwsPopup button {
+    padding: 0.5em;
+    min-width: 10ex;
+    margin: 3px;
+}
 
-.stwPanel:empty {
+.stwsPanel:empty {
     width: 0px !important;
 }
 
-.stwPanel h1:not(:has(i.fa-nothing)) {
+.stwsPanel h1:not(:has(i.fa-nothing)) {
     border-top: thin solid var(--light);
 }
 
-.stwPanel h1 {
+.stwsPanel h1 {
     font-size: 1.1em;
     font-variant: small-caps;
     font-weight: lighter;
@@ -174,11 +180,11 @@ body {
     margin: 0;
 }
 
-.stwPanel h1>span {
+.stwsPanel h1>span {
     float: right;
 }
 
-.stwPanel {
+.stwsPanel {
     position: relative;
     display: grid;
     grid-template-rows: 1fr auto auto;
@@ -186,27 +192,27 @@ body {
     border-right: thin solid var(--light);
 }
 
-.stwPanel:not(:empty) {
+.stwsPanel:not(:empty) {
     resize: horizontal;
     overflow: hidden;
     min-width: 25em;
 }
 
-.stwPanel i {
+.stwsPanel i {
     padding: 0.25em 0;
 }
 
-.stwPanel table {
+.stwsPanel table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.stwPanel tr:hover {
+.stwsPanel tr:hover {
     background-color: var(--light);
     cursor: pointer;
 }
 
-.stwStatusbar {
+.stwsStatusbar {
     display: grid;
     grid-column: 1 / 5;
     grid-row: 2;
@@ -216,37 +222,37 @@ body {
     padding: 0.5em;
 }
 
-.stwBrowsebar {
+.stwsBrowsebar {
     padding: 0.25em;
     display: grid;
     gap: 0.5em;
     grid-template-columns: repeat(5, min-content) 1fr;
 }
 
-.stwBrowsebar>i:hover,
+.stwsBrowsebar>i:hover,
 h1>span>i:hover {
     background-color: var(--light) !important;
     cursor: pointer;
 }
 
-.stwBrowsebar i {
+.stwsBrowsebar i {
     cursor: pointer;
     font-size: 1.25em;
     padding: 0.2em;
 }
 
-.stwBrowsebar input {
+.stwsBrowsebar input {
     padding: 0.25em;
     margin-top: -0.2em;
 }
 
-.stwTabs {
+.stwsTabs {
     display: grid;
     grid-template-rows: auto 1fr;
     white-space: nowrap;
 }
 
-.stwTabLabel {
+.stwsTabLabel {
     border-top: medium solid transparent;
     border-right: thin solid var(--light);
     display: inline-block;
@@ -255,12 +261,12 @@ h1>span>i:hover {
     cursor: pointer;
 }
 
-.stwTabLabel .fa-times {
+.stwsTabLabel .fa-times {
     padding-left: 1em;
     cursor: pointer;
 }
 
-.stwTab {
+.stwsTab {
     display: grid;
     grid-template-rows: auto 1fr;
     margin: 0 0;
@@ -269,38 +275,38 @@ h1>span>i:hover {
     padding-top: 0.25em;
 }
 
-.stwTab:not([selected]) {
+.stwsTab:not([selected]) {
     display: none;
 }
 
-.stwForm button {
+.stwsForm button {
     color: white;
     background-color: var(--maincolor);
     border: none;
 }
 
-.stwForm ul {
+.stwsForm ul {
     margin: 0;
     padding: 0;
     list-style-type: none;
 }
 
-.stwForm li {
+.stwsForm li {
     padding: var(--padding);
     padding-top: 0;
     break-inside: avoid;
 }
 
-.stwForm li select:not([multiple]) {
+.stwsForm li select:not([multiple]) {
     height: calc(var(--input-height) + 0.5em);
 }
 
-.stwForm li input,
-.stwForm li select,
-.stwForm li textarea,
-.stwForm li progress,
-.stwForm li meter,
-.stwForm li button {
+.stwsForm li input,
+.stwsForm li select,
+.stwsForm li textarea,
+.stwsForm li progress,
+.stwsForm li meter,
+.stwsForm li button {
     line-height: var(--input-height);
     width: -webkit-fill-available;
     width: -moz-available;
@@ -308,19 +314,19 @@ h1>span>i:hover {
     font-size: inherit;
 }
 
-.stwForm input[type="checkbox"],
-.stwForm input[type="radio"] {
+.stwsForm input[type="checkbox"],
+.stwsForm input[type="radio"] {
     width: auto;
 }
 
-.stwForm textarea {
+.stwsForm textarea {
     font-family: var(--font-family);
     font-size: inherit;
     min-height: calc(3 * var(--input-height));
     border: thin solid;
 }
 
-.stwForm li>label[for] {
+.stwsForm li>label[for] {
     display: inline-block;
     line-height: var(--input-height);
     vertical-align: top;
@@ -349,27 +355,27 @@ article:has(> :last-child:nth-child(4)) {
     grid-template-rows: min-content min-content auto min-content;
 }
 
-.stwTree ul {
+.stwsTree ul {
     list-style: none;
     margin: 0;
     padding: 0;
     cursor: pointer;
 }
 
-.stwTree li>div {
+.stwsTree li>div {
     padding: 0 0.5em;
     line-height: 1.75em;
 }
 
-.stwTree li>div>span:last-child {
+.stwsTree li>div>span:last-child {
     float: right;
 }
 
-.stwTree>ul {
+.stwsTree>ul {
     overflow: auto;
 }
 
-ul.stwT li.stwT:not([selected]) ul.stwT li:not(.stwT)>div {
+ul.stwsT li.stwsT:not([selected]) ul.stwsT li:not(.stwsT)>div {
     display: none;
 }
 
@@ -395,6 +401,7 @@ li[data-type=dir]>div>span:nth-child(2)::before {
 li[data-type=Unit]>div>span:nth-child(2)::before {
     content: "\e323";
 }
+
 li[data-type=file]>div>span:nth-child(2)::before {
     content: "\f15b";
 }
@@ -415,13 +422,13 @@ li[data-type=ds]>div>span:nth-child(2)::before {
     content: "\f1c0";
 }
 
-.stwMenu {
+.stwsMenu nav {
     display: inline-block;
     background-color: var(--menubackcolor);
     color: var(--menuforecolor);
 }
 
-.stwMenu ul {
+.stwsMenu nav ul {
     display: flex;
     position: relative;
     z-index: 1;
@@ -429,62 +436,73 @@ li[data-type=ds]>div>span:nth-child(2)::before {
     padding: 0;
 }
 
-.stwMenu div>span {
+.stwsMenu .stwsVertical>ul,
+.stwsMenu .stwsVertical>ul>li {
+    width: 100% !important;
+}
+
+.stwsMenu .stwsVertical>ul>li>ul {
+    display: block !important;
+    width: 100% !important;
+    border: none !important;
+}
+
+.stwsMenu nav div>span {
     display: inline-block;
     padding: 0 0 0 2em;
 }
 
-.stwMenu:not(.stwPopup) ul>li>ul {
+.stwsMenu:not(.stwsPopup) nav ul>li>ul {
     display: none;
     border: thin solid;
     position: absolute;
     left: 0;
 }
 
-.stwMenu ul>li>ul>li>ul {
+.stwsMenu nav ul>li>ul>li>ul {
     left: 100%;
     top: 0;
 }
 
-.stwMenu ul>li:hover>ul {
+.stwsMenu nav ul>li:hover>ul {
     background-color: var(--menuhovercolor);
     display: block;
 }
 
-.stwMenu li {
+.stwsMenu nav li {
     list-style: none;
     position: relative;
 }
 
-.stwMenu li>ul>li {
+.stwsMenu nav li>ul>li {
     min-width: 12em;
 }
 
-.stwMenu li>div {
+.stwsMenu nav li>div {
     padding: 0.75em 1em;
     cursor: pointer;
     white-space: nowrap;
 }
 
-.stwMenu div.checked:after {
+.stwsMenu nav div.checked:after {
     font: normal normal 100 1em/1 "Font Awesome 6 Pro";
     content: "\f00c";
     float: right;
 }
 
-.stwMenu li>ul>li>div:not(:last-child):after {
+.stwsMenu nav li>ul>li>div:not(:last-child):after {
     font: normal normal 100 1em/1 "Font Awesome 6 Pro";
     content: "\f0da";
     float: right;
 }
 
-.stwMenu li:hover>div {
+.stwsMenu nav li:hover>div {
     background-color: var(--menubackcolor);
     color: var(--menuhover-color);
     opacity: 1;
 }
 
-.stwMenu ul {
+.stwsMenu nav ul {
     background-color: var(--menubackcolor);
     color: var(--menucolor);
     opacity: 1;

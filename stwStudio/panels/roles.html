@@ -1,4 +1,4 @@
-<article tabindex="0" class="stwTree" id="roles" onclick="stwStudio.manageGroups(event)">
+<article tabindex="0" class="stwsTree" id="roles" onclick="stwStudio.manageGroups(event)">
     <h1><i class="fa-light fa-fw fa-nothing"></i> roles
         <span>
             <i class="fa-light fa-fw fa-rotate" title="Refresh" data-action="refresh"></i>&nbsp;
@@ -7,24 +7,24 @@
         </span>
     </h1>
     <header>
-        <article class="stwForm">
+        <article class="stwsForm">
             <form name="impersonate">
                 <ul>
                 </ul>
             </form>
         </article>
     </header>
-    <div class="stwLoading">
+    <div class="stwsLoading">
         <i class="fa-light fa-sync fa-spin fa-2x"></i>
     </div>
 </article>
-<article class="stwForm" id="properties" onclick="stwStudio.manageProperties(event, 'roles')" style="display:none">
+<article class="stwsForm" id="properties" onclick="stwStudio.manageProperties(event, 'roles')" style="display:none">
     <h1><i class="fa-light fa-fw fa-angle-down"></i> properties
         <span>
             <i class="fa-light fa-fw fa-trash-can" title="Trash" data-action="trash"></i>
         </span>
     </h1>
-    <form class="stwHideLabels" onchange="stwStudio.submitForm(event)">
+    <form class="stwsHideLabels" onchange="stwStudio.submitForm(event)">
         <ul>
             <li><label>Name</label><input type="text" name="name" placeholder="Name" title="Name" required></li>
         </ul>

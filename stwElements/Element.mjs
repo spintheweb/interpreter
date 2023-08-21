@@ -20,12 +20,16 @@ import Breadcrumbs from '../stwContents/Breadcrumbs.mjs';
 import Languages from '../stwContents/Languages.mjs';
 import Text from '../stwContents/Text.mjs';
 import Menu from '../stwContents/Menu.mjs';
+import Tabs from '../stwContents/Tabs.mjs';
+import Group from '../stwContents/Group.mjs';
 
 const contents = {
     Text: Text, // Default content
     Breadcrumbs: Breadcrumbs,
     Languages: Languages,
-    Menu: Menu
+    Menu: Menu,
+    Tabs: Tabs,
+    Group: Group
 }
 
 export function createElement(parent, element) {

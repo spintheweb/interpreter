@@ -1,4 +1,4 @@
-<article tabindex="0" class="stwTree" id="webbase" onclick="stwStudio.manageWebbase(event)"
+<article tabindex="0" class="stwsTree" id="webbase" onclick="stwStudio.manageWebbase(event)"
     oncontextmenu="stwStudio.manageContextMenu(event)">
     <h1><i class="fa-light fa-fw fa-nothing"></i> webbase
         <span>
@@ -10,17 +10,17 @@
             <!--<i class="fa-light fa-fw fa-trash-can" title="Show/Hide trashed nodes" data-action="trashed"></i>-->
         </span>
     </h1>
-    <div class="stwLoading">
+    <div class="stwsLoading">
         <i class="fa-light fa-sync fa-spin fa-2x"></i>
     </div>
 </article>
-<article class="stwForm stwAccordion" id="properties" onclick="stwStudio.manageProperties(event, 'webbase')">
+<article class="stwsForm stwsAccordion" id="properties" onclick="stwStudio.manageProperties(event, 'webbase')">
     <h1><i class="fa-light fa-fw fa-angle-down"></i> properties
         <span>
             <i class="fa-light fa-fw fa-expand" title="Expand (Ctrl+E)" data-action="expand"></i>
         </span>
     </h1>
-    <form class="stwHideLabels" onchange="stwStudio.submitForm(event)">
+    <form class="stwsHideLabels" onchange="stwStudio.submitForm(event)">
         <input type="hidden" name="_id">
         <input type="hidden" name="_idParent">
         <input type="hidden" name="type">
@@ -76,8 +76,8 @@
                     <option value="-300" disabled>Table</option>
                     <option value="-200" disabled>List</option>
                     <option value="-400" disabled>Tree</option>
-                    <option value="-105" disabled>Tabs</option>
-                    <option value="-106" disabled>Group</option>
+                    <option value="Tabs" data-value="-105">Tabs</option>
+                    <option value="Group" data-value="-106">Group</option>
                     <option value="-800" disabled>Calendar</option>
                     <option value="-600" disabled>Graph</option>
                     <option value="" disabled>Map</option>
@@ -101,17 +101,17 @@
         </ul>
     </form>
 </article>
-<article class="stwTree stwAccordion" id="options" onclick="stwStudio.manageOptions(event)">
+<article class="stwsTree stwsAccordion" id="options" onclick="stwStudio.manageOptions(event)">
     <h1><i class="fa-light fa-fw fa-angle-right"></i> options</h1>
     <ul style="display: none; max-height: 10em;"></ul>
 </article>
-<article class="stwTree stwAccordion" id="visibility" onclick="stwStudio.manageVisibility(event)">
+<article class="stwsTree stwsAccordion" id="visibility" onclick="stwStudio.manageVisibility(event)">
     <h1><i class="fa-light fa-fw fa-angle-right"></i> visibilities</h1>
     <ul style="display: none; max-height: 10em;"></ul>
 </article>
 <div>&nbsp;</div>
 <!--
-<nav id="contextMenu" class="stwMenu stwPopup" style="position:absolute; top: 100px; left: 100px; z-index: 10;">
+<nav id="contextMenu" class="stwsMenu stwPopup" style="position:absolute; top: 100px; left: 100px; z-index: 10;">
     <ul>
         <li>
             <div><span>Open</span><span>CTRL+O</span></div>

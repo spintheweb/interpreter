@@ -1,5 +1,5 @@
 /*!
- * tabs
+ * options
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
@@ -10,33 +10,20 @@ export default class Tabs extends Content {
 	constructor(name, template, lang) {
 		super(name, template, lang, true);
 
-		// Code executed by the client to handle the content
-		this._clientHandler = function stwTabs(event) {
-			let target = event.target.closest('li'); tabs = target.closest('ul').children;
-			for (let i = 0; i < tabs.length / 2; ++i) {
-				let tab = tabs[i];
-				if (tab.classList.contains('stwTabLabel')) {
-					tab.classList[target == tab ? 'add' : 'remove']('stwSelected');
-					if (target == tab)
-						tabs[tabs.length / 2 + i].removeAttribute('hidden');
-					else
-						tabs[tabs.length / 2 + i].setAttribute('hidden', true);
-				}
-			}
-		};
+		this.options = params.options || [];
 	}
 
+	// TODO: Render only the first selected option
 	render(req, res, next) {
-		
-		return super.render(socket, (socket, template) => {
-			let labels = '', tabs = '';
-			this.children.forEach((tab, i) => {
-				if (tab.granted(socket.target.user) & 0b1) {
-					labels += `<li class="stwTabLabel${i === 0 ? ' stwSelected' : ''}" onclick="stwTabs(event)">${tab.localizedName()}</li>`;
-					tabs += `<li id="${tab.permalink()}" class="stwTab"${i !== 0 ? ' hidden' : ''} data-ref="${tab.permalink()}1"></li>`;
+		return super.render(req, res, next, () => {
+			let labels = '', options = '';
+			this.options.forEach((option, i) => {
+				if (option.granted(req.session.roles & 0b01)) {
+					labels += `<li class="stwTabLabel${i === 0 ? ' stwSelected' : ''}" onclick="stwTabs(event)">${option.localizedName()}</li>`;
+					options += `<li id="${option.permalink()}" class="stwTab"${i !== 0 ? ' hidden' : ''} data-ref="${option.permalink()}1"></li>`;
 				}
 			});
-			return `<ul>${labels}${tabs}</ul>`;
+			return `<ul>${labels}${options}</ul>`;
 		});
 	}
 }

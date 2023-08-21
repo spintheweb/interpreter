@@ -10,11 +10,6 @@ import Content from '../stwElements/Content.mjs';
 export default class Menu extends Content {
 	constructor(params = {}) {
 		super(params);
-		delete this.dsn;
-		delete this.query;
-		delete this.params;
-		delete this.layout;
-
 		this.options = params.options || [];
 	}
 
@@ -25,8 +20,8 @@ export default class Menu extends Content {
 		return this;
 	}
 
-	render(req, res, next) {
-		return super.render(req, res, next, () => {
+	async render(req, res, next) {
+		return await super.render(req, res, next, () => {
 			let fragment = '', mask = 0x3F000000, level = 1, prevLevel;
 
 			this.options.forEach((link, i) => {
@@ -55,10 +50,10 @@ export default class Menu extends Content {
 			});
 			fragment += `</li>${'</ul>'.repeat(level - prevLevel)}</li>`;
 
-			if (true /*horizontal*/)
-				return `<nav><ul>${fragment}</ul></nav>`;
+			if (this._layout.settings.orientation !== 'vertical')
+				return `<nav class="stwHorizontal"><ul>${fragment}</ul></nav>`;
 
-			return `<nav style="display: inherit"><ul><li><ul style="display: block">${fragment}</ul></li></ul></nav>`;
+			return `<nav class="stwVertical"><ul><li><ul>${fragment}</ul></li></ul></nav>`;
 		});
 	}
 }

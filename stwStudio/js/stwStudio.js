@@ -4,7 +4,7 @@
  * MIT Licensed
  */
 const stwStudio = {
-    stwCopyElement: undefined,
+    stwsCopyElement: undefined,
 
     visibilityEnum: {
         'LV': '<i class="fa-solid fa-fw fa-square-check" title="Local visibility"></i>',
@@ -20,17 +20,17 @@ const stwStudio = {
         document.getElementById('Browse').src = document.location.origin;
 
         if (window.getComputedStyle(document.body).getPropertyValue('color-scheme') === 'dark')
-            document.body.className = 'stwDark';
+            document.body.className = 'stwsDark';
         else
-            document.body.className = 'stwLight';
+            document.body.className = 'stwsLight';
 
         ace.config.set('basePath', 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.0/');
 
         stwStudio.settings = settings;
         stwStudio.settings.lang = document.firstElementChild.getAttribute('lang') || 'en';
 
-        if (!document.querySelector('.stwPanels i[selected]'))
-            document.querySelector('.stwPanels>i').click();
+        if (!document.querySelector('.stwsPanels i[selected]'))
+            document.querySelector('.stwsPanels>i').click();
         document.querySelectorAll('h1 .fa-angle-right').forEach(i => {
             i.closest('h1').nextElementSibling.style.display = 'none';
         });
@@ -56,7 +56,7 @@ const stwStudio = {
         if (event.target.name === 'theme') {
             document.body.className = event.target.value;
             document.querySelectorAll('.ace_editor').forEach(ace => {
-                ace.editor.setTheme(event.target.value == 'stwDark' ? 'ace/theme/tomorrow_night' : '');
+                ace.editor.setTheme(event.target.value == 'stwsDark' ? 'ace/theme/tomorrow_night' : '');
             });
         } else if (event.target.name === 'mainColor') {
             let color = parseInt(event.target.value.replace('#', ''), 16);
@@ -120,27 +120,27 @@ const stwStudio = {
                 else if (event.key == 'ArrowDown' && i < elements.length - 1)
                     elements[++i].firstChild.click();
             } else if (event.key == 'Escape') {
-                if (stwStudio.stwCopyElement)
+                if (stwStudio.stwsCopyElement)
                     event.target.querySelectorAll('span[class]').forEach(element => element.className = '');
-                stwStudio.stwCopyElement = undefined;
+                stwStudio.stwsCopyElement = undefined;
 
             } else if (event.key == 'x' && event.ctrlKey) {
-                if (stwStudio.stwCopyElement)
+                if (stwStudio.stwsCopyElement)
                     event.target.querySelectorAll('span[class]').forEach(element => element.className = '');
                 selectedElement.querySelector('div span:last-of-type').className = 'cut';
-                stwStudio.stwCopyElement = selectedElement;
-                stwStudio.statusBar('Cutting element...' + stwStudio.stwCopyElement.dataset.id);
+                stwStudio.stwsCopyElement = selectedElement;
+                stwStudio.statusBar('Cutting element...' + stwStudio.stwsCopyElement.dataset.id);
 
             } else if (event.key == 'c' && event.ctrlKey) {
-                if (stwStudio.stwCopyElement)
+                if (stwStudio.stwsCopyElement)
                     event.target.querySelectorAll('span[class]').forEach(element => element.className = '');
                 selectedElement.querySelector('div span:last-of-type').className = 'copy';
-                stwStudio.stwCopyElement = selectedElement;
-                stwStudio.statusBar('Copying element...' + stwStudio.stwCopyElement.dataset.id);
+                stwStudio.stwsCopyElement = selectedElement;
+                stwStudio.statusBar('Copying element...' + stwStudio.stwsCopyElement.dataset.id);
 
-            } else if (stwStudio.stwCopyElement && selectedElement.dataset.type === 'Content' && event.key == 'v' && event.ctrlKey) {
+            } else if (stwStudio.stwsCopyElement && selectedElement.dataset.type === 'Content' && event.key == 'v' && event.ctrlKey) {
                 stwStudio.statusBar('Pasting link...');
-                fetch(`/stwStudio/wbdl/${selectedElement.dataset.id}/${stwStudio.stwCopyElement.dataset.id}`,
+                fetch(`/stwStudio/wbdl/${selectedElement.dataset.id}/${stwStudio.stwsCopyElement.dataset.id}`,
                     {
                         method: 'PUT',
                         body: 'linked'
@@ -150,38 +150,46 @@ const stwStudio = {
                     })
                     .catch(err => { console.log(err) });
 
-            } else if (stwStudio.stwCopyElement && event.key == 'v' && event.ctrlKey) {
+            } else if (stwStudio.stwsCopyElement && event.key == 'v' && event.ctrlKey) {
                 stwStudio.statusBar('Pasting element...');
-                fetch(`/stwStudio/wbdl/${selectedElement.dataset.id}/${stwStudio.stwCopyElement.dataset.id}`,
+                fetch(`/stwStudio/wbdl/${selectedElement.dataset.id}/${stwStudio.stwsCopyElement.dataset.id}`,
                     {
                         method: 'PUT',
-                        body: stwStudio.stwCopyElement.querySelector('span[class]').className
+                        body: stwStudio.stwsCopyElement.querySelector('span[class]').className
                     })
                     .then(res => res.json())
                     .then(data => {
-                        if (stwStudio.stwCopyElement.querySelector('span[class]').className == 'cut')
-                            stwStudio.stwCopyElement.remove();
+                        if (stwStudio.stwsCopyElement.querySelector('span[class]').className == 'cut')
+                            stwStudio.stwsCopyElement.remove();
                         stwStudio.renderPanel('/stwStudio/panels/webbase.html', data._idParent, data._id);
                         stwStudio.loadForm(document.querySelector('#properties form'), data);
                     })
                     .catch(err => { console.log(err) });
 
             } else if (event.key == 'Delete') {
-                if (selectedElement.firstChild.lastChild.innerText.endsWith('T') && !confirm('Are you sure you want to delete the element permanently? There is no going back.'))
-                    return;
-                if (stwStudio.stwCopyElement?.dataset.id === selectedElement.dataset.id)
-                    stwStudio.stwCopyElement = undefined;
-                stwStudio.statusBar('Deleting element...');
-                fetch(`/stwStudio/wbdl/${document.getElementById('properties').dataset.id}`,
-                    {
-                        method: 'DELETE'
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        stwStudio.renderPanel('/stwStudio/panels/webbase.html', data._id);
-                        stwStudio.loadForm(document.querySelector('#properties form'), data);
-                    })
-                    .catch(err => { console.log(err) });
+                if (selectedElement.firstChild.lastChild.innerText.endsWith('T'))
+                    stwStudio.openMessage({ type: 'question', text: 'Are you sure you want to delete the element permanently? There is no going back.' }, handleMessage);
+                else
+                    handleMessage(event);
+
+                function handleMessage(event) {
+                    if (event.currentTarget.returnValue === '')
+                        return;
+
+                    if (stwStudio.stwsCopyElement?.dataset.id === selectedElement.dataset.id)
+                        stwStudio.stwsCopyElement = undefined;
+                    stwStudio.statusBar('Deleting element...');
+                    fetch(`/stwStudio/wbdl/${document.getElementById('properties').dataset.id}`,
+                        {
+                            method: 'DELETE'
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            stwStudio.renderPanel('/stwStudio/panels/webbase.html', data._id);
+                            stwStudio.loadForm(document.querySelector('#properties form'), data);
+                        })
+                        .catch(err => { console.log(err) });
+                }
             } else
                 return;
 
@@ -202,9 +210,9 @@ const stwStudio = {
 
         let parent = target.closest('h1') || target.closest('div');
 
-        // Collapse stwAccordion
-        if (target.className.indexOf('fa-angle') != -1 && target.closest('article')?.classList.contains('stwAccordion')) {
-            let accordion = target.closest('article').parentElement.querySelector('.stwAccordion>h1>.fa-angle-down');
+        // Collapse stwsAccordion
+        if (target.className.indexOf('fa-angle') != -1 && target.closest('article')?.classList.contains('stwsAccordion')) {
+            let accordion = target.closest('article').parentElement.querySelector('.stwsAccordion>h1>.fa-angle-down');
             if (accordion && accordion != target) {
                 accordion.classList.replace('fa-angle-down', 'fa-angle-right');
                 accordion.parentElement.nextElementSibling.style.display = 'none';
@@ -427,7 +435,7 @@ const stwStudio = {
 
         } else {
             let name = typeof (node.name) === 'string' ? node.name : (node.name[stwStudio.settings.lang] || node.name[Object.keys(node.name)[0]]),
-                cssClass = node.status === 'T' ? 'class="stwT"' : '';
+                cssClass = node.status === 'T' ? 'class="stwsT"' : '';
 
             if (node.children && node.children.length) {
                 if (!depth)
@@ -480,6 +488,10 @@ const stwStudio = {
                         .catch(err => console.log(err));
 
                 } else if (parent) {
+                    if (parent.dataset.type === 'Content') {
+                        stwStudio.openMessage({ type: 'xmark', text: 'Cannot add a new element directly to a content: first create the element then add it.' });
+                        return;
+                    }
                     fetch(`/stwStudio/wbdl/${parent.dataset.id}/${event.target.dataset.action}`,
                         {
                             method: 'POST'
@@ -616,7 +628,7 @@ const stwStudio = {
                     stwStudio.renderPanel('/stwStudio/panels/roles.html');
 
                 } else if (event.target.dataset.action === 'addGroup') {
-                    alert('add role');
+                    stwStudio.openMessage({ text: 'Add new role' });
                 }
                 break;
             case 'UL':
@@ -648,7 +660,7 @@ const stwStudio = {
                     stwStudio.renderPanel('/stwStudio/panels/datasources.html');
 
                 } else if (event.target.dataset.action === 'addDatasource') {
-                    alert('add datasource');
+                    stwStudio.openMessage({ text: 'Add new datasource' });
                 }
                 break;
             case 'UL':
@@ -676,8 +688,8 @@ const stwStudio = {
                 path = el.firstChild.children[1].innerText + '/' + path;
 
             if (!document.getElementById(path)) {
-                document.querySelector('.stwTabs > div').insertAdjacentHTML('beforeend', `<span tabindex="0" role="link" class="stwTabLabel" title="${path}">${path}<i class="fa-light fa-times"></i></span>`);
-                document.querySelector('.stwTabs').insertAdjacentHTML('beforeend', `<div class="stwTab"><div></div><div id="${path}"></div></div>`);
+                document.querySelector('.stwsTabs > div').insertAdjacentHTML('beforeend', `<span tabindex="0" role="link" class="stwsTabLabel" title="${path}">${path}<i class="fa-light fa-times"></i></span>`);
+                document.querySelector('.stwsTabs').insertAdjacentHTML('beforeend', `<div class="stwsTab"><div></div><div id="${path}"></div></div>`);
 
                 let editor = ace.edit(path);
                 if (document.body.className == 'stwDark')
@@ -743,20 +755,20 @@ const stwStudio = {
             let i;
             for (i = 0; i < currentTarget.children.length && currentTarget.children[i] != target.parentElement; ++i);
 
-            if (target.closest('.stwTabLabel').hasAttribute('selected'))
+            if (target.closest('.stwsTabLabel').hasAttribute('selected'))
                 currentTarget.firstElementChild.click();
 
             currentTarget.children[i].remove();
             currentTarget.parentElement.children[i + 1].remove();
 
         } else if (target.className === 'stwTabLabel' && !target.hasAttribute('selected')) {
-            currentTarget.querySelector('.stwTabLabel[selected]').removeAttribute('selected');
+            currentTarget.querySelector('.stwsTabLabel[selected]').removeAttribute('selected');
             target.setAttribute('selected', '');
 
             let i;
             for (i = 0; i < currentTarget.children.length && currentTarget.children[i] != target; ++i);
 
-            currentTarget.parentElement.querySelector('.stwTab[selected]').removeAttribute('selected');
+            currentTarget.parentElement.querySelector('.stwsTab[selected]').removeAttribute('selected');
             currentTarget.parentElement.children[i + 1].setAttribute('selected', '');
 
             let editor = currentTarget.parentElement.querySelector(`div[id="${target.innerText}"]>textarea`);
@@ -806,16 +818,27 @@ const stwStudio = {
             stwStudio.statusTimeout = setTimeout(() => { document.getElementById('statusbar').children[1].innerHTML = '' }, 1000);
     },
     openPopup: (url, data, callback) => {
-        fetch(url)
-            .then(res => {
-                return res.text();
-            })
-            .then(html => {
-                let popup = document.getElementById('stwPopup');
-                popup.onclose = callback;
-                popup.innerHTML = html;
-                popup.showModal();
-            });
+        fetch(url).then(res => res.text()).then(html => show(html));
+        function show(html) {
+            let popup = document.getElementById('stwsPopup');
+            popup.onclose = callback;
+            popup.innerHTML = html;
+            popup.showModal();
+        }
+    },
+    openMessage: (msg, callback) => {
+        fetch('/stwStudio/panels/message.html').then(res => res.text()).then(html => show(html));
+        function show(html) {
+            html = html.replace('{@@title}', msg.title || 'Spin the Web Studio')
+                .replace('{@@type}', msg.type || 'info') // xmark | question | exclamation | info
+                .replace('{@@text}', msg.text || '')
+                .replace('{@@hideCancel}', msg.type === 'question' ? '' : 'style="display: none"');
+
+            let popup = document.getElementById('stwsPopup');
+            popup.onclose = callback;
+            popup.innerHTML = html;
+            popup.showModal();
+        }
     }
 }
 

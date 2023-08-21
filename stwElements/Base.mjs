@@ -11,8 +11,8 @@ export default class Base {
 
 	constructor(params = {}) {
 		this._id = (Base[WEBBASE].hasOwnProperty('index') && Base[WEBBASE].index.get(params._id) ? v1() : params._id) || v1();
-		//this._idParent = params._idParent;
-		Object.defineProperty(this, '_idParent', { writable: true });
+		this._idParent = params._idParent;
+		// Object.defineProperty(this, '_idParent', { writable: true }); 
 
 		this.type = this.constructor.name;
 		this.status = params.status || 'U';

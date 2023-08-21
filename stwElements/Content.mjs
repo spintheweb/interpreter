@@ -107,24 +107,24 @@ export default class Content extends Base {
         if (this.granted(req.session.roles) & 0b01) {
             req.dataset = await this.getData(req); // TODO: Retrieve data asynchronously
 
-            let layout = lexer(pickText([req.session.lang, Base[WEBBASE].lang], this.layout));
+            this._layout = lexer(pickText([req.session.lang, Base[WEBBASE].lang], this.layout));
 
-            if (typeof layout === 'object') {
+            if (typeof this._layout === 'object') {
                 // TODO: Evaluate layout.settings
 
-                if (typeof layout.settings.visible != 'undefined' &&
-                    (getValue(req, layout.settings.visible) ? false : true)) // TODO: layout.settings.invisible
+                if (typeof this._layout.settings.visible != 'undefined' &&
+                    (getValue(req, this._layout.settings.visible) ? false : true)) // TODO: layout.settings.invisible
                     return '';
 
-                if (layout.settings.caption)
-                    fragment += `<h1>${layout.settings.caption}</h1>`;
-                if (layout.settings.header)
-                    fragment += `<header>${layout.settings.header}</header>`;
-                fragment += body(req, this.id, layout);
-                if (layout.settings.footer)
-                    fragment += `<footer>${layout.settings.footer}</footer>`;
+                if (this._layout.settings.caption)
+                    fragment += `<h1>${this._layout.settings.caption}</h1>`;
+                if (this._layout.settings.header)
+                    fragment += `<header>${this._layout.settings.header}</header>`;
+                fragment += body(req, this.id, this._layout);
+                if (this._layout.settings.footer)
+                    fragment += `<footer>${this._layout.settings.footer}</footer>`;
             } else
-                fragment = body(req, layout);
+                fragment = body(req, this._layout);
 
             res.set('Cache-Control', 'max-age=0, no-store');
             res.send({ id: this._id, section: this.section, sequence: this.sequence, body: `<article id="${this._id}" ${this.CSSClass} data-ms="${Date.now() - timestamp}ms" data-seq="${this.sequence}">${fragment}</article>` });

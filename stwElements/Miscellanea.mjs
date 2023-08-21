@@ -9,6 +9,7 @@ export const WEBBASE = Symbol('webbase');
 export const PATH = Symbol('path')
 
 export const ROOT_DIR = process.cwd();
+export const STYLES_DIR = path.join(ROOT_DIR, 'stwStyles');
 export const WEBO_DIR = path.join(ROOT_DIR, 'public');
 export const STUDIO_DIR = path.join(ROOT_DIR, 'stwStudio');
 
