@@ -203,8 +203,8 @@ const stwStudio = {
         if (!event.isTrusted && target.classList.contains('fa-angle-down'))
             return;
 
-        if (target.tagName === 'SPAN' && target.parentElement.id === 'searchMode') {
-            target.toggleAttribute('selected');
+        if (target.parentElement.classList.contains('searchMode')) {
+            target.parentElement.toggleAttribute('selected');
             return;
         }
 
@@ -309,12 +309,11 @@ const stwStudio = {
                     document.getElementById(elementId).value = data;
                 else if (destination && destination.tagName === 'SECTION') {
                     destination.innerHTML = data;
-                    stwStudio.setup();
                     callback(path);
                 } else if (destination) {
                     document.getElementById(path).editor = destination;
                     destination.setValue(data, -1);
-                    document.querySelector(`.stwTabs .stwTabLabel[title="${path}"]`).click();
+                    document.querySelector(`.stwsTabs .stwsTabLabel[title="${path}"]`).click();
                 }
             })
             .catch(err => {
@@ -692,12 +691,12 @@ const stwStudio = {
                 document.querySelector('.stwsTabs').insertAdjacentHTML('beforeend', `<div class="stwsTab"><div></div><div id="${path}"></div></div>`);
 
                 let editor = ace.edit(path);
-                if (document.body.className == 'stwDark')
+                if (document.body.className == 'stwsDark')
                     editor.setTheme('ace/theme/tomorrow_night');
                 editor.session.setMode(ace.require('ace/ext/modelist').getModeForPath(path).mode);
                 stwStudio.loadFile(path, editor);
             } else
-                document.querySelector(`.stwTabs .stwTabLabel[title="${path}"]`).click();
+                document.querySelector(`.stwsTabs .stwsTabLabel[title="${path}"]`).click();
         }
     },
     manageProperties: (event, what) => {
@@ -761,7 +760,7 @@ const stwStudio = {
             currentTarget.children[i].remove();
             currentTarget.parentElement.children[i + 1].remove();
 
-        } else if (target.className === 'stwTabLabel' && !target.hasAttribute('selected')) {
+        } else if (target.className === 'stwsTabLabel' && !target.hasAttribute('selected')) {
             currentTarget.querySelector('.stwsTabLabel[selected]').removeAttribute('selected');
             target.setAttribute('selected', '');
 

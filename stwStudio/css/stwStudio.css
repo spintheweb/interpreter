@@ -511,12 +511,12 @@ li[data-type=ds]>div>span:nth-child(2)::before {
 #searchMode,
 #replaceMode {
     position: absolute;
-    right: var(--padding);
+    right: 0.75em;
     line-height: 1.5em;
 }
 
 #searchMode span,
-#replace span {
+#replaceMode span {
     display: inline-block;
     width: 1.4em;
     text-align: center;

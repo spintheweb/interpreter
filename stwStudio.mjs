@@ -162,12 +162,18 @@ router.put('/wbdl/:_idParent/:_idChild', (req, res, next) => {
     let parent = Base[WEBBASE].index.get(req.params._idParent) || Base[WEBBASE];
     let child = Base[WEBBASE].index.get(req.params._idChild);
 
-    if (req.body === 'cut') {
-        child.parent.children.splice(child.parent.children.findIndex(element => element._id == req.params._idChild), 1);
-        parent.children.push(child);
-        child._idParent = parent._id;
-    } else
-        child = parent.add(cloneElement(child));
+    switch (req.body) {
+        case 'cut':
+            child.parent.children.splice(child.parent.children.findIndex(element => element._id == req.params._idChild), 1);
+            parent.children.push(child);
+            child._idParent = parent._id;
+            break;
+        case 'linked':
+            parent.add(child);
+            break;
+        default:
+            child = parent.add(cloneElement(child));
+    }
     res.json(child);
 });
 router.patch('/wbdl/:_id', (req, res, next) => {
