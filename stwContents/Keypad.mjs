@@ -31,7 +31,7 @@ export default class Keypad extends Content {
 					return fragment += '<br>';
 				return fragment += `<li data-ref="${c}">${c}</a></li>`;
 			});
-			return `<ul class="stwBody" onclick="location.href='/stwc/keypad/'">${fragment}</ul>`;
+			return `<ol class="stwBody" onclick="location.href='/stwc/keypad/'">${fragment}</ol>`;
 		});
 	}
 }

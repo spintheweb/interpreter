@@ -78,6 +78,9 @@ li[selected]>div {
     color: white;
     background-color: var(--mainhovercolor);
 }
+.stwsTree div:focus {
+    outline: none;
+}
 
 span.cut::before {
     content: "\f0c4";
@@ -285,7 +288,7 @@ h1>span>i:hover {
     border: none;
 }
 
-.stwsForm ul {
+.stwsForm ol {
     margin: 0;
     padding: 0;
     list-style-type: none;
@@ -355,7 +358,7 @@ article:has(> :last-child:nth-child(4)) {
     grid-template-rows: min-content min-content auto min-content;
 }
 
-.stwsTree ul {
+.stwsTree ol {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -371,11 +374,11 @@ article:has(> :last-child:nth-child(4)) {
     float: right;
 }
 
-.stwsTree>ul {
+.stwsTree>ol {
     overflow: auto;
 }
 
-ul.stwsT li.stwsT:not([selected]) ul.stwsT li:not(.stwsT)>div {
+ol.stwsT li.stwsT:not([selected]) ol.stwsT li:not(.stwsT)>div {
     display: none;
 }
 
@@ -428,7 +431,7 @@ li[data-type=ds]>div>span:nth-child(2)::before {
     color: var(--menuforecolor);
 }
 
-.stwsMenu nav ul {
+.stwsMenu nav ol {
     display: flex;
     position: relative;
     z-index: 1;
@@ -436,12 +439,12 @@ li[data-type=ds]>div>span:nth-child(2)::before {
     padding: 0;
 }
 
-.stwsMenu .stwsVertical>ul,
-.stwsMenu .stwsVertical>ul>li {
+.stwsMenu .stwsVertical>ol,
+.stwsMenu .stwsVertical>ol>li {
     width: 100% !important;
 }
 
-.stwsMenu .stwsVertical>ul>li>ul {
+.stwsMenu .stwsVertical>ol>li>ol {
     display: block !important;
     width: 100% !important;
     border: none !important;
@@ -452,19 +455,19 @@ li[data-type=ds]>div>span:nth-child(2)::before {
     padding: 0 0 0 2em;
 }
 
-.stwsMenu:not(.stwsPopup) nav ul>li>ul {
+.stwsMenu:not(.stwsPopup) nav ol>li>ol {
     display: none;
     border: thin solid;
     position: absolute;
     left: 0;
 }
 
-.stwsMenu nav ul>li>ul>li>ul {
+.stwsMenu nav ol>li>ol>li>ol {
     left: 100%;
     top: 0;
 }
 
-.stwsMenu nav ul>li:hover>ul {
+.stwsMenu nav ol>li:hover>ol {
     background-color: var(--menuhovercolor);
     display: block;
 }
@@ -474,7 +477,7 @@ li[data-type=ds]>div>span:nth-child(2)::before {
     position: relative;
 }
 
-.stwsMenu nav li>ul>li {
+.stwsMenu nav li>ol>li {
     min-width: 12em;
 }
 
@@ -490,7 +493,7 @@ li[data-type=ds]>div>span:nth-child(2)::before {
     float: right;
 }
 
-.stwsMenu nav li>ul>li>div:not(:last-child):after {
+.stwsMenu nav li>ol>li>div:not(:last-child):after {
     font: normal normal 100 1em/1 "Font Awesome 6 Pro";
     content: "\f0da";
     float: right;
@@ -502,7 +505,7 @@ li[data-type=ds]>div>span:nth-child(2)::before {
     opacity: 1;
 }
 
-.stwsMenu nav ul {
+.stwsMenu nav ol {
     background-color: var(--menubackcolor);
     color: var(--menucolor);
     opacity: 1;

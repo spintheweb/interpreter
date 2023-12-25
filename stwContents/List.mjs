@@ -14,7 +14,7 @@ export default class List extends Content {
 
 	render(req, res, next) {
 		return super.render(req, res, next, () => {
-			let fragment = '<ul>';
+			let fragment = '<ol>';
 
 			if (!this.datasource()) { // TODO: set the content datasource, query amd template
 				this._clientHandler = function stwListRoles(event) {
@@ -43,7 +43,7 @@ export default class List extends Content {
 				});
 			}
 
-			return fragment + '</ul>';
+			return fragment + '</ol>';
 		});
 	}
 }

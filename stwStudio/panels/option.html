@@ -3,7 +3,7 @@
                 onclick="this.closest('dialog').close()"></i></span></h1>
     <form onchange="stwStudio.submitForm(event)">
         <input type="hidden" name="_id">
-        <ul>
+        <ol>
             <li><label>Permalink</label><input type="url" name="url" placeholder="permalink" title="permalink"></li>
             <li><label>Query string</label><input type="text" name="params" placeholder="Query string (i.e. key=value)"
                     title="Query string"></li>
@@ -14,7 +14,7 @@
                     <option>_parent</option>
                     <option>_top</option>
                 </select></li>
-        </ul>
+        </ol>
         <div style="text-align:right; padding: 0 1em;"><button onclick="this.closest('dialog').close()">Cancel</button>&emsp;<button onclick="this.closest('dialog').close('OK')">OK</button></div>
     </form>
 </article>

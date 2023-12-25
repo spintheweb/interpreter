@@ -113,7 +113,7 @@ const stwStudio = {
                 if (toggle)
                     stwStudio.click({ isTrusted: true, target: toggle });
             } else if (event.key == 'ArrowUp' || event.key == 'ArrowDown') {
-                let elements = [...document.getElementById('webbase').querySelectorAll('ul:not([style="display: none"])>li')];
+                let elements = [...document.getElementById('webbase').querySelectorAll('ol:not([style="display: none"])>li')];
                 let i = elements.findIndex(element => element.dataset.id === selectedElement.dataset.id);
                 if (event.key == 'ArrowUp' && i > 0)
                     elements[--i].firstChild.click();
@@ -200,6 +200,9 @@ const stwStudio = {
     click: event => {
         let target = event.target;
 
+        if (target.hasAttribute('tabindex'))
+            target.focus();
+
         if (!event.isTrusted && target.classList.contains('fa-angle-down'))
             return;
 
@@ -222,7 +225,7 @@ const stwStudio = {
         if (target.classList.contains('fa-angle-down')) {
             target.classList.replace('fa-angle-down', 'fa-angle-right');
             if (parent.parentElement.tagName === 'LI')
-                parent.parentElement.querySelector('ul').style.display = 'none';
+                parent.parentElement.querySelector('ol').style.display = 'none';
             else
                 parent.nextElementSibling.style.display = 'none';
             document.getElementById('webbase')?.focus();
@@ -230,7 +233,7 @@ const stwStudio = {
         } else if (target.classList.contains('fa-angle-right')) {
             target.classList.replace('fa-angle-right', 'fa-angle-down');
             if (parent.parentElement.tagName === 'LI')
-                parent.parentElement.querySelector('ul').style.display = '';
+                parent.parentElement.querySelector('ol').style.display = '';
             else
                 parent.nextElementSibling.style.display = '';
         }
@@ -330,16 +333,16 @@ const stwStudio = {
                     })
                     .then(json => {
                         let webbase = document.getElementById('webbase');
-                        let visibles = [...webbase.querySelectorAll('ul:not([style="display: none"])>li:first-of-type')].map(element => element.dataset.id);
+                        let visibles = [...webbase.querySelectorAll('ol:not([style="display: none"])>li:first-of-type')].map(element => element.dataset.id);
                         if (subpath) {
-                            let ul = document.querySelector(`[data-id="${subpath}"]`).parentElement.closest('ul');
-                            for (var depth = -1; ul; ul = ul.parentElement.closest('ul'), ++depth);
+                            let ol = document.querySelector(`[data-id="${subpath}"]`).parentElement.closest('ol');
+                            for (var depth = -1; ol; ol = ol.parentElement.closest('ol'), ++depth);
                             document.querySelector(`[data-id="${subpath}"]`).insertAdjacentHTML('afterend', stwStudio.renderTree(json, depth, true));
                             document.querySelector(`[data-id="${subpath}"]`).remove();
                             document.querySelector(`[data-id="${selectId || subpath}"]>div`).click();
                         } else {
                             webbase.lastElementChild.remove();
-                            webbase.insertAdjacentHTML('beforeend', `<ul>${stwStudio.renderTree(json)}</ul>`);
+                            webbase.insertAdjacentHTML('beforeend', `<ol>${stwStudio.renderTree(json)}</ol>`);
                             document.querySelector('li[data-type=Webo]>div').click();
                             document.querySelector('[data-action="locate"]').click();
                         }
@@ -362,7 +365,7 @@ const stwStudio = {
                     })
                     .then(json => {
                         document.getElementById('explorer').lastElementChild.remove();
-                        document.getElementById('explorer').insertAdjacentHTML('beforeend', `<ul>${stwStudio.renderTree(json)}</ul>`);
+                        document.getElementById('explorer').insertAdjacentHTML('beforeend', `<ol>${stwStudio.renderTree(json)}</ol>`);
                     })
                     .catch(err => {
                         console.log(err);
@@ -379,7 +382,7 @@ const stwStudio = {
                         files.forEach(file => tree.children.push({ name: file.path, type: 'file', status: file.working_dir }));
 
                         document.getElementById('sourcecontrol').lastElementChild.remove();
-                        document.getElementById('sourcecontrol').insertAdjacentHTML('beforeend', `<ul>${stwStudio.renderTree(tree)}</ul>`);
+                        document.getElementById('sourcecontrol').insertAdjacentHTML('beforeend', `<ol>${stwStudio.renderTree(tree)}</ol>`);
                     })
                     .catch(err => {
                         console.log(err);
@@ -393,7 +396,7 @@ const stwStudio = {
                     })
                     .then(json => {
                         document.getElementById('datasources').lastElementChild.remove();
-                        document.getElementById('datasources').insertAdjacentHTML('beforeend', `<ul>${stwStudio.renderTree(json)}</ul>`);
+                        document.getElementById('datasources').insertAdjacentHTML('beforeend', `<ol>${stwStudio.renderTree(json)}</ol>`);
                     })
                     .catch(err => {
                         console.log(err);
@@ -411,7 +414,7 @@ const stwStudio = {
                             tree.children.push({ name: role, type: 'role' });
 
                         document.getElementById('roles').lastElementChild.remove();
-                        document.getElementById('roles').insertAdjacentHTML('beforeend', `<ul>${stwStudio.renderTree(tree)}</ul>`);
+                        document.getElementById('roles').insertAdjacentHTML('beforeend', `<ol>${stwStudio.renderTree(tree)}</ol>`);
                     })
                     .catch(err => {
                         console.log(err);
@@ -438,16 +441,16 @@ const stwStudio = {
 
             if (node.children && node.children.length) {
                 if (!depth)
-                    html = `<li ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span></span><span>${name}</span><span>${node.status || ''}</span></div><ul>`;
+                    html = `<li ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div tabindex="1" role="link"><span></span><span>${name}</span><span>${node.status || ''}</span></div><ol>`;
                 else if (show)
-                    show = false, html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span>${'&emsp;'.repeat(depth - 1)}<i class="fa-light fa-fw fa-angle-down"></i></span><span>${name}</span><span>${node.status}</span></div><ul>`;
+                    show = false, html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div tabindex="1" role="link"><span>${'&emsp;'.repeat(depth - 1)}<i class="fa-light fa-fw fa-angle-down"></i></span><span>${name}</span><span>${node.status}</span></div><ol>`;
                 else
-                    html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span>${'&emsp;'.repeat(depth - 1)}<i class="fa-light fa-fw fa-angle-right"></i></span><span>${name}</span><span>${node.status}</span></div><ul style="display: none">`;
+                    html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div tabindex="1" role="link"><span>${'&emsp;'.repeat(depth - 1)}<i class="fa-light fa-fw fa-angle-right"></i></span><span>${name}</span><span>${node.status}</span></div><ol style="display: none">`;
                 for (let child of node.children)
                     html += stwStudio.renderTree(child, depth + 1);
-                html += '</ul>';
+                html += '</ol>';
             } else
-                html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div role="link"><span>${'&emsp;'.repeat(depth)}&nbsp;</span><span>${name}</span><span>${node.status || ''}</span></div>`;
+                html = `<li ${cssClass} ${node._id ? `data-id="${node._id}" ` : ''}data-type="${node.type}"><div tabindex="1" role="link"><span>${'&emsp;'.repeat(depth)}&nbsp;</span><span>${name}</span><span>${node.status || ''}</span></div>`;
         }
         return `${html || '<li data-type="nothing"><div><span></span><span>Empty</span><span class="undefined"></span></div>'}</li>`;
     },
@@ -465,7 +468,7 @@ const stwStudio = {
         }
     },
     manageWebbase: event => {
-        let target = event.target.closest('h1') || (event.target.closest('ul') ? event.currentTarget.querySelector('ul') : event.target);
+        let target = event.target.closest('h1') || (event.target.closest('ol') ? event.currentTarget.querySelector('ol') : event.target);
 
         if (event.target.tagName === 'H1') {
             event.preventDefault();
@@ -500,8 +503,8 @@ const stwStudio = {
                             fetch(`/stwStudio/wbdl/${node._idParent}`)
                                 .then(res => res.json())
                                 .then(parentNode => {
-                                    let ul = parent.closest('ul');
-                                    for (var depth = -1; ul; ul = ul.parentElement.closest('ul'), ++depth);
+                                    let ol = parent.closest('ol');
+                                    for (var depth = -1; ol; ol = ol.parentElement.closest('ol'), ++depth);
 
                                     parent.insertAdjacentHTML('afterend', stwStudio.renderTree(parentNode, depth, true));
                                     parent.remove();
@@ -513,7 +516,7 @@ const stwStudio = {
                         .catch(err => console.log(err));
                 }
                 break;
-            case 'UL':
+            case 'OL':
                 let div = event.target.closest('div');
                 if (div && (!div.parentElement.hasAttribute('selected') || !event.isTrusted)) {
                     if (target.querySelector('li[selected]'))
@@ -541,7 +544,7 @@ const stwStudio = {
                                             return res.json();
                                     })
                                     .then(options => {
-                                        document.querySelector('#options ul').innerHTML = stwStudio.renderTree(options);
+                                        document.querySelector('#options ol').innerHTML = stwStudio.renderTree(options);
                                         document.getElementById('options').style.display = '';
                                     });
                             else
@@ -558,7 +561,7 @@ const stwStudio = {
                                     for (let role in roles)
                                         tree.children.push({ name: role, type: 'role', status: stwStudio.visibilityEnum[roles[role]] });
 
-                                    document.querySelector('#visibility ul').innerHTML = stwStudio.renderTree(tree);
+                                    document.querySelector('#visibility ol').innerHTML = stwStudio.renderTree(tree);
                                 });
                         })
                         .catch(err => console.log(err));
@@ -579,11 +582,11 @@ const stwStudio = {
             element.setAttribute('selected', '');
             element.firstElementChild.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
 
-            element.querySelector('ul').style.display = '';
+            element.querySelector('ol').style.display = '';
             for (let node = element; node.tagName === 'LI'; node = node.parentElement) {
                 if (node.firstElementChild.firstElementChild.firstElementChild)
                     node.firstElementChild.firstElementChild.firstElementChild.classList.replace('fa-angle-right', 'fa-angle-down');
-                node = node.closest('ul')
+                node = node.closest('ol')
                 node.style.display = '';
             }
         }
@@ -607,14 +610,14 @@ const stwStudio = {
             })
             .then(json => {
                 document.getElementById('search').lastElementChild.remove();
-                document.getElementById('search').insertAdjacentHTML('beforeend', `<ul>${stwStudio.renderTree(json)}</ul>`);
+                document.getElementById('search').insertAdjacentHTML('beforeend', `<ol>${stwStudio.renderTree(json)}</ol>`);
             })
             .catch(err => {
                 console.log(err);
             });
     },
     manageGroups: event => {
-        let target = event.target.closest('h1') || (event.target.closest('ul') ? event.currentTarget.querySelector('ul') : event.target);
+        let target = event.target.closest('h1') || (event.target.closest('ol') ? event.currentTarget.querySelector('ol') : event.target);
 
         if (event.target.tagName === 'H1') {
             event.preventDefault();
@@ -630,7 +633,7 @@ const stwStudio = {
                     stwStudio.openMessage({ text: 'Add new role' });
                 }
                 break;
-            case 'UL':
+            case 'OL':
                 // TODO: Properties visible
                 let div = event.target.closest('div');
                 if (div && (!div.parentElement.hasAttribute('selected') || !event.isTrusted)) {
@@ -646,7 +649,7 @@ const stwStudio = {
         }
     },
     manageDatasource: event => {
-        let target = event.target.closest('h1') || (event.target.closest('ul') ? event.currentTarget.querySelector('ul') : event.target);
+        let target = event.target.closest('h1') || (event.target.closest('ol') ? event.currentTarget.querySelector('ol') : event.target);
 
         if (event.target.tagName === 'H1') {
             event.preventDefault();
@@ -662,7 +665,7 @@ const stwStudio = {
                     stwStudio.openMessage({ text: 'Add new datasource' });
                 }
                 break;
-            case 'UL':
+            case 'OL':
                 // TODO: Properties visible
                 let div = event.target.closest('div');
                 if (div && (!div.parentElement.hasAttribute('selected') || !event.isTrusted)) {

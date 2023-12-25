@@ -11,6 +11,7 @@
         "express-session": "^1.17.3",
         "express-ws": "^5.0.2",
         "html-entities": "^2.4.0",
+        "mssql": "^10.0.1",
         "simple-git": "^3.19.1",
         "uuid": "^9.0.0"
     },

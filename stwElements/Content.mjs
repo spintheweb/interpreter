@@ -47,7 +47,7 @@ export default class Content extends Base {
         this.cssClass = params.cssClass;
         this.section = params.section;
         this.Sequence(params.sequence);
-        this.dns = params.dns;
+        this.dsn = params.dsn;
         this.query = params.query;
         this.params = params.params;
         this.layout = { [lang]: params.layout };

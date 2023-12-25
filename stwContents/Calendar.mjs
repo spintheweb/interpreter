@@ -37,7 +37,7 @@ export default class Calendar extends Content {
 				date = new Date(newDate);
 			}
 
-			return `<ul class="stwBody">${fragment}</ul>`;
+			return `<ol class="stwBody">${fragment}</ol>`;
 		});
 	}
 }

@@ -25,7 +25,7 @@
         <input type="hidden" name="_idParent">
         <input type="hidden" name="type">
         <input type="hidden" name="status">
-        <ul>
+        <ol>
             <li><label>Name</label><input type="text" name="name" placeholder="Name" title="Name" required></li>
             <li><label>Slug</label><input type="text" name="slug" placeholder="Slug" title="Slug"
                     style="font-style: italic;"></li>
@@ -98,21 +98,21 @@
                 <input type="text" name="params" placeholder="Parameters (i.e. key=value)" title="Parameters">
             </li>
             <li><label>Layout</label><textarea name="layout" placeholder="Layout" title="Layout"></textarea></li>
-        </ul>
+        </ol>
     </form>
 </article>
-<article class="stwsTree stwsAccordion" id="options" onclick="stwStudio.manageOptions(event)">
+<article class="stwsTree stwsHandleHierarchy stwsAccordion" id="options" ondblclick="stwStudio.manageOptions(event)" onkeydown="stwStudio.manageOptions(event)">
     <h1><i class="fa-light fa-fw fa-angle-right"></i> options</h1>
-    <ul style="display: none; max-height: 10em;"></ul>
+    <ol style="display: none; max-height: 10em;"></ol>
 </article>
 <article class="stwsTree stwsAccordion" id="visibility" onclick="stwStudio.manageVisibility(event)">
     <h1><i class="fa-light fa-fw fa-angle-right"></i> visibilities</h1>
-    <ul style="display: none; max-height: 10em;"></ul>
+    <ol style="display: none; max-height: 10em;"></ol>
 </article>
 <div>&nbsp;</div>
 <!--
 <nav id="contextMenu" class="stwsMenu stwPopup" style="position:absolute; top: 100px; left: 100px; z-index: 10;">
-    <ul>
+    <ol>
         <li>
             <div><span>Open</span><span>CTRL+O</span></div>
         </li>
@@ -131,6 +131,6 @@
         <li style="border-top: thin solid;">
             <div><span>Properties</span><span>CTRL+P</span></div>
         </li>
-    </ul>
+    </ol>
 </nav>
 -->

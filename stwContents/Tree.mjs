@@ -13,7 +13,7 @@ export default class Tree extends Content {
 
 	render(socket) {
 		return super.render(socket, (socket, template) => {
-			let fragment = '<ul>';
+			let fragment = '<ol>';
 
 			if (!this.datasource()) { // TODO: set the content datasource, query and template
 				this._clientHandler = function stwTreeWebbase(event) {
@@ -49,14 +49,14 @@ export default class Tree extends Content {
 					
 				}
 
-				fragment = '<ul onclick="stwTreeWebbase(event)" onmousemove="stwTreeWebbase(event)" onmouseleave="stwTreeWebbase(event)">';
+				fragment = '<ol onclick="stwTreeWebbase(event)" onmousemove="stwTreeWebbase(event)" onmouseleave="stwTreeWebbase(event)">';
 				_webbase(this.webbase);
 
 				function _webbase(element, level = 0) {
 					if (element.children.length > 0) {
-						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(socket.target.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fa-solid fa-fw fa-angle-${level === 0 ? 'down' : 'right'}"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.localizedName()}</div><ul ${level > 0 ? 'style="display: none"' : ''}>`;
+						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(socket.target.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fa-solid fa-fw fa-angle-${level === 0 ? 'down' : 'right'}"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.localizedName()}</div><ol ${level > 0 ? 'style="display: none"' : ''}>`;
 						element.children.forEach(child => _webbase(child, level + 1));
-						fragment += '</ul></li>';
+						fragment += '</ol></li>';
 					} else {
 						fragment += `<li><div style="padding-left:${level}em" class="stwRBV${element.granted(socket.target.user)}" id="${element.id}" data-ref="${element.permalink()}"><i class="fa-solid fa-fw"></i>&#8239;<span class="stw${element.constructor.name}Icn"></span>&ensp;${element.localizedName()}</div></li>`;
 					}
@@ -67,7 +67,7 @@ export default class Tree extends Content {
 					fragment += `<li>${row}</li>`;
 				});
 			}
-			return fragment + '</ul>';
+			return fragment + '</ol>';
 
 			function _dir() {
 				// TODO: Directory structure

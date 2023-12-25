@@ -37,7 +37,7 @@ article.stwContent {position:relative; padding:0.25em; border: thin dashed trans
 .stwTabLabel:hover {background-color:#ffffff; color:#000000;}
 .stwTab {position:relative; border:1px solid #f0f0f0;}
 
-.stwKeypad ul {list-style-type:none; margin:0; padding:0;}
+.stwKeypad ol {list-style-type:none; margin:0; padding:0;}
 .stwKeypad li {display:inline-block; padding:0.5em; border:1px solid #f0f0f0; border-radius:0.5em; min-width:2em; margin:0.25em; text-align:center; cursor:pointer;}
 .stwKeypad li:hover {background-color:#f0f0f0; color:#000000;}
 
@@ -47,23 +47,23 @@ article.stwContent {position:relative; padding:0.25em; border: thin dashed trans
 
 .stwMenu nav { display: inline-block; background-color: var(--back); color: var(--fore); }
 .stwMenu nav a { display: inline-block; width: calc(100% - 1em); text-decoration: none; color: inherit; }
-.stwMenu nav ul { display: flex; position: relative; z-index: 1; margin: 0; padding: 0; }
+.stwMenu nav ol { display: flex; position: relative; z-index: 1; margin: 0; padding: 0; }
 .stwMenu nav a>span { display: inline-block; padding: 0 0 0 2em; }
-.stwMenu nav ul>li>ul { display: none; border: thin solid; position: absolute; left: 0; }
-.stwMenu nav ul>li>ul>li>ul { left: 100%; top: 0; }
-.stwMenu nav ul>li:hover>ul { display: block; }
+.stwMenu nav ol>li>ol { display: none; border: thin solid; position: absolute; left: 0; }
+.stwMenu nav ol>li>ol>li>ol { left: 100%; top: 0; }
+.stwMenu nav ol>li:hover>ol { display: block; }
 .stwMenu nav li { list-style: none; position: relative; }
-.stwMenu nav li>ul>li { min-width: 12em; }
+.stwMenu nav li>ol>li { min-width: 12em; }
 .stwMenu nav li>div { padding: 0.75em 1em; white-space: nowrap; }
-.stwMenu nav li>ul>li>div:not(:last-child):after { font-family: "Font Awesome 6 Free"; font-weight: 900; content: "\f0da"; float: right; }
+.stwMenu nav li>ol>li>div:not(:last-child):after { font-family: "Font Awesome 6 Free"; font-weight: 900; content: "\f0da"; float: right; }
 .stwMenu nav li>div:hover { background-color: var(--special); opacity: 1; }
-.stwMenu nav ul ul { background-color: var(--menu--special); color: var(--fore); opacity: 1; }
+.stwMenu nav ol ol { background-color: var(--menu--special); color: var(--fore); opacity: 1; }
 
-.stwTree ul ul {list-style-type:none; margin:0;}
-.stwTree .stwBody>ul {margin:0;}
+.stwTree ol ol {list-style-type:none; margin:0;}
+.stwTree .stwBody>ol {margin:0;}
 .stwTree li>div {padding:0.25em; cursor:pointer;}
 
-.stwCalendar ul {list-style-type:none; margin:0; padding:0;}
+.stwCalendar ol {list-style-type:none; margin:0; padding:0;}
 .stwCalendar li {display:inline-block; padding:0.5em; min-width:3em; text-align:center;}
 .stwWeekday {color:var(--special); border-top:2px solid #f0f0f0;}
 .stwWeedday > div {font-size:0.50em;}

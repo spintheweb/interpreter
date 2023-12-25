@@ -23,7 +23,7 @@ export default class Tabs extends Content {
 					options += `<li id="${option.permalink()}" class="stwTab"${i !== 0 ? ' hidden' : ''} data-ref="${option.permalink()}1"></li>`;
 				}
 			});
-			return `<ul>${labels}${options}</ul>`;
+			return `<ol>${labels}${options}</ol>`;
 		});
 	}
 }

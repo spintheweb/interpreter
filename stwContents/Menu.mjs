@@ -36,11 +36,11 @@ export default class Menu extends Content {
 					for (prevLevel = level, level = 1; link.sequence & (mask >> (6 * level)); ++level);
 
 					if (prevLevel > level)
-						fragment += `</li>${'</ul>'.repeat(prevLevel - level)}`;
+						fragment += `</li>${'</ol>'.repeat(prevLevel - level)}`;
 					else if (prevLevel == level)
 						fragment += '</li>';
 					else
-						fragment += '<ul>';
+						fragment += '<ol>';
 
 					if (link.name === '-')
 						fragment += `<li><hr>`;
@@ -48,12 +48,12 @@ export default class Menu extends Content {
 						fragment += `<li><div><a href="${element.permalink(req.session.lang) + (link.params ? '?' + link.params : '')}">${pickText([req.session.lang, Base[WEBBASE].lang], link.name || element.name)}</a></div>`;
 				}
 			});
-			fragment += `</li>${'</ul>'.repeat(level - prevLevel)}</li>`;
+			fragment += `</li>${'</ol>'.repeat(level - prevLevel)}</li>`;
 
 			if (this._layout.settings.orientation !== 'vertical')
-				return `<nav class="stwHorizontal"><ul>${fragment}</ul></nav>`;
+				return `<nav class="stwHorizontal"><ol>${fragment}</ol></nav>`;
 
-			return `<nav class="stwVertical"><ul><li><ul>${fragment}</ul></li></ul></nav>`;
+			return `<nav class="stwVertical"><ol><li><ol>${fragment}</ol></li></ol></nav>`;
 		});
 	}
 }

@@ -1,16 +1,12 @@
 /*!
- * webspinner data module
+ * webspinner data module for MongoDB
  * Copyright(c) 2023 Giancarlo Trevisan
  * MIT Licensed
  */
-'use strict';
-
-const dbclient = require('mongodb').MongoClient;
+import { MongoClient as dbclient } from 'mongodb';
 let db;
 
-module.exports = {
-    read: read
-}
+export const read = read;
 
 dbclient.connect('mongodb://localhost:27017/webebo', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(client => {
