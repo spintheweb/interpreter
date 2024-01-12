@@ -98,8 +98,8 @@ const stwStudio = {
             event.preventDefault();
             event.stopPropagation();
         }
-        if (event.ctrlKey && event.key == 'l') {
-            document.querySelector('[data-action="locate"]').click();
+        if (event.ctrlKey && event.key == 'i') {
+            document.querySelector('[data-action="inspect"]').click();
             event.preventDefault();
             event.stopPropagation();
         }
@@ -242,7 +242,7 @@ const stwStudio = {
         if (!event.target.form.reportValidity())
             return;
 
-        stwStudio.statusBar('Save properties...');
+        stwStudio.statusBar('Save data...');
 
         let data = {};
         for (let input of event.target.form)
@@ -254,7 +254,20 @@ const stwStudio = {
         if (data.hasOwnProperty('slug') && data.slug === '')
             data.slug = data.name.toLowerCase().replace(/[^a-z]/g, '');
 
-        fetch(`/stwStudio/wbdl/${data._id}`,
+        let panelName = event.target.closest('section').firstChild.id,
+            url = '/stwStudio/wbdl/';
+        switch (panelName) {
+            case 'webbase':
+                url += data._id;
+                break;
+            case 'datasources':
+                url += 'datasources/' + event.target.form.name.dataset.value;
+                break;
+            default:
+                return;
+        };
+
+        fetch(url,
             {
                 method: 'PATCH',
                 body: JSON.stringify(data),
@@ -262,7 +275,8 @@ const stwStudio = {
             })
             .then(res => res.json())
             .then(data => {
-                stwStudio.renderPanel('/stwStudio/panels/webbase.html', data._idParent, data._id);
+                if (panelName === 'webbase')
+                    stwStudio.renderPanel('/stwStudio/panels/webbase.html', data._idParent, data._id);
             })
             .catch(err => { console.log(err) });
     },
@@ -278,10 +292,21 @@ const stwStudio = {
                 if (li) li.style.display = '';
             }
 
-            if (input.name === 'permalink' && data.mainunit) {
-                fetch(`/stwStudio/wbdl/permalink/${data.mainunit}`)
+            if (input.name === 'permalink' && data.mainpage) {
+                fetch(`/stwStudio/wbdl/permalink/${data.mainpage}`)
                     .then(res => res.text())
                     .then(text => { input.value = text })
+                    .catch(err => { console.log(err) });
+            }
+            if (input.name === 'dsn' && input.options.length == 1) {
+                fetch('/stwStudio/wbdl/datasources')
+                    .then(res => res.json())
+                    .then(json => {
+                        if (input.options.length == 1)
+                            json.children.forEach(dsn => {
+                                input.insertAdjacentHTML('beforeend', `<option value="${dsn.name}">${dsn.name}</option>`);
+                            });
+                    })
                     .catch(err => { console.log(err) });
             }
 
@@ -295,7 +320,7 @@ const stwStudio = {
         }
         if (form.slug && form.slug.value === '')
             form.slug.value = form.name.value.toLowerCase().replace(/[^a-z]/g, '');
-        else
+        else if (form.slug)
             form.slug.value = form.slug.value.toLowerCase().replace(/[^a-z]/g, '');
 
         // document.querySelector('#properties .fa-trash-can').className = data.status === 'T' ? 'fa-light fa-fw fa-trash-can' : 'fa-light fa-fw fa-trash-can';
@@ -344,7 +369,7 @@ const stwStudio = {
                             webbase.lastElementChild.remove();
                             webbase.insertAdjacentHTML('beforeend', `<ol>${stwStudio.renderTree(json)}</ol>`);
                             document.querySelector('li[data-type=Webo]>div').click();
-                            document.querySelector('[data-action="locate"]').click();
+                            document.querySelector('[data-action="inspect"]').click();
                         }
                         visibles.forEach(id => {
                             let element = webbase.querySelector(`[data-id="${id}"]`);
@@ -397,6 +422,7 @@ const stwStudio = {
                     .then(json => {
                         document.getElementById('datasources').lastElementChild.remove();
                         document.getElementById('datasources').insertAdjacentHTML('beforeend', `<ol>${stwStudio.renderTree(json)}</ol>`);
+                        document.querySelector('li[data-type=ds]>div').click();
                     })
                     .catch(err => {
                         console.log(err);
@@ -415,14 +441,19 @@ const stwStudio = {
 
                         document.getElementById('roles').lastElementChild.remove();
                         document.getElementById('roles').insertAdjacentHTML('beforeend', `<ol>${stwStudio.renderTree(tree)}</ol>`);
+                        document.querySelector('li[data-type=role]>div').click();
                     })
                     .catch(err => {
                         console.log(err);
                     });
                 break;
             case '/stwStudio/panels/settings.html':
-                let color = '#';
-                getComputedStyle(document.documentElement).getPropertyValue('--maincolor').split(',').forEach(byte => color += parseInt(byte).toString(16));
+                // TODO: Not working
+                let color = getComputedStyle(document.documentElement).getPropertyValue('--maincolor');
+                if (color.indexOf(',') != -1) {
+                    color = '#';
+                    getComputedStyle(document.documentElement).getPropertyValue('--maincolor').split(',').forEach(byte => color += parseInt(byte).toString(16));
+                }
                 document.getElementById('mainColor').value = color;
                 break;
         }
@@ -582,7 +613,8 @@ const stwStudio = {
             element.setAttribute('selected', '');
             element.firstElementChild.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
 
-            element.querySelector('ol').style.display = '';
+            if (element.querySelector('ol'))
+                element.querySelector('ol').style.display = '';
             for (let node = element; node.tagName === 'LI'; node = node.parentElement) {
                 if (node.firstElementChild.firstElementChild.firstElementChild)
                     node.firstElementChild.firstElementChild.firstElementChild.classList.replace('fa-angle-right', 'fa-angle-down');
@@ -673,9 +705,19 @@ const stwStudio = {
                         target.querySelector('li[selected]').removeAttribute('selected');
                     div.parentElement.setAttribute('selected', '');
 
-                    let properties = document.getElementById('properties');
-                    properties.querySelector('input[name]').value = div.children[1].innerText;
-                    properties.style.display = '';
+                    fetch(`/stwStudio/wbdl/datasources/${div.children[1].innerText}`)
+                        .then(res => {
+                            if (res.ok)
+                                return res.json();
+                        })
+                        .then(json => {
+                            let properties = document.getElementById('properties');
+                            stwStudio.loadForm(properties.querySelector('form'), json);
+                            properties.style.display = '';
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
                 }
                 break;
         }
@@ -791,8 +833,11 @@ const stwStudio = {
             case 'refresh':
                 document.getElementById('Browse').src = document.getElementById('BrowseURL').value;
                 break;
-            case 'locate':
-                stwStudio.locateElement(document.cookie.split('; ').find(row => row.startsWith('stwUnit='))?.split('=')[1]);
+            case 'inspect':
+                let sitemap = document.querySelector('i.fa-sitemap:not([selected])');
+                if (sitemap)
+                    sitemap.click();
+                stwStudio.locateElement(document.cookie.split('; ').find(row => row.startsWith('stwPage='))?.split('=')[1]);
                 break;
             case 'home':
                 document.getElementById('Browse').src = location.origin;
@@ -850,9 +895,13 @@ window.addEventListener('keydown', stwStudio.keydown);
 window.addEventListener('load', () => {
     stwStudio.setup();
     document.getElementById('Browse').addEventListener('load', event => {
-        if (event.currentTarget.contentWindow.origin && event.currentTarget.contentWindow?.location.origin != 'null')
+        if (event.currentTarget.contentWindow.origin && event.currentTarget.contentWindow?.location.origin != 'null') {
+            document.getElementById('BrowseTab').innerHTML = '<img src="' + event.currentTarget.contentDocument.querySelector('[rel="icon"]').href + '" title="icon"> ' + event.currentTarget.contentDocument.title;
             document.getElementById('BrowseURL').value = event.currentTarget.contentWindow.location.href;
-        else
+            const inspect = window.location.search.match(/inspect=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/);
+            if (inspect)
+                stwStudio.locateElement(inspect[1]);
+        } else
             event.currentTarget.contentWindow.location = location.origin + '/';
     });
 });

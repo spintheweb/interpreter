@@ -12,6 +12,7 @@
         "express-ws": "^5.0.2",
         "html-entities": "^2.4.0",
         "mssql": "^10.0.1",
+        "mysql2": "^3.6.5",
         "simple-git": "^3.19.1",
         "uuid": "^9.0.0"
     },
@@ -41,7 +42,7 @@
     "bugs": {
         "url": "https://github.com/spintheweb/project/issues"
     },
-    "homeunit": "https://www.spintheweb.org",
+    "homepage": "https://www.spintheweb.org",
     "optionalDependencies": {
         "bufferutil": "^4.0.1",
         "utf-8-validate": "^5.0.2"

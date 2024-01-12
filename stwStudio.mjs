@@ -16,7 +16,7 @@ const router = express.Router();
 
 // Only developers are allowed to use the Spin the Web Studio API
 router.all('/*', (req, res, next) => {
-    if (req.session.developer)
+    if (req.session.stwDeveloper)
         next();
     else
         res.redirect('/');
@@ -47,7 +47,7 @@ router.put('/wbdl/persist', (req, res, next) => {
 // Determine permalink of given element
 router.get('/wbdl/permalink/:_id', (req, res) => {
     let element = Base[WEBBASE].index.get(req.params._id);
-    res.send(element ? element.permalink(req.session.lang) : '');
+    res.send(element ? element.permalink(req.session.stwLanguage) : '');
 });
 
 // TODO: Replace
@@ -71,18 +71,25 @@ router.post('/wbdl/search/:lang', (req, res) => {
 
 //#region Manage datasources
 router.get('/wbdl/datasources/:name?', (req, res) => {
-    let datasources = [];
-    for (let datasource in Base[WEBBASE].datasources)
-        datasources.push({
-            name: datasource,
-            type: 'ds',
-            description: Base[WEBBASE].datasources[datasource]
-        });
+    if (req.params.name) {
+        let datasource = Base[WEBBASE].datasources[req.params.name];
+        res.json({ name: req.params.name, type: datasource.type, config: datasource.config });
 
-    if (req.params.name)
-        res.json(datasources[req.params.name]);
-    else
+    } else {
+        let datasources = [];
+        for (let datasource in Base[WEBBASE].datasources)
+            datasources.push({
+                name: datasource,
+                type: 'ds',
+                description: Base[WEBBASE].datasources[datasource]
+            });
         res.json({ children: datasources });
+    }
+});
+router.patch('/wbdl/datasources/:name', (req, res) => {
+    delete Base[WEBBASE].datasources[req.params.name];
+    Base[WEBBASE].datasources[req.body.name] = req.body;
+    res.json(null);
 });
 //#endregion
 
@@ -94,7 +101,7 @@ router.get('/wbdl/options/:_id', (req, res) => {
         element.options.forEach(option => {
             let element = Base[WEBBASE].index.get(option._id);
             if (element)
-                options.children.push({ _id: element._id, type: element.type, name: element.localizedName(req.session.lang), title: element.permalink(req.session.lang), status: element.status, sequence: option.sequence });
+                options.children.push({ _id: element._id, type: element.type, name: element.localizedName(req.session.stwLanguage), title: element.permalink(req.session.stwLanguage), status: element.status, sequence: option.sequence });
         });
         res.json(options);
         return;
@@ -178,7 +185,7 @@ router.put('/wbdl/:_idParent/:_idChild', (req, res, next) => {
 });
 router.patch('/wbdl/:_id', (req, res, next) => {
     let element = Base[WEBBASE].index.get(req.params._id);
-    res.json(element.patch(req.session.lang, req.body));
+    res.json(element.patch(req.session.stwLanguage, req.body));
 });
 router.delete('/wbdl/:_id', (req, res, next) => {
     let element = Base[WEBBASE].index.get(req.params._id);

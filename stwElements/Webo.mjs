@@ -24,10 +24,10 @@ export default class Webo extends Area {
         Object.assign(this.visibility, params.visibility, {
             administrators: true, // Everything except development
             developers: true, // Manage webbase
+            editors: false, // Add data
             translators: false, // Modify texts in webbase
             guests: false, // Use public parts of webbase
-            users: true, // Use webbase
-            webmasters: false // Add data
+            users: true // Use webbase
         });
         this.datasources = params.datasources || {
             example: { mime: 'application/json', data: [{ name: 'WBDL', desc: 'Webbase Description Language' }, { name: 'WBLL', desc: 'Webbase Layout Language' }] }
@@ -64,7 +64,7 @@ export default class Webo extends Area {
     // Determine the requested webbase element given the url
     route(pathname, lang) {
         if (!pathname || pathname === '/')
-            pathname = this.mainunit;
+            pathname = this.mainpage;
 
         if (typeof pathname === 'object')
             return pathname;
@@ -97,7 +97,7 @@ export default class Webo extends Area {
         next();
     }
 
-    // Build a site map (https://www.sitemaps.org/index.html) that includes the urls of the visible units in the webbase, if no language is specified in the url return the sitemap index
+    // Build a site map (https://www.sitemaps.org/index.html) that includes the urls of the visible pages in the webbase, if no language is specified in the url return the sitemap index
     sitemap(req, res) {
         let lang = parse(req.url).query, fragment = '';
 
@@ -115,7 +115,7 @@ export default class Webo extends Area {
         function _url(element) {
             if (['Webo', 'Area'].indexOf(element.constructor.name) !== -1 && element.children.length > 0)
                 element.children.forEach(child => _url(child));
-            else if (element.constructor.name === 'Unit' && element.granted(req.user) & 0b01 === 0b01)
+            else if (element.constructor.name === 'Page' && element.granted(req.user) & 0b01 === 0b01)
                 fragment += `<url><loc>${element.webbase.localizedName(undefined, lang)}${element.slugSlug(true)}</loc><changefreq>always</changefreq><priority>0.5</priority></url>`;
         }
     }

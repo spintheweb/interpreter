@@ -9,7 +9,7 @@ import Content from '../stwElements/Content.mjs';
 
 // https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
 export default class Languages extends Content {
-    constructor(params = {}) {
+    constructor(params) {
         super(params);
 		delete this.dsn;
 		delete this.query;
@@ -22,7 +22,7 @@ export default class Languages extends Content {
         this.behavior = true;
 
         req.app.get('/stwc/setlanguage/:lang', (req, res, next) => {
-            req.session.lang = req.params.lang;
+            req.session.stwLanguage = req.params.lang;
             res.redirect('back');
         });
     }
@@ -45,7 +45,7 @@ export default class Languages extends Content {
                     fragment += `<option>${lang.toUpperCase()}</option>`;
                 fragment += '</select>';
             }
-            return `<span ${this.CSSClass}">${fragment}</span>`;
+            return `<span ${this.CSSClass(req.exposed.stwDeveloper ? 'stwInspectable' : '')}">${fragment}</span>`;
         });
     }
 }

@@ -4,16 +4,18 @@
  * MIT Licensed
  */
 import { encode } from 'html-entities';
+import { replacePlaceholders } from './Miscellanea.mjs';
 
 const SYNTAX = new RegExp([
     /(\\[aAs])(?:\('([^]*?)'\))/,
     /(\\[rnt])/,
     /(?:([aAbo]))(?:\('([^]*?)'\))?((?:p(\('[^]*?'\))?)*)/,
     /(?:([cefhilmruwxyz]))(?:\('([^]*?)'\))?/,
-    /(?:([dnsvV]))(?:\('([^]*?)'\))/,
+    /(?:([dnsvVk]))(?:\('([^]*?)'\))/,
     /(?:([jJtT]))(?:\('([^]*?)'\))/,
     /\/\/.*$/,
-    /\/\*[^]*(\*\/)?/
+    /\/\*[^]*(\*\/)?/,
+    /([<>])/ // TODO: Group consecutive moves
 ].map(r => r.source).join('|'), 'gmu');
 
 export function lexer(wbll = '') {
@@ -33,7 +35,7 @@ export function lexer(wbll = '') {
                 if (symbol == '\\a' || symbol == '\\s' || symbol == '\\A') {
                     attrs = {};
                     for (let attr of expression[1].matchAll(/([a-zA-Z0-9-_]+)(?:=(["'])([^]*?)\2)?/gmu))
-                        attrs[attr[1]] = attr[3] || '';
+                        attrs[attr[1]] = attr[3] || 'true';
                     if (symbol == '\\s') {
                         layout.settings = attrs;
                         layout.attrs = { class: '' };
@@ -53,13 +55,13 @@ export function lexer(wbll = '') {
                 }
                 if (expression[2] && expression[2].startsWith('p')) {
                     params = {};
+                    let i = 0;
                     for (let param of expression[2].matchAll(/(?:p(?:\('([^]*?)'\))?)/gmu))
                         for (let pair of (param[1] || '').matchAll(/(([a-zA-Z0-9-_]*)(?:;((?:["']?)(?:[^])*\1))?)/gmu)) {
-                            params[pair[2] || '__'] = pair[3] || '@@';
+                            params[pair[2] || '§' + i++] = pair[3] || '@@';
                             break;
                         }
                 }
-
                 if (symbol == '\\a' && (token.symbol == '\\t' || token.symbol != '\\')) {
                     token = layout.tokens.pop();
                     if (token.content)
@@ -79,29 +81,25 @@ export function lexer(wbll = '') {
                 layout.tokens.push(token);
             }
         } catch (err) {
-            console.log(err, JSON.stringify(expression));
+            throw err;
         }
     }
     return layout;
 }
 
+// TODO: Used by symbols v and k to set session variables, how about replacing v and k with p? 
 function evaluate(req, expression) {
-    // TODO: if = then javascript
     return getValue(req, expression);
 }
 
-function getName(req, name) {
-    try {
-        return name || req.dataset[req.row][req.col] || `Field${req.col}`;
-    } catch {
-        return `Field${req.col}`;
-    }
+function getName(req, name = '') {
+    return replacePlaceholders(name, req.exposed, req.dataset[req.row]) || Object.keys(req.dataset[req.row])[req.col] || `Field${req.col}`;
 }
 
 export function getValue(req, key) {
     try {
         if (key === '@@')
-            return req.dataset[req.row][Object.keys(req.dataset[req.row])[req.col++]] || '';
+            return Object.values(req.dataset[req.row])[req.col++] || '';
         if (key.startsWith('@@')) // dataset, req
             return req.dataset[req.row][key.replace('@@', '')] || '';
         if (key.startsWith('@')) // data
@@ -114,10 +112,10 @@ export function getValue(req, key) {
     }
 }
 
-function renderAttributes(req, attrs) {
+export function renderAttributes(req, attrs) {
     let html = '';
     if (attrs)
-        for (let attr of Object.keys(attrs))
+        for (let attr in attrs)
             html += ` ${attr}="${attr === 'name' ? attrs[attr] : encode(getValue(req, attrs[attr]))}"`;
     return html;
 }
@@ -127,44 +125,62 @@ function renderParameters(req, uri, params) {
     try {
         url = new URL(getValue(req, uri));
 
+        url.href = replacePlaceholders(url.href, req.exposed, req.dataset[req.row]);
+
         if (params)
-            for (let param of Object.keys(params))
-                url.searchParams.set(param, getValue(req, params[param]));
+            for (let param in params)
+                url.searchParams.set(param[0] === '§' ? Object.keys(req.dataset[req.row])[req.col] : param, getValue(req, params[param]));
         return url.href;
     } catch {
-        url = new URL('http://stw.local' + uri);
+        url = new URL('https://stw.local/' + uri);
         if (params)
-            for (let param of Object.keys(params))
-                url.searchParams.set(param, getValue(req, params[param]));
-        return url.href.replace('http://stw.local', '');
+            for (let param in params)
+                url.searchParams.set(param[0] === '§' ? Object.keys(req.dataset[req.row])[req.col] : param, getValue(req, params[param]));
+        return url.href.replace('https://stw.local/', '');
     }
 }
 
-export function renderer(req, contentId, layout) {
+// flags = CELL|THEAD|TABLE|RECURSE
+export function renderer(req, contentId, layout, flags = 0b0000) {
     if (typeof layout == 'string')
         return layout;
 
-    req.cols = [];
-    req.col = 0;
-    req.row = req.row || 0;
+    if ((flags & 0b0001) == 0b0000) {
+        req.col = 0;
+        req.row = req.row || 0;
+    }
 
-    let html = '', str;
+    if (!layout.tokens.length)
+        Object.keys(req.dataset[0]).forEach(i => {
+            layout.tokens.push({ symbol: 'l', args: [] });
+            layout.tokens.push({ symbol: 'f', args: [] });
+            if ((flags & 0b0110) != 0b0110) layout.tokens.push({ symbol: '\\r', args: [] });
+        });
+
+    let html = '', thead = '', str;
     for (let token of layout.tokens)
         try {
             switch (token.symbol) {
+                case '<':
+                    req.col -= req.col ? 1 : 0;
+                    break;
+                case '>':
+                    req.col++;
+                    break;
                 case 'a':
                     str = token.args ? token.args[0] : '@@';
-                    html += `<a href="${renderParameters(req, str, token.params)}" onclick="stwHref(event)"${renderAttributes(req, token.attrs)}>
-                        ${renderer(req, contentId, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [str] }] })}</a>`;
+                    html += `<a href="${renderParameters(req, str, token.params)}" ${renderAttributes(req, token.attrs)}>
+                        ${renderer(req, contentId, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [str] }] }, 0b0001)}</a>`;
                     break;
                 case 'b':
+                    // TODO: Table buttons?
                     if (token.args)
                         str = token.args[0] == '.' ? req.data.url.pathname : token.args[0];
                     else
                         str = '@@';
                     token.params.stwHandler = contentId;
-                    html += `<button formaction="${renderParameters(req, str, token.params)}" onclick="stwSubmit(event)"${renderAttributes(req, token.attrs)}>
-                        ${renderer(req, contentId, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [''] }] } || str)}</button>`;
+                    html += `<button formaction="${renderParameters(req, str, token.params)}" ${renderAttributes(req, token.attrs)}>
+                        ${renderer(req, contentId, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [''] }] } || str, 0b0001)}</button>`;
                     break;
                 case 'c':
                     token.attrs = token.attrs || {};
@@ -193,7 +209,7 @@ export function renderer(req, contentId, layout) {
                 case 'f':
                     str = getValue(req, '@@');
                     if (!token.attrs)
-                        html += str;
+                        html += ' ' + str;
                     else
                         html += `<span${renderAttributes(req, token.attrs)}>${str}</span>`;
                     break;
@@ -207,7 +223,13 @@ export function renderer(req, contentId, layout) {
                     break;
                 case 'l':
                     str = getName(req, token.args[0]);
-                    html += `<label${renderAttributes(req, token.attrs)}>${str}</label>`;
+                    if ((flags & 0b0010) == 0b0000) // Not table
+                        html += `<label${renderAttributes(req, token.attrs)}>${str}</label>`;
+                    else if ((flags & 0b0110) == 0b0110) // thead
+                        thead += `<th${renderAttributes(req, token.attrs)}>${str}</th>`;
+                    else // cell
+                        html += ((flags & 0b1000) == 0b1000 ? '</td>' : '') + `<td${renderAttributes(req, token.attrs)}>`;
+                    flags |= 0b1000;
                     break;
                 case 'm':
                     token.attrs = token.attrs || {};
@@ -258,8 +280,9 @@ export function renderer(req, contentId, layout) {
                     break;
             }
         } catch (err) {
-            console.log(err, JSON.stringify(token));
-            break;
+            throw err;
         }
-    return html;
+    if ((flags & 0b0110) == 0b0110)
+        return thead;
+    return html + ((flags & 0b1000) == 0b1000 ? '</td>' : '');
 }

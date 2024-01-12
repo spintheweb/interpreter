@@ -9,7 +9,7 @@ import Content from '../stwElements/Content.mjs';
 
 // All client site code that is visible in the page is concatenated
 export default class ClientSideCode extends Content {
-	constructor(params = {}) {
+	constructor(params) {
 		super(params);
 		delete this.cssClass;
         delete this.sequence;
@@ -19,7 +19,7 @@ export default class ClientSideCode extends Content {
 	}
 
 	render(req, res, next) {
-		if (this.granted(req.session.roles) & 0b01) {
+		if (this.granted(req.session.stwRoles) & 0b01) {
 			let fragment = this.layout.js;
 
 			if (this.dsn) {

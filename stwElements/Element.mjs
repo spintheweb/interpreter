@@ -6,22 +6,19 @@
 import { WEBBASE } from './Miscellanea.mjs';
 import Base from './Base.mjs';
 import Area from './Area.mjs';
-import Unit from './Unit.mjs';
+import Page from './Page.mjs';
 import Link from './Link.mjs';
 
-/*
-const contents = {};
-fs.readdirSync(path.join(process.cwd(), 'contents')).forEach(async module => {
-    if (module.endsWith('.mjs'))
-        contents[module.replace('.mjs', '')] = await import('../stwContents/' + module);
-});
-*/
 import Breadcrumbs from '../stwContents/Breadcrumbs.mjs';
 import Languages from '../stwContents/Languages.mjs';
 import Text from '../stwContents/Text.mjs';
 import Menu from '../stwContents/Menu.mjs';
 import Tabs from '../stwContents/Tabs.mjs';
 import Group from '../stwContents/Group.mjs';
+import List from '../stwContents/List.mjs';
+import Table from '../stwContents/Table.mjs';
+import Tree from '../stwContents/Tree.mjs';
+import Form from '../stwContents/Form.mjs';
 
 const contents = {
     Text: Text, // Default content
@@ -29,7 +26,11 @@ const contents = {
     Languages: Languages,
     Menu: Menu,
     Tabs: Tabs,
-    Group: Group
+    Group: Group,
+    List: List,
+    Table: Table,
+    Tree: Tree,
+    Form: Form
 }
 
 export function createElement(parent, element) {
@@ -38,8 +39,8 @@ export function createElement(parent, element) {
     switch (element.type) {
         case 'Area':
             return new Area(element);
-        case 'Unit':
-            return new Unit(element);
+        case 'Page':
+            return new Page(element);
         case 'Link':
             return new Link(element)
         case 'Content':

@@ -8,7 +8,7 @@ import Base from '../stwElements/Base.mjs';
 import Content from '../stwElements/Content.mjs';
 
 export default class Breadcrumbs extends Content {
-	constructor(params = {}) {
+	constructor(params) {
 		super(params);
 		delete this.dsn;
 		delete this.query;
@@ -18,14 +18,14 @@ export default class Breadcrumbs extends Content {
 
 	render(req, res, next) {
 		return super.render(req, res, next, () => {
-			let lang = req.session.lang;
-			let element = Base[WEBBASE].index.get(res.locals.cookie.stwUnit);
+			let lang = req.session.stwLanguage;
+			let element = Base[WEBBASE].index.get(res.locals.cookie.stwPage);
 			let fragment = element.localizedName(lang);
 
 			for (element = element.parent; element.type != 'Webo'; element = element.parent)
 				fragment = `<a href="${element.permalink(lang) || '/'}">${element.localizedName(lang)}</a>/${fragment}` 
 
-			return `<nav ${this.CSSClass}">/${fragment}</nav>`;
+			return `<nav ${this.CSSClass(req.exposed.stwDeveloper ? 'stwInspectable' : '')}">/${fragment}</nav>`;
 		});
 	}
 }

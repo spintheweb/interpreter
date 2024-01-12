@@ -32,3 +32,34 @@ export function pickText(langs, texts = {}) {
         return texts[langs[1]];
     return texts[0] ? texts[0] : '';
 }
+
+// TODO: remove trailing or leading word ... '' ""
+// Placeholders that start with a single @ can reference cookies or query string keys, these are termed exposed parameters
+// Placeholders that start with a double @@ can reference data source fields, session, application or server variables, these are termed unexposed parameters
+export function replacePlaceholders(text, exposed, unexposed) {
+    text = text.replace(/(\b\s*|\W\s*)?(\[.*?\])(\s*\b|\s*\W)?/g, function (match, p1, p2, p3, offset, s) {
+        let flag = false;
+        match = match.replace(/(\/?@@?\*?[_a-z][a-z0-9_.$]*)/ig, function (match, p1, offset, s) {
+            if (p1.charAt(0) === '/') return p1.substr(1);
+            if (p1.charAt(1) === '@') {
+                if (unexposed[p1.substr(1)]) {
+                    flag = true;
+                    return unexposed[p1.substr(2)] instanceof Date ? unexposed[p1.substr(2)].toJSON() : unexposed[p1.substr(2)];
+                }
+            } else if (exposed[p1.substr(1)]) {
+                flag = true;
+                return exposed[p1.substr(1)] instanceof Date ? exposed[p1.substr(1)].toJSON() : exposed[p1.substr(1)];
+            }
+            return '';
+        });
+        if (flag) return p1 + p2.substr(1, p2.length - 2) + p3; // Remove []
+        if (p3) return p1;
+        return '';
+    });
+
+    return text.replace(/(\/?@@?\*?[_a-z][a-z0-9_.$]*)/ig, function (match, p1, offset, s) {
+        if (p1.charAt(0) === '/') return p1.substr(1);
+        if (p1.charAt(1) === '@') return (unexposed[p1.substr(2)] instanceof Date ? unexposed[p1.substr(2)].toJSON() : unexposed[p1.substr(2)]) || '';
+        return (exposed[p1.substr(1)] instanceof Date ? exposed[p1.substr(1)].toJSON() : exposed[p1.substr(1)]) || '';
+    });
+}

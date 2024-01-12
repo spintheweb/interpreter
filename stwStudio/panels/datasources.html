@@ -18,16 +18,18 @@
                 data-action="Expand"></i><!--TODO: interact with datasource-->
         </span>
     </h1>
-    <form>
+    <form class="stwsHideLabels" onchange="stwStudio.submitForm(event)">
         <ol>
-            <li><label>Name</label><input type="text" name="name" placeholder="Name" title="Name" pattern="[a-z]{3,}"
-                    required></li>
-            <li><label>Type</label><select name="type" required>
-                <option value="json">JSON</option>
-                <option value="xml">XML</option>
-                <option value="mssql">MS SQL Server</option>
-            </select></li>
-            <li><label>Details</label><textarea name="details" placeholder="details" title="May be actual formatted data or connection string specifications"></textarea></li>
+            <li><label><span>Name</span><input type="text" name="name" placeholder="Name" title="Name ([a-z]{3,})" pattern="[a-z]{3,}"
+                    onbeforeinput="this.dataset.value=this.value" required></label></li>
+            <li><label><span>Type</span><select name="type" required>
+                <option value="oracle">Oracle</option>
+                <option value="mysql">MySQL</option>
+                <option value="mssql">Microsoft SQL Server</option>
+                <option value="postgresql">PostgreSQL</option>
+                <option value="db2">IBM Db2</option>
+            </select></label></li>
+            <li><label><span>Config</span><textarea name="config" placeholder="config" title="Datasource connection parameters (JSON)" required></textarea></label></li>
         </ol>
     </form>
 </article>

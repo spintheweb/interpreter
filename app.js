@@ -49,17 +49,17 @@ const sessionConfig = {
 
 if (!IS_DEV) {
     app.set('trust proxy', 1);
-//    sessionConfig.cookie.secure = true;
+    //    sessionConfig.cookie.secure = true;
 }
 
 app.use(session(sessionConfig));
 app.use((req, res, next) => {
-    if (!req.session.user) {
-        req.session.user = IS_DEV ? 'developer' : 'guest';
-        req.session.roles = IS_DEV ? ['users', 'developers'] : ['guests'];
-        req.session.lang = language.pick(Base[WEBBASE].langs, req.headers['accept-language']);
-        req.session.developer = IS_DEV;
-        res.cookie('stwDeveloper', req.session.developer);
+    if (!req.session.stwUser) {
+        req.session.stwUser = IS_DEV ? 'developer' : 'guest';
+        req.session.stwRoles = IS_DEV ? ['users', 'developers'] : ['guests'];
+        req.session.stwLanguage = language.pick(Base[WEBBASE].langs, req.headers['accept-language']);
+        req.session.stwDeveloper = IS_DEV;
+        res.cookie('stwDeveloper', req.session.stwDeveloper);
     }
 
     const { headers: { cookie } } = req;
@@ -80,13 +80,13 @@ app.use('/stw', stwAuth);
 app.use('/stwStyles', stwStyles);
 
 app.get('/*', (req, res, next) => {
-    let el = Base[WEBBASE].route(req.params[0], req.session.lang);
+    let el = Base[WEBBASE].route(req.params[0], req.session.stwLanguage);
     if (el && typeof el.render === 'function')
         el.render(req, res, next);
     else
         next();
 });
-app.use(express.static(WEBO_DIR));
+app.use(express.static(WEBO_DIR, { maxAge: '1d' }));
 
 let server;
 if (settings.protocol === 'https')

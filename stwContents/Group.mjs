@@ -7,7 +7,7 @@ import { WEBBASE } from '../stwElements/Miscellanea.mjs';
 import Content from '../stwElements/Content.mjs';
 
 export default class Group extends Content {
-    constructor(params = {}) {
+    constructor(params) {
         super(params);
 		delete this.cssClass;
 

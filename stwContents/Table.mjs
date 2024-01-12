@@ -3,27 +3,37 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE } from '../stwElements/Miscellanea.mjs';
 import Content from '../stwElements/Content.mjs';
-import { renderer } from `../stwElements/WBLL`;
+import { renderer, renderAttributes } from '../stwElements/WBLL.mjs';
 
 export default class Table extends Content {
-	constructor(name, template, lang) {
-		super(name, template, lang, true);
+	constructor(params) {
+		super(params);
 	}
 
-	render(socket) {
-		return super.render(socket, (socket, template) => {
+	async render(req, res, next) {
+		return await super.render(req, res, next, () => {
 			let fragment = '<table>';
-			fragment += '<thead><tr></tr></thead><tbody>'; // TODO: Special handling of l, \t and \n symbols
-			socket.dataset.forEach(function (row, i) {
-				socket.row = i;
-				fragment += `<tr>${renderer(socket, this, template)}</tr>`;
-			});
-			fragment += '</tbody><tfoot><tr>';
-			fragment += 'This is pager space'; // TODO: Paging
-			fragment += '</tr></tfoot></table>';
-			return fragment;
+
+			// Render thead
+			fragment += `<thead><tr>${this._layout.settings.rownumber ? '<th></th>' : ''}${renderer(req, this._id, this._layout, 0b0110)}</tr></thead>`;
+			// TODO: Search row
+
+			for (let row = 0; row < req.dataset.length; ++row) {
+				req.row = row;
+
+				let rowAttr = this._layout.tokens.find(token => token.symbol == '\\A') || '';
+				if (rowAttr)
+					rowAttr = renderAttributes(req, rowAttr.attrs);
+
+				// TODO: Render break
+				// TODO: Editable row
+				fragment += `<tr${rowAttr}>${this._layout.settings.rownumber ? '<td>' + (row + 1) + '</td>' : ''}${renderer(req, this._id, this._layout, 0b0010)}</tr>`;
+			}
+			// Render tfoot
+			fragment += '<tfoot></tfoot>';
+
+			return fragment + '</table>';
 		});
 	}
 }

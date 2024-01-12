@@ -321,8 +321,8 @@ export default class Chart extends Content {
                     sr = Math.floor(0.667 * r),
                     v = (data[s].value - m) / (M - m);
 
-                if (data[s].units === undefined) data[s].units = '';
-                svg.appendChild(text(r, r, data[s].value + data[s].units, { 'font-size': Math.floor(0.333 * r) + 'px' }));
+                if (data[s].pages === undefined) data[s].pages = '';
+                svg.appendChild(text(r, r, data[s].value + data[s].pages, { 'font-size': Math.floor(0.333 * r) + 'px' }));
                 svg.appendChild(text(r, Math.floor(1.4 * r), data[s].label, { 'font-size': Math.floor(0.25 * r) + 'px' }));
                 v = 1.0 - (v - Math.floor(v));
                 let element = createSVGElement('path', {

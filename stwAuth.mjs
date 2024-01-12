@@ -18,39 +18,39 @@ router.post('/logon/:_id?', async (req, res) => {
 
     let user = users.find(user => user.enabled && user.name === req.body.user && user.pwd == decrypt(req.body.password));
     if (user) {
-        req.session.user = user.name;
-        req.session.roles = user.roles;
-        req.session.developer = user.roles.includes('developers');
-        res.cookie('stwDeveloper', req.session.developer);
+        req.session.stwUser = user.name;
+        req.session.stwRoles = user.roles;
+        req.session.stwDeveloper = user.roles.includes('developers');
+        res.cookie('stwDeveloper', req.session.stwDeveloper);
 
     } else {
-        req.session.user = 'guest';
-        req.session.roles = ['guests'];
-        req.session.developer = false;
+        req.session.stwUser = 'guest';
+        req.session.stwRoles = ['guests'];
+        req.session.stwDeveloper = false;
         res.cookie('stwDeveloper', false);
         res.statusCode = 401; // 401 Unauthorized
     }
-    res.redirect(Base[WEBBASE].index.get(req.params[1] || res.locals.cookie.stwUnit)?.permalink(req.session.lang) || '.');
+    res.redirect(Base[WEBBASE].index.get(req.params[1] || res.locals.cookie.stwPage)?.permalink(req.session.stwLanguage) || '.');
 });
 
 router.post('/logoff/:_id?', async (req, res) => {
-    req.session.user = 'guest';
-    req.session.roles = ['guests'];
-    req.session.developer = false;
+    req.session.stwUser = 'guest';
+    req.session.stwRoles = ['guests'];
+    req.session.stwDeveloper = false;
     res.cookie('stwDeveloper', false);
 
-    res.redirect(Base[WEBBASE].index.get(req.params[1] || res.locals.cookie.stwUnit)?.permalink(req.session.lang) || '.');
+    res.redirect(Base[WEBBASE].index.get(req.params[1] || res.locals.cookie.stwPage)?.permalink(req.session.stwLanguage) || '.');
 });
 
 router.post('/setpwd/:id?', async (req, res) => {
-    if (req.session.user === 'guest') {
+    if (req.session.stwUser === 'guest') {
         res.sendStatus(204); // 204 No content
         return;
     }
 
     let users = JSON.parse(fs.readFileSync(path.join(WEBO_DIR, '/.data/basicAuth.json')));
 
-    let user = users.find(user => user.enabled && user.name === req.session.user && user.pwd == decrypt(req.body.oldpwd));
+    let user = users.find(user => user.enabled && user.name === req.session.stwUser && user.pwd == decrypt(req.body.oldpwd));
     if (req.body.newpwd2 === req.body.newpwd2) {
         user.pwd = encrypt(req.body.newpwd);
     }

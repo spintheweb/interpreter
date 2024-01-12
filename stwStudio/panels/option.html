@@ -4,16 +4,16 @@
     <form onchange="stwStudio.submitForm(event)">
         <input type="hidden" name="_id">
         <ol>
-            <li><label>Permalink</label><input type="url" name="url" placeholder="permalink" title="permalink"></li>
-            <li><label>Query string</label><input type="text" name="params" placeholder="Query string (i.e. key=value)"
-                    title="Query string"></li>
-            <li><label>Name</label><input type="text" name="name" placeholder="Name" title="Name"></li>
-            <li><label>Target</label><select name="target" title="Where to display the URL">
+            <li><label><span>Permalink</span><input type="url" name="url" placeholder="permalink" title="permalink"></label></li>
+            <li><label><span>Query string</span><input type="text" name="params" placeholder="Query string (i.e. key=value)"
+                    title="Query string"></label></li>
+            <li><label><span>Name</span><input type="text" name="name" placeholder="Name" title="Name"></label></li>
+            <li><label><span>Target</span><select name="target" title="Where to display the URL">
                     <option selected>_self</option>
                     <option>_blank</option>
                     <option>_parent</option>
                     <option>_top</option>
-                </select></li>
+                </select></label></li>
         </ol>
         <div style="text-align:right; padding: 0 1em;"><button onclick="this.closest('dialog').close()">Cancel</button>&emsp;<button onclick="this.closest('dialog').close('OK')">OK</button></div>
     </form>

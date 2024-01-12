@@ -7,8 +7,8 @@ import { WEBBASE } from '../stwElements/Miscellanea.mjs';
 import Content from '../stwElements/Content.mjs';
 
 export default class Script extends Content {
-	constructor(name, template, lang) {
-		super(name, template || '', lang);
+	constructor(params) {
+		super(params);
 	}
 
 	render(socket) {

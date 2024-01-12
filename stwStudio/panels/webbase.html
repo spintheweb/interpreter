@@ -4,9 +4,9 @@
         <span>
             <!--<i class="fa-light fa-fw fa-rotate" title="Refresh" data-action="refresh"></i>&nbsp;-->
             <i class="fa-light fa-fw fa-cloud-arrow-up" title="Persist webbase" data-action="persist"></i>&nbsp;
-            <i class="fa-kit fa-fw fa-light-folder-grid-circle-plus" title="New area" data-action="Area"></i>&nbsp;
-            <i class="fa-kit fa-light-rectangles-mixed-circle-plus" title="New unit" data-action="Unit"></i>&nbsp;
-            <i class="fa-kit fa-fw fa-light-square-circle-plus" title="New content" data-action="Content"></i>
+            <i class="fa-kit fa-fw fa-light-folder-circle-plus" title="New area" data-action="Area"></i>&nbsp;
+            <i class="fa-kit fa-light-file-circle-plus" title="New page" data-action="Page"></i>&nbsp;
+            <i class="fa-kit fa-fw fa-light-rectangle-circle-plus" title="New content" data-action="Content"></i>
             <!--<i class="fa-light fa-fw fa-trash-can" title="Show/Hide trashed nodes" data-action="trashed"></i>-->
         </span>
     </h1>
@@ -26,82 +26,87 @@
         <input type="hidden" name="type">
         <input type="hidden" name="status">
         <ol>
-            <li><label>Name</label><input type="text" name="name" placeholder="Name" title="Name" required></li>
-            <li><label>Slug</label><input type="text" name="slug" placeholder="Slug" title="Slug"
-                    style="font-style: italic;"></li>
-
-            <li><label>Domain</label><input type="url" name="domain" placeholder="e.g. domain.com" title="Domain"
-                    style="font-style: italic;" required></li>
-            <li><label>Icon</label><input type="text" name="icon" placeholder="icon" title="Icon"></li>
-            <li><label>Image</label><input type="text" name="image" placeholder="image" title="Image"></li>
-
-            <li><label>Template</label><input type="text" name="template" placeholder="Template" title="Template"
-                    required></li>
-            <li><label></label><input type="text" name="visible" placeholder="callback():Boolean"
-                    title="Programmatic visibility"></li>
-
-            <li><label>Main unit</label>
-                <div style="display: flex; align-items: center;">
-                    <input name="permalink" title="Main unit" readonly>
-                    <input type="hidden" name="mainunit">
-                    <i class="fa-light fa-fw fa-bars" style="margin-left: 0.25em; cursor: pointer;"></i>
-                </div>
+            <li><label><span>Name</span><input type="text" name="name" placeholder="Name" title="Name" required></label>
             </li>
+            <li><label><span>Slug</span><input type="text" name="slug" placeholder="Slug" title="Slug"
+                        style="font-style: italic;"></label></li>
 
-            <li><label>Default language</label><select name="lang" title="Default language" required>
-                    <option value="de">deutsch</option>
-                    <option value="en">english</option>
-                    <option value="es">español</option>
-                    <option value="fr">français</option>
-                    <option value="it">italiano</option>
-                </select></li>
-            <li><label>Documentation</label>
-                <textarea name="description" placeholder="description" title="Description"></textarea>
-                <input type="text" name="keywords" placeholder="keywords" title="Keywords">
-            </li>
+            <li><label><span>Domain</span><input type="url" name="domain" placeholder="e.g. domain.com" title="Domain"
+                        style="font-style: italic;" required></label></li>
+            <li><label><span>Icon</span><input type="text" name="icon" placeholder="icon" title="Icon"></label></li>
+            <li><label><span>Image</span><input type="text" name="image" placeholder="image" title="Image"></label></li>
+
+            <li><label><span>Template</span><input type="text" name="template" placeholder="Template" title="Template"
+                        required></label></li>
+            <li><label><span>Visibility</span><input type="text" name="visible" placeholder="callback():Boolean"
+                        title="Programmatic visibility"></label></li>
+
+            <li><label><span>Main page</span>
+                    <div style="display: flex; align-items: center;">
+                        <input name="permalink" title="Main page" readonly>
+                        <input type="hidden" name="mainpage">
+                        <i class="fa-light fa-fw fa-bars" style="margin-left: 0.25em; cursor: pointer;"></i>
+                    </div>
+                </label></li>
+
+            <li><label><span>Default language</span><select name="lang" title="Default language" required>
+                        <option value="de">deutsch</option>
+                        <option value="en">english</option>
+                        <option value="es">español</option>
+                        <option value="fr">français</option>
+                        <option value="it">italiano</option>
+                    </select></label></li>
+            <li><label><span>Documentation</span>
+                    <textarea name="description" placeholder="description" title="Description"></textarea>
+                    <input type="text" name="keywords" placeholder="keywords" title="Keywords">
+                </label></li>
 
             <li>
-                <label>Position</label>
-                <div style="display: grid; grid-template-columns: 1fr auto 5em;">
-                    <input type="text" name="section" placeholder="Section" title="Section">&nbsp;
-                    <input type="number" name="sequence" placeholder="Seq." step="0.1" title="Sequence">
-                </div>
+                <label><span>Position</span>
+                    <div style="display: grid; grid-template-columns: 1fr auto 5em;">
+                        <input type="text" name="section" placeholder="Section" title="Section">&nbsp;
+                        <input type="number" name="sequence" placeholder="Seq." step="0.1" title="Sequence">
+                    </div>
+                </label>
             </li>
 
-            <li><label>CSS class</label><input type="text" name="cssClass" placeholder="CSS class" title="CSS class">
-            </li>
-            <li><label>Type</label><select name="subtype" title="Type">
-                    <option value="Text" data-value="-100" selected>Text</option>
-                    <option value="-500" disabled>Form</option>
-                    <option value="-300" disabled>Table</option>
-                    <option value="-200" disabled>List</option>
-                    <option value="-400" disabled>Tree</option>
-                    <option value="Tabs" data-value="-105">Tabs</option>
-                    <option value="Group" data-value="-106">Group</option>
-                    <option value="-800" disabled>Calendar</option>
-                    <option value="-600" disabled>Graph</option>
-                    <option value="" disabled>Map</option>
-                    <option value="Menu" data-value="-102">Menu</option>
-                    <option value="-101" disabled>Area links</option>
-                    <option value="-103" disabled>Indexed links</option>
-                    <option value="Breadcrumbs" data-value="-104">Breadcrumbs</option>
-                    <option value="-601" disabled>Image map</option>
-                    <option value="-700" disabled>Shortcut</option>
-                    <option value="-902" disabled>Client side code</option>
-                    <option value="-901" disabled>Server side code</option>
-                    <option value="Languages">Languages</option>
-                </select></li>
-            <li><label>Data source</label><select name="dsn" title="Datasource">
-                    <option value="" disabled selected>datasource</option>
-                </select></li>
+            <li><label><span>SS class</span><input type="text" name="cssClass" placeholder="CSS class"
+                        title="CSS class">
+                </label></li>
+            <li><label><span>Type</span><select name="subtype" title="Type">
+                        <option value="Text" data-value="-100" selected>Text</option>
+                        <option value="Form" data-value="-500">Form</option>
+                        <option value="Table" data-value="-300">Table</option>
+                        <option value="List" data-value="-200">List</option>
+                        <option value="Tree" data-value="-400">Tree</option>
+                        <option value="Tabs" data-value="-105">Tabs</option>
+                        <option value="Group" data-value="-106">Group</option>
+                        <option value="-800" disabled>Calendar</option>
+                        <option value="-600" disabled>Graph</option>
+                        <option value="" disabled>Map</option>
+                        <option value="Menu" data-value="-102">Menu</option>
+                        <option value="-101" disabled>Area links</option>
+                        <option value="-103" disabled>Indexed links</option>
+                        <option value="Breadcrumbs" data-value="-104">Breadcrumbs</option>
+                        <option value="-601" disabled>Image map</option>
+                        <option value="-700" disabled>Shortcut</option>
+                        <option value="-902" disabled>Client side code</option>
+                        <option value="-901" disabled>Server side code</option>
+                        <option value="Languages">Languages</option>
+                    </select></label></li>
+            <li><label><span>Data source</span><select name="dsn" title="DSN">
+                        <option value="" selected></option>
+                    </select></label></li>
             <li><textarea name="query" placeholder="Query" title="Query"></textarea>
                 <input type="text" name="params" placeholder="Parameters (i.e. key=value)" title="Parameters">
             </li>
-            <li><label>Layout</label><textarea name="layout" placeholder="Layout" title="Layout"></textarea></li>
+            <li><label><span>Layout</span><textarea name="layout" placeholder="Layout"
+                        title="Layout"></textarea></label></li>
         </ol>
     </form>
 </article>
-<article class="stwsTree stwsHandleHierarchy stwsAccordion" id="options" ondblclick="stwStudio.manageOptions(event)" onkeydown="stwStudio.manageOptions(event)">
+<article class="stwsTree stwsHandleHierarchy stwsAccordion" id="options" ondblclick="stwStudio.manageOptions(event)"
+    onkeydown="stwStudio.manageOptions(event)">
     <h1><i class="fa-light fa-fw fa-angle-right"></i> options</h1>
     <ol style="display: none; max-height: 10em;"></ol>
 </article>
@@ -110,8 +115,7 @@
     <ol style="display: none; max-height: 10em;"></ol>
 </article>
 <div>&nbsp;</div>
-<!--
-<nav id="contextMenu" class="stwsMenu stwPopup" style="position:absolute; top: 100px; left: 100px; z-index: 10;">
+<!--nav id="contextMenu" class="stwsMenu stwPopup" style="position:absolute; top: 100px; left: 100px; z-index: 10;">
     <ol>
         <li>
             <div><span>Open</span><span>CTRL+O</span></div>
@@ -132,5 +136,4 @@
             <div><span>Properties</span><span>CTRL+P</span></div>
         </li>
     </ol>
-</nav>
--->
+</nav-->

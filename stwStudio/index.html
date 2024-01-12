@@ -43,7 +43,8 @@
     <section class="stwsPanel"></section>
     <section class="stwsTabs">
         <div onclick="stwStudio.manageTab(event)">
-            <span tabindex="0" role="link" class="stwsTabLabel" title="Browse" selected>Browse</span></div>
+            <span id="BrowseTab" tabindex="0" role="link" class="stwsTabLabel" title="Browse" selected>Browse</span>
+        </div>
         <div class="stwsTab" selected>
             <div class="stwsBrowsebar" onclick="stwStudio.manageBrowse(event)">
                 <i tabindex="0" role="link" class="fa-light fa-fw fa-arrow-left" title="Back" data-action="back"></i>
@@ -51,11 +52,11 @@
                     data-action="forward"></i>
                 <i tabindex="0" role="link" class="fa-light fa-fw fa-rotate-right" title="Refresh (F5)"
                     data-action="refresh"></i>
-                <i tabindex="0" role="link" class="fa-kit fa-fw fa-light-sitemap-circle-arrow-left" title="Locate in webbase (CTRL+L)"
-                    data-action="locate"></i>
+                <i tabindex="0" role="link" class="fa-kit fa-fw fa-light-page-magnifying-glass"
+                    title="Inspect page in webbase (CTRL+I)" data-action="inspect"></i>
                 <i tabindex="0" role="link" class="fa-light fa-fw fa-house-blank" title="Home" data-action="home"></i>
                 <input id="BrowseURL" type="url" name="url" placeholder="URL" onchange="stwStudio.setURL(event)"
-                    pattern="(http|https)://*" require>
+                    require>
             </div>
             <iframe id="Browse" title="Webo"></iframe>
         </div>
@@ -63,11 +64,11 @@
     <section id="statusbar" class="stwsStatusbar"><span></span><span></span><span></span></section>
     <dialog id="stwsPopup"></dialog>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.0/ace.min.js"
-        integrity="sha512-e1Y1L6lY7YKDe+zseybZUG8MYUMLA1jxMQAPJqRYiA4L8NPaXfW+h52QQTLurHW4w3b21LxH/u1sZYMBtoB70w=="
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.min.js"
+        integrity="sha512-v4FCpndHUTAcQ0BeBMQMj7+JFXJYD2ABCX3wUcnWI18lKCr7DpqcaGXLUyooBbnCtTzLfsoXef40p3EaGHPRFQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.0/ext-modelist.min.js"
-        integrity="sha512-eLnWwyo8+10FUmWGbZviLMhmvevH45+572B3Bf1gwullCjtgZff1yAXtM17v6F5e4zNw+8v7VbdQQa097xHpBw=="
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ext-modelist.min.js"
+        integrity="sha512-f032zKWc7iSmjYcvUiIlFSbLAOtJTO3ej0Ng+Sjc6jg9sNGlRzOZuJ1vBZAPId9awEmViTqYpB83OshXjTx5BQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!--TODO: https://medium.com/@jackub/writing-custom-ace-editor-mode-5a7aa83dbe50-->
 </body>

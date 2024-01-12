@@ -3,15 +3,16 @@
  * Copyright(c) 2017 Giancarlo Trevisan
  * MIT Licensed
  */
-import { WEBBASE, pickText } from './Miscellanea.mjs';
+import { WEBBASE, pickText, replacePlaceholders } from './Miscellanea.mjs';
 import Base from './Base.mjs';
 import { lexer, getValue, renderer } from './WBLL.mjs';
 import { createElement } from './Element.mjs';
+import Execute from '../stwData.mjs';
 
 export default class Content extends Base {
     static #behavior = false;
 
-    constructor(params = {}) {
+    constructor(params) {
         super(params);
         delete this.children;
 
@@ -58,8 +59,9 @@ export default class Content extends Base {
         return this;
     }
 
-    get CSSClass() {
-        return this.cssClass ? `class="${this.cssClass}"` : '';
+    CSSClass(cssClass = '') {
+        cssClass = this.cssClass + ' ' + cssClass;
+        return cssClass.trimEnd() ? `class="${cssClass}"` : '';
     }
     Sequence(value) {
         this.sequence = isNaN(value) ? null : value;
@@ -72,42 +74,57 @@ export default class Content extends Base {
             return 0;
         });
     }
-    Datasource(name, query, params) {
-        this.Query(query);
-        this.Params(params);
-        if (typeof name === 'undefined')
-            return this.datasource;
-        this.datasource = name;
-        return this;
-    }
-    get Query() {
-        // TODO: Preprocess query
-        return this.query;
-    }
-    Params(name) {
-        // TODO: Preprocess query
-        if (typeof value === 'undefined') return this.params;
-        this.params = value;
-        return this;
-    }
     add() {
         return null;
     }
-    async getData(req, callback) { // TODO: Request data asynchronously
-        if (typeof this.query == 'function')
-            return this.query(req);
-        return JSON.parse(this.query || '[{}]');
+    async getData(req) {
+        let data = [{}];
+        if (this.dsn) {
+            try {
+                data = await Execute(Base[WEBBASE].datasources[this.dsn], replacePlaceholders(this.query, req.exposed, req.unexposed));
+                data = data[0];
+            }
+            catch (err) {
+                req.session.err = err;
+            }
+        }
+        return data;
     }
+    showError(req, res) {
+        let body = `<i class="fal fa-fw fa-bug" title="CONTENT: ${this.permalink(req.session.stwLanguage)}"></i>`;
+        if (req.exposed.stwDeveloper) {
+            body = `CONTENT: ${this.permalink(req.session.stwLanguage)}`;
+            for (let property in req.session.err)
+                body += `\n${property.toUpperCase()}: ${req.session.err[property]}`;
+            body = `<i role="inspector" data-id="${this._id}" class="fa-kit fa-fw fa-light-bug-magnifying-glass stwInspector" title="${body}" style="position:relative"></i>`
+        }
+        delete req.session.err;
+
+        // 206 Partial Content
+        res.status(206).send({ id: this._id, section: this.section, sequence: this.sequence, body: body });
+    }
+
     async render(req, res, next, body) {
         let timestamp = Date.now();
 
-        body = body || this.renderRow;
+        body = body || renderer;
 
         let fragment = '';
-        if (this.granted(req.session.roles) & 0b01) {
-            req.dataset = await this.getData(req); // TODO: Retrieve data asynchronously
+        if (this.granted(req.session.stwRoles) & 0b01) {
+            req.exposed = Object.assign(res.locals.cookie, req.query);
+            req.unexposed = Object.assign(req.session); // TODO: Add Application parameters
 
-            this._layout = lexer(pickText([req.session.lang, Base[WEBBASE].lang], this.layout));
+            req.row = 0;
+            req.dataset = await this.getData(req);
+
+            if (req.session.err) {
+                this.showError(req, res, next);
+                return;
+            }
+
+            if (!this._layout)
+                Object.defineProperty(this, '_layout', { enumerable: false, writable: true });
+            this._layout = lexer(pickText([req.session.stwLanguage, Base[WEBBASE].lang], this.layout));
 
             if (typeof this._layout === 'object') {
                 // TODO: Evaluate layout.settings
@@ -126,22 +143,17 @@ export default class Content extends Base {
             } else
                 fragment = body(req, this._layout);
 
+            res.set('Content-Type', 'text/html');
+            res.set('X-Content-Type-Options', 'nosniff');
             res.set('Cache-Control', 'max-age=0, no-store');
-            res.send({ id: this._id, section: this.section, sequence: this.sequence, body: `<article id="${this._id}" ${this.CSSClass} data-ms="${Date.now() - timestamp}ms" data-seq="${this.sequence}">${fragment}</article>` });
+
+            res.send({ id: this._id, section: this.section, sequence: this.sequence, body: `<article id="${this._id}" ${this.CSSClass(req.exposed.stwDeveloper ? 'stwInspectable' : '')} data-ms="${Date.now() - timestamp}ms" data-seq="${this.sequence}">${fragment}</article>` });
 
         } else
             res.sendStatus(204); // 204 No content
     }
-    renderRow(req, contentId, layout) {
-        if (typeof layout === 'object')
-            return renderer(req, contentId, layout);
-        else
-            return layout;
-    }
 
-    /*
-    // TODO: If developer show content info and rendering time
-    log((new Date) - stopwatch, "time");
-    log(new Date, "time");
-    */
+    renderRor(req) {
+        return renderer(req, this._id, this._layout);
+    }
 }

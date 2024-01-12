@@ -1,20 +1,29 @@
 :root {
     font-family: sans-serif;
     font-size: 10pt;
+    -webkit-user-select: none;
+    user-select: none;
 
     --maincolor: #ff004c;
     --mainhovercolor: #cc003d;
-    --light: hsla(0, 0%, 59%, 0.4);
-    --padding: 0.25em 0.5em;
-    --input-height: 1.5em;
-    --hideLabels: none;
+    --lightcolor: hsla(0, 0%, 59%, 0.4);
     --menubackcolor: black;
     --menuforecolor: white;
     --menuhovercolor: #cc003d;
+    --errorcolor: red;
+
+    --padding: 0.25em 0.5em;
+    --input-height: 1.5em;
+    --hideLabels: none;
 }
 
 [tabindex="0"]:focus-within {
     outline: 0;
+}
+
+input:invalid, select:invalid, textarea:invalid {
+    outline-color: var(--errorcolor);
+    border-color: var(--errorcolor);
 }
 
 .maincolor:hover {
@@ -51,7 +60,7 @@ body {
     margin: 0;
 }
 
-form.stwsHideLabels label {
+form.stwsHideLabels label span {
     display: var(--hideLabels);
 }
 
@@ -62,7 +71,7 @@ li[selected]>div {
 
 .stwsTabLabel[selected] {
     border-top: medium solid var(--maincolor);
-    border-right: thin solid var(--light);
+    border-right: thin solid var(--lightcolor);
 }
 
 .stwsPanels i {
@@ -150,7 +159,7 @@ body {
     min-width: 40em;
     min-height: 10em;
     padding: 0 0 1em 0;
-    border: thin solid var(--light);
+    border: thin solid var(--lightcolor);
 }
 
 #stwsPopup h1 {
@@ -172,7 +181,7 @@ body {
 }
 
 .stwsPanel h1:not(:has(i.fa-nothing)) {
-    border-top: thin solid var(--light);
+    border-top: thin solid var(--lightcolor);
 }
 
 .stwsPanel h1 {
@@ -191,8 +200,8 @@ body {
     position: relative;
     display: grid;
     grid-template-rows: 1fr auto auto;
-    border-left: thin solid var(--light);
-    border-right: thin solid var(--light);
+    border-left: thin solid var(--lightcolor);
+    border-right: thin solid var(--lightcolor);
 }
 
 .stwsPanel:not(:empty) {
@@ -211,7 +220,7 @@ body {
 }
 
 .stwsPanel tr:hover {
-    background-color: var(--light);
+    background-color: var(--lightcolor);
     cursor: pointer;
 }
 
@@ -234,7 +243,7 @@ body {
 
 .stwsBrowsebar>i:hover,
 h1>span>i:hover {
-    background-color: var(--light) !important;
+    background-color: var(--lightcolor) !important;
     cursor: pointer;
 }
 
@@ -257,7 +266,7 @@ h1>span>i:hover {
 
 .stwsTabLabel {
     border-top: medium solid transparent;
-    border-right: thin solid var(--light);
+    border-right: thin solid var(--lightcolor);
     display: inline-block;
     padding: 0.55em 1em;
     white-space: nowrap;
@@ -274,7 +283,7 @@ h1>span>i:hover {
     grid-template-rows: auto 1fr;
     margin: 0 0;
     vertical-align: middle;
-    border-top: thin solid var(--light);
+    border-top: thin solid var(--lightcolor);
     padding-top: 0.25em;
 }
 
@@ -326,7 +335,6 @@ h1>span>i:hover {
     font-family: var(--font-family);
     font-size: inherit;
     min-height: calc(3 * var(--input-height));
-    border: thin solid;
 }
 
 .stwsForm li>label[for] {
@@ -391,38 +399,47 @@ li[data-type]>div>span:nth-child(2)::before {
 
 li[data-type=Webo]>div>span:nth-child(2)::before {
     content: "\f0c2";
+    width:1em;
 }
 
 li[data-type=Area]>div>span:nth-child(2)::before {
-    content: "\e188";
+    content: "\f07b";
+    width:1em;
 }
 
 li[data-type=dir]>div>span:nth-child(2)::before {
     content: "\f07b";
+    width:1em;
 }
 
-li[data-type=Unit]>div>span:nth-child(2)::before {
-    content: "\e323";
+li[data-type=Page]>div>span:nth-child(2)::before {
+    content: "\f15b";
+    width:1em;
 }
 
 li[data-type=file]>div>span:nth-child(2)::before {
     content: "\f15b";
+    width:1em;
 }
 
 li[data-type^=Content]>div>span:nth-child(2)::before {
-    content: "\f0c8";
+    content: "\f2fa";
+    width:1em;
 }
 
 li[data-type=Group]>div>span:nth-child(2)::before {
     content: "\f0c0";
+    width:1em;
 }
 
 li[data-type=role]>div>span:nth-child(2)::before {
     content: "\f21d";
+    width:1em;
 }
 
 li[data-type=ds]>div>span:nth-child(2)::before {
     content: "\f1c0";
+    width:1em;
 }
 
 .stwsMenu nav {
@@ -432,6 +449,7 @@ li[data-type=ds]>div>span:nth-child(2)::before {
 }
 
 .stwsMenu nav ol {
+    list-style-type: none;
     display: flex;
     position: relative;
     z-index: 1;
@@ -532,5 +550,5 @@ li[data-type=ds]>div>span:nth-child(2)::before {
 
 #searchMode span:hover,
 #replaceMode span:hover {
-    background-color: var(--light);
+    background-color: var(--lightcolor);
 }
