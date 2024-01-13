@@ -19,6 +19,7 @@ import List from '../stwContents/List.mjs';
 import Table from '../stwContents/Table.mjs';
 import Tree from '../stwContents/Tree.mjs';
 import Form from '../stwContents/Form.mjs';
+import Calendar from '../stwContents/Calendar.mjs';
 
 const contents = {
     Text: Text, // Default content
@@ -30,7 +31,8 @@ const contents = {
     List: List,
     Table: Table,
     Tree: Tree,
-    Form: Form
+    Form: Form,
+    Calendar: Calendar
 }
 
 export function createElement(parent, element) {

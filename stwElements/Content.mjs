@@ -118,13 +118,19 @@ export default class Content extends Base {
             req.dataset = await this.getData(req);
 
             if (req.session.err) {
-                this.showError(req, res, next);
+                this.showError(req, res);
                 return;
             }
 
-            if (!this._layout)
-                Object.defineProperty(this, '_layout', { enumerable: false, writable: true });
-            this._layout = lexer(pickText([req.session.stwLanguage, Base[WEBBASE].lang], this.layout));
+            if (!this._layout) // lex once!
+                try {
+                    Object.defineProperty(this, '_layout', { enumerable: false, writable: true });
+                    this._layout = lexer(pickText([req.session.stwLanguage, Base[WEBBASE].lang], this.layout));
+                } catch (err) {
+                    req.session.err = { "syntax error": err.message.replace(/"/g, "''") };
+                    this.showError(req, res);
+                    return;
+                }
 
             if (typeof this._layout === 'object') {
                 // TODO: Evaluate layout.settings
@@ -153,7 +159,7 @@ export default class Content extends Base {
             res.sendStatus(204); // 204 No content
     }
 
-    renderRor(req) {
+    renderRow(req) {
         return renderer(req, this._id, this._layout);
     }
 }

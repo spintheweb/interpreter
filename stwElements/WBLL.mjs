@@ -15,7 +15,8 @@ const SYNTAX = new RegExp([
     /(?:([jJtT]))(?:\('([^]*?)'\))/,
     /\/\/.*$/,
     /\/\*[^]*(\*\/)?/,
-    /([<>])/ // TODO: Group consecutive moves
+    /([<>])/, // TODO: Group consecutive moves
+    /(?<error>[\S])/ // Anything else is an error
 ].map(r => r.source).join('|'), 'gmu');
 
 export function lexer(wbll = '') {
@@ -25,69 +26,68 @@ export function lexer(wbll = '') {
         return layout;
 
     for (let expression of wbll.matchAll(SYNTAX)) {
-        try {
-            expression = expression.filter((value, i) => (value !== undefined && i));
+        if (expression.groups.error != undefined)
+            throw new SyntaxError(expression.input.slice(0, expression.index) + ' >>>' + expression.input.slice(expression.index));;
 
-            symbol = expression[0];
-            args = [], params = undefined, attrs = undefined;
+        expression = expression.filter((value, i) => (value !== undefined && i));
 
-            if (symbol) {
-                if (symbol == '\\a' || symbol == '\\s' || symbol == '\\A') {
-                    attrs = {};
-                    for (let attr of expression[1].matchAll(/([a-zA-Z0-9-_]+)(?:=(["'])([^]*?)\2)?/gmu))
-                        attrs[attr[1]] = attr[3] || 'true';
-                    if (symbol == '\\s') {
-                        layout.settings = attrs;
-                        layout.attrs = { class: '' };
-                        continue;
-                    }
-                    if (layout.settings && symbol == '\\a' && !Object.keys(token).length) {
-                        attrs.class = attrs.class || '';
-                        layout.attrs = attrs;
-                        continue;
-                    }
-                } else if ('tTjJ'.indexOf(symbol) != -1) {
-                    args = [null, null, expression[1]];
-                } else if (expression[1]) {
-                    args = symbol == 'h' ? [null] : [];
-                    for (let arg of (expression[1] + ';').matchAll(/(?:(=?(["']?)[^]*?\2));/gmu))
-                        args.push(arg[1]);
+        symbol = expression[0];
+        args = [], params = undefined, attrs = undefined;
+
+        if (symbol) {
+            if (symbol == '\\a' || symbol == '\\s' || symbol == '\\A') {
+                attrs = {};
+                for (let attr of expression[1].matchAll(/([a-zA-Z0-9-_]+)(?:=(["'])([^]*?)\2)?/gmu))
+                    attrs[attr[1]] = attr[3] || 'true';
+                if (symbol == '\\s') {
+                    layout.settings = attrs;
+                    layout.attrs = { class: '' };
+                    continue;
                 }
-                if (expression[2] && expression[2].startsWith('p')) {
-                    params = {};
-                    let i = 0;
-                    for (let param of expression[2].matchAll(/(?:p(?:\('([^]*?)'\))?)/gmu))
-                        for (let pair of (param[1] || '').matchAll(/(([a-zA-Z0-9-_]*)(?:;((?:["']?)(?:[^])*\1))?)/gmu)) {
-                            params[pair[2] || '§' + i++] = pair[3] || '@@';
-                            break;
-                        }
+                if (layout.settings && symbol == '\\a' && !Object.keys(token).length) {
+                    attrs.class = attrs.class || '';
+                    layout.attrs = attrs;
+                    continue;
                 }
-                if (symbol == '\\a' && (token.symbol == '\\t' || token.symbol != '\\')) {
-                    token = layout.tokens.pop();
-                    if (token.content)
-                        token.content.attrs = attrs;
-                    else
-                        token.attrs = Object.assign(token.attrs || {}, attrs);
-                } else if (!token.content && 'aAbB'.indexOf(token.symbol) != -1 && 'fitvxyz'.indexOf(symbol) != -1) {
-                    token = layout.tokens.pop();
-                    token.content = { symbol: symbol, args: args, params: params, attrs: attrs };
-                } else {
-                    if (symbol == 'A') {
-                        symbol = 'a';
-                        attrs = { target: '_blank' };
-                    }
-                    token = { symbol: symbol, args: args || ['@@'], params: params, attrs: attrs };
-                }
-                layout.tokens.push(token);
+            } else if ('tTjJ'.indexOf(symbol) != -1) {
+                args = [null, null, expression[1]];
+            } else if (expression[1]) {
+                args = symbol == 'h' ? [null] : [];
+                for (let arg of (expression[1] + ';').matchAll(/(?:(=?(["']?)[^]*?\2));/gmu))
+                    args.push(arg[1]);
             }
-        } catch (err) {
-            throw err;
+            if (expression[2] && expression[2].startsWith('p')) {
+                params = {};
+                let i = 0;
+                for (let param of expression[2].matchAll(/(?:p(?:\('([^]*?)'\))?)/gmu))
+                    for (let pair of (param[1] || '').matchAll(/(([a-zA-Z0-9-_]*)(?:;((?:["']?)(?:[^])*\1))?)/gmu)) {
+                        params[pair[2] || '§' + i++] = pair[3] || '@@';
+                        break;
+                    }
+            }
+            if (symbol == '\\a' && (token.symbol == '\\t' || token.symbol != '\\')) {
+                token = layout.tokens.pop();
+                if (token.content)
+                    token.content.attrs = attrs;
+                else
+                    token.attrs = Object.assign(token.attrs || {}, attrs);
+            } else if (!token.content && 'aAbB'.indexOf(token.symbol) != -1 && 'fitvxyz'.indexOf(symbol) != -1) {
+                token = layout.tokens.pop();
+                token.content = { symbol: symbol, args: args, params: params, attrs: attrs };
+            } else {
+                if (symbol == 'A') {
+                    symbol = 'a';
+                    attrs = { target: '_blank' };
+                }
+                token = { symbol: symbol, args: args || ['@@'], params: params, attrs: attrs };
+            }
+            layout.tokens.push(token);
         }
     }
     return layout;
 }
 
-// TODO: Used by symbols v and k to set session variables, how about replacing v and k with p? 
+// TODO: Used by symbols v and k to set session variables
 function evaluate(req, expression) {
     return getValue(req, expression);
 }

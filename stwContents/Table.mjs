@@ -19,6 +19,7 @@ export default class Table extends Content {
 			fragment += `<thead><tr>${this._layout.settings.rownumber ? '<th></th>' : ''}${renderer(req, this._id, this._layout, 0b0110)}</tr></thead>`;
 			// TODO: Search row
 
+			fragment += 'tbody';
 			for (let row = 0; row < req.dataset.length; ++row) {
 				req.row = row;
 
@@ -30,6 +31,8 @@ export default class Table extends Content {
 				// TODO: Editable row
 				fragment += `<tr${rowAttr}>${this._layout.settings.rownumber ? '<td>' + (row + 1) + '</td>' : ''}${renderer(req, this._id, this._layout, 0b0010)}</tr>`;
 			}
+			fragment += '</tbody>';
+			
 			// Render tfoot
 			fragment += '<tfoot></tfoot>';
 

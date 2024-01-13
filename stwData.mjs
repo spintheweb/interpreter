@@ -13,7 +13,7 @@ export default async function Execute(datasource, command) {
         if (datasource.type === 'mysql') {
             Object.defineProperty(datasource, 'connection', {
                 enumerable: false,
-                value: await mysql.createPool(configDb)
+                value: mysql.createPool(configDb)
             });
 /*            Object.defineProperty(datasource, 'schema', {
                 enumerable: false,
@@ -55,7 +55,10 @@ export default async function Execute(datasource, command) {
                 value: await mssql.connect(configDb)
             });
 
-        } else
+        } else {
+            let err = new ReferenceError(`Connection error ${datasource.name} `);
+            throw err;
+        }
             return [[{}], [{}]];
     }
 

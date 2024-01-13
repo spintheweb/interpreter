@@ -4,6 +4,7 @@
  * MIT Licensed
  */
 import Content from '../stwElements/Content.mjs';
+import { renderAttributes } from '../stwElements/WBLL.mjs';
 
 export default class List extends Content {
 	constructor(params) {
