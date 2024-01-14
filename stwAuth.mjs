@@ -20,14 +20,14 @@ router.post('/logon/:_id?', async (req, res) => {
     if (user) {
         req.session.stwUser = user.name;
         req.session.stwRoles = user.roles;
-        req.session.stwDeveloper = user.roles.includes('developers');
-        res.cookie('stwDeveloper', req.session.stwDeveloper);
+        req.session.stwIsDeveloper = user.roles.includes('developers');
+        res.cookie('stwIsDeveloper', req.session.stwIsDeveloper);
 
     } else {
         req.session.stwUser = 'guest';
         req.session.stwRoles = ['guests'];
-        req.session.stwDeveloper = false;
-        res.cookie('stwDeveloper', false);
+        req.session.stwIsDeveloper = false;
+        res.cookie('stwIsDeveloper', false);
         res.statusCode = 401; // 401 Unauthorized
     }
     res.redirect(Base[WEBBASE].index.get(req.params[1] || res.locals.cookie.stwPage)?.permalink(req.session.stwLanguage) || '.');
@@ -36,8 +36,8 @@ router.post('/logon/:_id?', async (req, res) => {
 router.post('/logoff/:_id?', async (req, res) => {
     req.session.stwUser = 'guest';
     req.session.stwRoles = ['guests'];
-    req.session.stwDeveloper = false;
-    res.cookie('stwDeveloper', false);
+    req.session.stwIsDeveloper = false;
+    res.cookie('stwIsDeveloper', false);
 
     res.redirect(Base[WEBBASE].index.get(req.params[1] || res.locals.cookie.stwPage)?.permalink(req.session.stwLanguage) || '.');
 });

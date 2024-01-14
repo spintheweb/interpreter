@@ -7,7 +7,7 @@
     <title>STW Studio</title>
     <script>
         // Exit Spin the Web Studio if not developer
-        if (document.cookie.split('; ').find(row => row.startsWith('stwDeveloper='))?.split('=')[1] != 'true')
+        if (document.cookie.split('; ').find(row => row.startsWith('stwIsDeveloper='))?.split('=')[1] != 'true')
             location = '..';
         // Do not allow studio within frame
         if (self != top)

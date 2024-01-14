@@ -26,7 +26,7 @@ export function lexer(wbll = '') {
         return layout;
 
     for (let expression of wbll.matchAll(SYNTAX)) {
-        if (expression.groups.error != undefined)
+        if (expression.groups.error !== undefined)
             throw new SyntaxError(expression.input.slice(0, expression.index) + ' >>>' + expression.input.slice(expression.index));;
 
         expression = expression.filter((value, i) => (value !== undefined && i));
@@ -251,12 +251,19 @@ export function renderer(req, contentId, layout, flags = 0b0000) {
                     html += `<article data-ref="_${contentId}"></article>`;
                     break;
                 case 'r':
+                    token.attrs = token.attrs || {};
+                    token.attrs.type = 'radio'
+                    token.attrs.name = getName(req, token.args[0]);
+                    token.attrs.value = token.args[1] || '@@';
+                    for (let i = 3; i < token.args.length; i += (token.args[2] == 2 ? 2 : 1)) {
+                        html += `<label><input${renderAttributes(req, token.attrs)}>`;
+                    }
                     break;
                 case 's':
                     break;
                 case 't':
-                case 'T':
                 case 'v':
+                case 'T':
                 case 'V':
                     str = 'tv'.indexOf(token.symbol) != -1 ? token.args[2] : evaluate(req, token.args[2]);
                     if (!token.attrs)

@@ -52,6 +52,8 @@ export default class Content extends Base {
         this.query = params.query;
         this.params = params.params;
         this.layout = { [lang]: params.layout };
+        if (this._layout)
+            this._layout = undefined; // Force lexer next load
 
         if (this.subtype != (params.subtype || 'Text'))
             return Content.changeSubtype(this, params.subtype || 'Text');
@@ -92,7 +94,7 @@ export default class Content extends Base {
     }
     showError(req, res) {
         let body = `<i class="fal fa-fw fa-bug" title="CONTENT: ${this.permalink(req.session.stwLanguage)}"></i>`;
-        if (req.exposed.stwDeveloper) {
+        if (req.exposed.stwIsDeveloper) {
             body = `CONTENT: ${this.permalink(req.session.stwLanguage)}`;
             for (let property in req.session.err)
                 body += `\n${property.toUpperCase()}: ${req.session.err[property]}`;
@@ -127,7 +129,7 @@ export default class Content extends Base {
                     Object.defineProperty(this, '_layout', { enumerable: false, writable: true });
                     this._layout = lexer(pickText([req.session.stwLanguage, Base[WEBBASE].lang], this.layout));
                 } catch (err) {
-                    req.session.err = { "syntax error": err.message.replace(/"/g, "''") };
+                    req.session.err = { "syntax error": '\n' + err.message.replace(/"/g, "''") };
                     this.showError(req, res);
                     return;
                 }
@@ -135,25 +137,38 @@ export default class Content extends Base {
             if (typeof this._layout === 'object') {
                 // TODO: Evaluate layout.settings
 
-                if (typeof this._layout.settings.visible != 'undefined' &&
+                if (this._layout.settings.visible !== undefined &&
                     (getValue(req, this._layout.settings.visible) ? false : true)) // TODO: layout.settings.invisible
                     return '';
 
                 if (this._layout.settings.caption)
-                    fragment += `<h1>${this._layout.settings.caption}</h1>`;
+                    fragment += `<h1>${this._layout.settings.collapsible ? '<i class="fa-light fa-fw fa-angle-down"></i>' : ''}${this._layout.settings.caption}</h1>`;
+                fragment += '<div class="stwToggleChild">';
                 if (this._layout.settings.header)
                     fragment += `<header>${this._layout.settings.header}</header>`;
                 fragment += body(req, this.id, this._layout);
                 if (this._layout.settings.footer)
                     fragment += `<footer>${this._layout.settings.footer}</footer>`;
+                fragment += '</div>';
             } else
                 fragment = body(req, this._layout);
+
+            if (!fragment) {
+                res.sendStatus(204); // 204 No content
+                return;
+            }
 
             res.set('Content-Type', 'text/html');
             res.set('X-Content-Type-Options', 'nosniff');
             res.set('Cache-Control', 'max-age=0, no-store');
 
-            res.send({ id: this._id, section: this.section, sequence: this.sequence, body: `<article id="${this._id}" ${this.CSSClass(req.exposed.stwDeveloper ? 'stwInspectable' : '')} data-ms="${Date.now() - timestamp}ms" data-seq="${this.sequence}">${fragment}</article>` });
+            let cssClass = '';
+            if (req.exposed.stwIsDeveloper == 'true')
+                cssClass = 'stwInspect';
+            if (this._layout.settings.collapsible == 'true')
+                cssClass += ' stwToggleParent';
+
+            res.send({ id: this._id, section: this.section, sequence: this.sequence, body: `<article id="${this._id}" ${req.exposed.stwIsDeveloper == 'true' ? this.CSSClass(cssClass) + ' title="CTRL+click to inspect content"' : this.CSSClass(cssClass)} data-ms="${Date.now() - timestamp}ms" data-seq="${this.sequence}" onclick="stwToggleContent(event)">${fragment}</article>` });
 
         } else
             res.sendStatus(204); // 204 No content

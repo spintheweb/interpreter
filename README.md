@@ -26,8 +26,8 @@ A _webbase_ is an hierachically organized structure of three base elements, plus
 _Contents_ are central, they come in four flavors: _navigational_, _organizational_, _presentational_ and _special_. The purpose of contents is to allow _interaction_ with data of any kind, they request data, provide data, they can be simple microservices, dashbords that are described macroscopically by (WBDL) Webbase Description Language and microscopically (WBLL) Webbase Layout Language
 
 * navigational &mdash; these content render as menubars, menu, breadcrumbs, image maps
-* organizational &mdash; these contents render as tabs, group
-* presentational &mdash; these contents render as forms, lists, tables, calendars, trees, graphs 
+* organizational &mdash; these contents render as tabs, calendars, group
+* presentational &mdash; these contents render as forms, lists, tables, trees, graphs 
 * special &mdash; these contents can be client side scripts and API
 
 ## Paradigm

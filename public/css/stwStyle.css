@@ -16,6 +16,10 @@ a {
     text-decoration: none;
 }
 
+.stwInspect:hover {
+    opacity: 0.5;
+}
+
 [role="inspector"] {
     cursor: pointer;
     position: absolute;
@@ -25,12 +29,15 @@ a {
     line-height: 2em;
     width: 2em;
 }
+
 article [role="inspector"] {
     display: none;
 }
+
 article:hover [role="inspector"] {
     display: block;
 }
+
 .stwError {
     background-color: var(--errorcolor);
     color: #ffffff;
@@ -256,9 +263,9 @@ article.stwContent {
     opacity: 1;
 }
 
-.stwTree ol ol {
+.stwTree ol {
     list-style-type: none;
-    margin: 0;
+    padding: 0;
 }
 
 .stwTree .stwBody>ol {

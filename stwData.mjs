@@ -18,33 +18,37 @@ export default async function Execute(datasource, command) {
 /*            Object.defineProperty(datasource, 'schema', {
                 enumerable: false,
                 value: await datasource.connection.execute(`
-                    SELECT 'TABLES' as TYPE, 'TABLES' as NAME, '' as DATA_TYPE, '' as COLUMN_TYPE, '' as COLUMN_KEY, null as rows, 'TABLE' as PATH
+                    SELECT 'TABLES' as TYPE, 'TABLES' as NAME, null as ROWS, '' as DATA_TYPE, '' as COLUMN_TYPE, '' as COLUMN_KEY, 'TABLE' as PATH
                     UNION
-                    SELECT 'TABLE', T.TABLE_NAME, '', '', '', T.TABLE_ROWS, concat_ws('/', 'TABLE', T.TABLE_NAME)
+                    SELECT 'TABLE', T.TABLE_NAME, T.TABLE_ROWS, '', '', '', concat_ws('/', 'TABLE', T.TABLE_NAME)
                         FROM information_schema.tables T 
                         WHERE T.TABLE_SCHEMA='${configDb.database}' and T.TABLE_TYPE = 'BASE TABLE'
                     UNION
-                    SELECT 'COLUMN', C.COLUMN_NAME, C.DATA_TYPE, C.COLUMN_TYPE, C.COLUMN_KEY, null, concat_ws('/', 'TABLE', T.TABLE_NAME, C.COLUMN_NAME)
+                    SELECT 'COLUMN', C.COLUMN_NAME, null, C.DATA_TYPE, C.COLUMN_TYPE, C.COLUMN_KEY, concat_ws('/', 'TABLE', T.TABLE_NAME, C.COLUMN_NAME)
                         FROM information_schema.tables T inner join information_schema.columns C on T.TABLE_SCHEMA = C.TABLE_SCHEMA and T.TABLE_NAME = C.TABLE_NAME 
                         WHERE T.TABLE_SCHEMA='${configDb.database}' and T.TABLE_TYPE = 'BASE TABLE'
                     UNION
-                    SELECT 'VIEWS', 'VIEWS', '', '', '', null, 'VIEW'
+                    SELECT 'VIEWS', 'VIEWS', null, '', '', '', 'VIEW'
                     UNION
-                    SELECT 'VIEW', V.TABLE_NAME, '', '', '', null, concat_ws('/', 'VIEW', V.TABLE_NAME)
+                    SELECT 'VIEW', V.TABLE_NAME, null, '', '', '', concat_ws('/', 'VIEW', V.TABLE_NAME)
                         FROM information_schema.views V
                         WHERE V.TABLE_SCHEMA='${configDb.database}'
                     UNION
-                    SELECT 'COLUMN', C.COLUMN_NAME, C.DATA_TYPE, C.COLUMN_TYPE, C.COLUMN_KEY, null, concat_ws('/', 'VIEW', V.TABLE_NAME, C.COLUMN_NAME)
+                    SELECT 'COLUMN', C.COLUMN_NAME, null, C.DATA_TYPE, C.COLUMN_TYPE, C.COLUMN_KEY, concat_ws('/', 'VIEW', V.TABLE_NAME, C.COLUMN_NAME)
                         FROM information_schema.views V inner join information_schema.columns C on V.TABLE_SCHEMA = C.TABLE_SCHEMA and V.TABLE_NAME = C.TABLE_NAME
                         WHERE V.TABLE_SCHEMA='${configDb.database}'
                     UNION
-                    SELECT 'ROUTINES', 'ROUTINES', '', '', '', null, 'ROUTINE'
+                    SELECT 'ROUTINES', 'ROUTINES', null, '', '', '', 'ROUTINE'
                     UNION
-                    SELECT R.ROUTINE_TYPE, R.ROUTINE_NAME, '', '', '', null, concat_ws('/', 'ROUTINE', R.ROUTINE_TYPE, R.ROUTINE_NAME)
+                    SELECT distinct concat(R.ROUTINE_TYPE, 'S'), concat(R.ROUTINE_TYPE, 'S'), null, '', '', '', concat_ws('/', 'ROUTINE', R.ROUTINE_TYPE)
                         FROM information_schema.ROUTINES R
                         WHERE R.ROUTINE_SCHEMA='${configDb.database}'
                     UNION
-                    SELECT 'PARAMETER', ifnull(P.PARAMETER_NAME, 'RETURN'), P.DATA_TYPE, P.DTD_IDENTIFIER, ifnull(P.PARAMETER_MODE, ''), null, concat_ws('/', 'ROUTINE', R.ROUTINE_TYPE, R.ROUTINE_NAME, P.PARAMETER_NAME)
+                    SELECT R.ROUTINE_TYPE, R.ROUTINE_NAME, null, '', '', '', concat_ws('/', 'ROUTINE', R.ROUTINE_TYPE, R.ROUTINE_NAME)
+                        FROM information_schema.ROUTINES R
+                        WHERE R.ROUTINE_SCHEMA='${configDb.database}'
+                    UNION
+                    SELECT 'PARAMETER', ifnull(P.PARAMETER_NAME, 'RETURN'), null, P.DATA_TYPE, P.DTD_IDENTIFIER, ifnull(P.PARAMETER_MODE, ''), concat_ws('/', 'ROUTINE', R.ROUTINE_TYPE, R.ROUTINE_NAME, ifnull(P.PARAMETER_NAME, 'RETURN'))
                         FROM information_schema.ROUTINES R left join information_schema.PARAMETERS P ON R.ROUTINE_SCHEMA = P.SPECIFIC_SCHEMA and R.ROUTINE_NAME = P.SPECIFIC_NAME
                         WHERE R.ROUTINE_SCHEMA='${configDb.database}'`)
             });*/

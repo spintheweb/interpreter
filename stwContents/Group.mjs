@@ -15,7 +15,7 @@ export default class Group extends Content {
     }
 
     set Sequence(value) {
-        if (typeof value === 'undefined') return this.sequence;
+        if (value === undefined) return this.sequence;
         this.sequence = isNaN(value) || value < 1 ? 1 : value;
         if (this.parent) // Order by section, sequence
             this.parent.children.sort((a, b) =>

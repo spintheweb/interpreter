@@ -16,7 +16,7 @@ const router = express.Router();
 
 // Only developers are allowed to use the Spin the Web Studio API
 router.all('/*', (req, res, next) => {
-    if (req.session.stwDeveloper)
+    if (req.session.stwIsDeveloper)
         next();
     else
         res.redirect('/');

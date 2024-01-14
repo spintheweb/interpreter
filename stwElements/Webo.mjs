@@ -44,7 +44,7 @@ export default class Webo extends Area {
 
     // TODO: https://www.npmjs.com/package/locale
     Lang(code) {
-        if (typeof code === 'undefined')
+        if (code === undefined)
             return this.langs[0];
         if (value.search(/^[a-z][a-z](-[a-z][a-z])?$/i) !== -1)
             this.langs[0] = code.toLowerCase();

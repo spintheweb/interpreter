@@ -19,7 +19,7 @@ export default class Table extends Content {
 			fragment += `<thead><tr>${this._layout.settings.rownumber ? '<th></th>' : ''}${renderer(req, this._id, this._layout, 0b0110)}</tr></thead>`;
 			// TODO: Search row
 
-			fragment += 'tbody';
+			fragment += '<tbody>';
 			for (let row = 0; row < req.dataset.length; ++row) {
 				req.row = row;
 

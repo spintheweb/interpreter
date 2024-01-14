@@ -58,8 +58,8 @@ app.use((req, res, next) => {
         req.session.stwUser = IS_DEV ? 'developer' : 'guest';
         req.session.stwRoles = IS_DEV ? ['users', 'developers'] : ['guests'];
         req.session.stwLanguage = language.pick(Base[WEBBASE].langs, req.headers['accept-language']);
-        req.session.stwDeveloper = IS_DEV;
-        res.cookie('stwDeveloper', req.session.stwDeveloper);
+        req.session.stwIsDeveloper = IS_DEV;
+        res.cookie('stwIsDeveloper', req.session.stwIsDeveloper);
     }
 
     const { headers: { cookie } } = req;
