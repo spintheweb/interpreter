@@ -15,8 +15,8 @@ export default class List extends Content {
 		return await super.render(req, res, next, () => {
 			let fragment = this._layout.settings.rownumber ? '<ol>' : '<ul>';
 
-			for (let row = 0; row < req.dataset.length; ++row) {
-				req.row = row;
+			for (let row = 0; row < req.stwPrivate.stwData.length; ++row) {
+				req.stwPrivate.stwR = row;
 
 				let rowAttr = this._layout.tokens.find(token => token.symbol == '\\A') || '';
 				if (rowAttr)

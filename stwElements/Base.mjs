@@ -25,7 +25,8 @@ export default class Base {
 	patch(lang, params = {}) {
 		this.status = params.status;
 		this.name = { [lang]: params.name };
-		this.slug = { [lang]: params.slug.replace(/[^a-z0-9_]/gi, '').toLowerCase() };
+		if (this.constructor.name != 'Webo')
+			this.slug = { [lang]: params.slug.replace(/[^a-z0-9_]/gi, '').toLowerCase() };
 
 		return this;
 	}

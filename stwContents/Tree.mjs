@@ -17,13 +17,13 @@ export default class Tree extends Content {
 	async render(req, res, next) {
 		return await super.render(req, res, next, () => {
 			let path = (this._layout.settings.key || 'path').toLowerCase();
-			path = Object.keys(req.dataset[0]).find(key => key.toLowerCase() == path);
+			path = Object.keys(req.stwPrivate.stwData[0]).find(key => key.toLowerCase() == path);
 
 			if (!path)
 				return '';
 
 			const tree = {};
-			req.dataset.forEach((row, i) => {
+			req.stwPrivate.stwData.forEach((row, i) => {
 				if (row[path]) {
 					let node = tree;
 					row[path].split(SEPARATOR_EXPRESSION).forEach(part => {
@@ -44,7 +44,7 @@ export default class Tree extends Content {
 			for (let childnode in node)
 				fragment += this.renderRow(req, node[childnode], depth);
 		} else {
-			req.row = node.row;
+			req.stwPrivate.stwR = node.row;
 
 			let rowAttr = this._layout.tokens.find(token => token.symbol == '\\A') || { attrs: { class: '' }};
 			rowAttr.attrs.class = rowAttr.attrs.class + ' stwToggleParent';

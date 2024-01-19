@@ -17,7 +17,7 @@
 <article class="stwsForm stwsAccordion" id="properties" onclick="stwStudio.manageProperties(event, 'webbase')">
     <h1><i class="fa-light fa-fw fa-angle-down"></i> properties
         <span>
-            <i class="fa-light fa-fw fa-expand" title="Expand (Ctrl+E)" data-action="expand"></i>
+            <i class="fa-light fa-fw fa-expand" title="Expand (F2)" data-action="expand"></i>
         </span>
     </h1>
     <form class="stwsHideLabels" onchange="stwStudio.submitForm(event)">
@@ -42,11 +42,8 @@
                         title="Programmatic visibility"></label></li>
 
             <li><label><span>Main page</span>
-                    <div style="display: flex; align-items: center;">
-                        <input name="permalink" title="Main page" readonly>
-                        <input type="hidden" name="mainpage">
-                        <i class="fa-light fa-fw fa-bars" style="margin-left: 0.25em; cursor: pointer;"></i>
-                    </div>
+                    <input name="permalink" title="Main page" readonly>
+                    <input type="hidden" name="mainpage">
                 </label></li>
 
             <li><label><span>Default language</span><select name="lang" title="Default language" required>
@@ -105,9 +102,16 @@
         </ol>
     </form>
 </article>
-<article class="stwsTree stwsHandleHierarchy stwsAccordion" id="options" ondblclick="stwStudio.manageOptions(event)"
-    onkeydown="stwStudio.manageOptions(event)">
-    <h1><i class="fa-light fa-fw fa-angle-right"></i> options</h1>
+<article class="stwsTree stwsHandleHierarchy stwsAccordion" id="options" onclick="stwStudio.manageOptions(event)" onkeydown="stwStudio.manageOptions(event)">
+    <h1><i class="fa-light fa-fw fa-angle-right"></i> options
+        <span>
+            <i class="fa-light fa-fw fa-arrow-up" title="Move up" data-action="up"></i>
+            <i class="fa-light fa-fw fa-arrow-down" title="Move down" data-action="down"></i>
+            <i class="fa-light fa-fw fa-arrow-left" title="Move left" data-action="left"></i>
+            <i class="fa-light fa-fw fa-arrow-right" title="Move right" data-action="right"></i>
+            <i class="fa-light fa-fw fa-plus" title="New option" data-action="new"></i>
+        </span>
+    </h1>
     <ol style="display: none; max-height: 10em;"></ol>
 </article>
 <article class="stwsTree stwsAccordion" id="visibility" onclick="stwStudio.manageVisibility(event)">
@@ -115,7 +119,35 @@
     <ol style="display: none; max-height: 10em;"></ol>
 </article>
 <div>&nbsp;</div>
-<!--nav id="contextMenu" class="stwsMenu stwPopup" style="position:absolute; top: 100px; left: 100px; z-index: 10;">
+<!--nav id="contextMenu" class="stwsMenu stwContext">
+    <ol>
+        <li>
+            <div><span>Shift left</span><span>CTRL+<i class="fal fa-fw fa-arrow-left"></i></span></div>
+        </li>
+        <li style="border-top: thin solid;">
+            <div><span>Shift right</span><span>CTRL+<i class="fal fa-fw fa-arrow-right"></i></span></a></div>
+        </li>
+        <li>
+            <div><span>Shift up</span><span>CTRL+<i class="fal fa-fw fa-arrow-up"></i></span></a></div>
+        </li>
+        <li>
+            <div><span>Shift down</span><span>CTRL+<i class="fal fa-fw fa-arrow-down"></i></span></a></div>
+        </li>
+        <li>
+            <div><hr></div>
+        </li>
+        <li>
+            <div><span>Insert</span><span>INS</span></a></div>
+        </li>
+        <li>
+            <div><span>Delete</span><span>DEL</span></a></div>
+        </li>
+        <li style="border-top: thin solid;">
+            <div><span><b>Properties</b></span><span></span></div>
+        </li>
+    </ol>
+</nav-->
+<!--nav id="contextMenu" class="stwsMenu stwContext">
     <ol>
         <li>
             <div><span>Open</span><span>CTRL+O</span></div>
@@ -133,7 +165,7 @@
             <div><span>Delete</span><span>DEL</span></a></div>
         </li>
         <li style="border-top: thin solid;">
-            <div><span>Properties</span><span>CTRL+P</span></div>
+            <div><span><b>Properties</b></span><span>CTRL+P</span></div>
         </li>
     </ol>
 </nav-->

@@ -17,10 +17,10 @@ export default class Text extends Content {
 
 	async render(req, res, next) {
 		if (this.granted(req.session.stwRoles) & 0b01) {
-			req.exposed = Object.assign(res.locals.cookie, req.query);
-			req.unexposed = Object.assign(req.session); // TODO: Add Application
+			req.stwPublic = Object.assign({}, res.locals.cookie, req.query);
+			req.stwPrivate = Object.assign({}, req.session); // TODO: Add Application
 
-			req.dataset = await this.getData(req);
+			req.stwPrivate.stwData = await this.getData(req);
 
 			if (req.session.err) {
 				this.showError(req, res);
@@ -32,24 +32,24 @@ export default class Text extends Content {
 			switch (fragment) {
 				case 'application/json':
 					res.set('Content-Type', fragment);
-					fragment = JSON.stringify(req.dataset);
+					fragment = JSON.stringify(req.stwPrivate.stwData);
 					break;
 				case 'text/csv':
 					res.set('Content-Type', fragment);
 					fragment = '';
-					for (let i = 0; i < req.dataset.length; ++i) {
+					for (let i = 0; i < req.stwPrivate.stwData.length; ++i) {
 						if (!i)
-							Object.keys(req.dataset[i]).forEach(fld => fragment += `"${fld}",`);
+							Object.keys(req.stwPrivate.stwData[i]).forEach(fld => fragment += `"${fld}",`);
 						fragment += '\n';
-						Object.values(req.dataset[i]).forEach(fld => fragment += typeof (fld) === 'number' ? `${fld},` : `"${fld instanceof Date ? (fld.toJSON() || '') : fld}",`);
+						Object.values(req.stwPrivate.stwData[i]).forEach(fld => fragment += typeof (fld) === 'number' ? `${fld},` : `"${fld instanceof Date ? (fld.toJSON() || '') : fld}",`);
 					}
 					break;
 				case 'application/xml':
 					res.set('Content-Type', fragment);
 					fragment = '<table>';
-					for (let i = 0; i < req.dataset.length; ++i) {
+					for (let i = 0; i < req.stwPrivate.stwData.length; ++i) {
 						fragment += '<row>';
-						Object.keys(req.dataset[i]).forEach((fld, j) => fragment += `<${fld}>${(req.dataset[i][j] instanceof Date ? req.dataset[i][j].toJSON() : encode(req.dataset[i][j])) || ''}</${fld}>`);
+						Object.keys(req.stwPrivate.stwData[i]).forEach((fld, j) => fragment += `<${fld}>${(req.stwPrivate.stwData[i][j] instanceof Date ? req.stwPrivate.stwData[i][j].toJSON() : encode(req.stwPrivate.stwData[i][j])) || ''}</${fld}>`);
 						fragment += '</row>';
 					}
 					fragment += '</table>';
@@ -59,10 +59,10 @@ export default class Text extends Content {
 					let template = fragment;
 					fragment = '';
 
-					if (!req.dataset.length)
-						fragment = replacePlaceholders(template, req.exposed, req.unexposed);
+					if (!req.stwPrivate.stwData.length)
+						fragment = replacePlaceholders(template, req.stwPublic, req.stwPrivate);
 					else
-						req.dataset.forEach(row => fragment += replacePlaceholders(template, req.exposed, Object.assign(req.unexposed, row)));
+						req.stwPrivate.stwData.forEach(row => fragment += replacePlaceholders(template, req.stwPublic, Object.assign(req.stwPrivate, row)));
 
 					if (this.cssClass)
 						fragment = `<div class="${this.cssClass}">${fragment}</div>`;

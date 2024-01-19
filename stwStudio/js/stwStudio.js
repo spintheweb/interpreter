@@ -93,7 +93,7 @@ const stwStudio = {
             document.querySelector('#properties i[data-action="expand"]').click();
             event.preventDefault();
         }
-        if (event.key == 'F5') {
+        if (event.key == 'F5' || (event.ctrlKey && event.key == 'r')) {
             document.getElementById('Browse').src = document.getElementById('BrowseURL').value;
             event.preventDefault();
             event.stopPropagation();
@@ -784,13 +784,19 @@ const stwStudio = {
             };
     },
     manageOptions: event => {
-        let li = event.target.closest('li');
-        if (li) {
-            li.setAttribute('selected', '');
-            stwStudio.openPopup('/stwStudio/panels/option.html', {}, event => {
-                stwStudio.statusBar('TODO: Modified option');
-                li.removeAttribute('selected');
-            });
+        if (event.target.dataset.action) {
+            alert(event.target.dataset.action);
+        } else {
+            let li = event.target.closest('li');
+            if (li) {
+                li.setAttribute('selected', '');
+                stwStudio.openPopup('/stwStudio/panels/option.html', {}, event => {
+                    stwStudio.statusBar('TODO: Modified option');
+                    //li.removeAttribute('selected');
+                });
+//                event.preventDefault();
+//                event.stopPropagation();
+            }
         }
     },
     manageTab: event => {

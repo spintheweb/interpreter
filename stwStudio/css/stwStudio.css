@@ -156,6 +156,8 @@ body {
 }
 
 #stwsPopup {
+    -webkit-user-select: none;
+    user-select: none;
     min-width: 40em;
     min-height: 10em;
     padding: 0 0 1em 0;

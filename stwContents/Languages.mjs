@@ -45,7 +45,7 @@ export default class Languages extends Content {
                     fragment += `<option>${lang.toUpperCase()}</option>`;
                 fragment += '</select>';
             }
-            return `<span ${this.CSSClass(req.exposed.stwIsDeveloper ? 'stwInspectable' : '')}">${fragment}</span>`;
+            return `<span ${this.CSSClass(req.stwPublic.stwIsDeveloper ? 'stwInspectable' : '')}">${fragment}</span>`;
         });
     }
 }

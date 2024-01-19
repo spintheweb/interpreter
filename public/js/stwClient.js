@@ -22,9 +22,10 @@ window.onload = () => {
 
         fetch(`/${_id}${location.search}`)
             .then(res => {
-                if (res.status == 200)
+                if (res.status == 204)
+                    return Promise.reject(`Nothing to show for /${_id}${location.search}`);
+                if (res.ok)
                     return res.json();
-                return Promise.reject(`Nothing to show for /${_id}${location.search}`);
             })
             .then(content => {
                 let section = document.getElementById(content.section);
@@ -102,7 +103,7 @@ window.onclick = event => {
             self.location = `/stwstudio?inspect=${content.id}`;
     }
 }
-function stwStudio() {
+function stwToggleStudio() {
     window.dispatchEvent(new KeyboardEvent('keydown', { ctrlKey: true, key: 'F12' }));
 }
 function stwToggleContent(event) {

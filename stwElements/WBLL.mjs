@@ -9,7 +9,7 @@ import { replacePlaceholders } from './Miscellanea.mjs';
 const SYNTAX = new RegExp([
     /(\\[aAs])(?:\('([^]*?)'\))/,
     /(\\[rnt])/,
-    /(?:([aAbo]))(?:\('([^]*?)'\))?((?:p(\('[^]*?'\))?)*)/,
+    /(?:([aAbo]))(?:\('([^]*?)'\))?((<|>|p(\('[^]*?'\))?)*)/,
     /(?:([cefhilmruwxyz]))(?:\('([^]*?)'\))?/,
     /(?:([dnsvVk]))(?:\('([^]*?)'\))/,
     /(?:([jJtT]))(?:\('([^]*?)'\))/,
@@ -19,7 +19,7 @@ const SYNTAX = new RegExp([
     /(?<error>[\S])/ // Anything else is an error
 ].map(r => r.source).join('|'), 'gmu');
 
-export function lexer(wbll = '') {
+export function lexer(req, wbll = '') {
     let layout = { settings: {}, tokens: [] }, token = {}, symbol, args, params, attrs;
 
     if (typeof wbll != 'string')
@@ -36,6 +36,8 @@ export function lexer(wbll = '') {
 
         if (symbol) {
             if (symbol == '\\a' || symbol == '\\s' || symbol == '\\A') {
+                expression[1] = replacePlaceholders(expression[1], req.stwPublic, req.stwPrivate);
+
                 attrs = {};
                 for (let attr of expression[1].matchAll(/([a-zA-Z0-9-_]+)(?:=(["'])([^]*?)\2)?/gmu))
                     attrs[attr[1]] = attr[3] || 'true';
@@ -59,7 +61,7 @@ export function lexer(wbll = '') {
             if (expression[2] && expression[2].startsWith('p')) {
                 params = {};
                 let i = 0;
-                for (let param of expression[2].matchAll(/(?:p(?:\('([^]*?)'\))?)/gmu))
+                for (let param of expression[2].matchAll(/(<|>|p(?:\('([^]*?)'\))?)/gmu))
                     for (let pair of (param[1] || '').matchAll(/(([a-zA-Z0-9-_]*)(?:;((?:["']?)(?:[^])*\1))?)/gmu)) {
                         params[pair[2] || '§' + i++] = pair[3] || '@@';
                         break;
@@ -93,20 +95,20 @@ function evaluate(req, expression) {
 }
 
 function getName(req, name = '') {
-    return replacePlaceholders(name, req.exposed, req.dataset[req.row]) || Object.keys(req.dataset[req.row])[req.col] || `Field${req.col}`;
+    return replacePlaceholders(name, req.stwPublic, req.stwPrivate.stwData[req.stwPrivate.stwR]) || Object.keys(req.stwPrivate.stwData[req.stwPrivate.stwR])[req.stwPrivate.stwC] || `Field${req.stwPrivate.stwC}`;
 }
 
 export function getValue(req, key) {
     try {
         if (key === '@@')
-            return Object.values(req.dataset[req.row])[req.col++] || '';
+            return Object.values(req.stwPrivate.stwData[req.stwPrivate.stwR])[req.stwPrivate.stwC++] || '';
         if (key.startsWith('@@')) // dataset, req
-            return req.dataset[req.row][key.replace('@@', '')] || '';
+            return req.stwPrivate.stwData[req.stwPrivate.stwR][key.replace('@@', '')] || '';
         if (key.startsWith('@')) // data
             return req.data.url.searchParams.get(key.replace('@', '')) || '';
-        if (typeof req.dataset[req.row][key] === 'function')
-            return req.dataset[req.row][key].toString();
-        return req.dataset[req.row][key] || key;
+        if (typeof req.stwPrivate.stwData[req.stwPrivate.stwR][key] === 'function')
+            return req.stwPrivate.stwData[req.stwPrivate.stwR][key].toString();
+        return req.stwPrivate.stwData[req.stwPrivate.stwR][key] || key;
     } catch {
         return key;
     }
@@ -125,17 +127,17 @@ function renderParameters(req, uri, params) {
     try {
         url = new URL(getValue(req, uri));
 
-        url.href = replacePlaceholders(url.href, req.exposed, req.dataset[req.row]);
+        url.href = replacePlaceholders(url.href, req.stwPublic, req.stwPrivate.stwData[req.stwPrivate.stwR]);
 
         if (params)
             for (let param in params)
-                url.searchParams.set(param[0] === '§' ? Object.keys(req.dataset[req.row])[req.col] : param, getValue(req, params[param]));
+                url.searchParams.set(param[0] === '§' ? Object.keys(req.stwPrivate.stwData[req.stwPrivate.stwR])[req.stwPrivate.stwC] : param, getValue(req, params[param]));
         return url.href;
     } catch {
         url = new URL('https://stw.local/' + uri);
         if (params)
             for (let param in params)
-                url.searchParams.set(param[0] === '§' ? Object.keys(req.dataset[req.row])[req.col] : param, getValue(req, params[param]));
+                url.searchParams.set(param[0] === '§' ? Object.keys(req.stwPrivate.stwData[req.stwPrivate.stwR])[req.stwPrivate.stwC] : param, getValue(req, params[param]));
         return url.href.replace('https://stw.local/', '');
     }
 }
@@ -146,12 +148,12 @@ export function renderer(req, contentId, layout, flags = 0b0000) {
         return layout;
 
     if ((flags & 0b0001) == 0b0000) {
-        req.col = 0;
-        req.row = req.row || 0;
+        req.stwPrivate.stwC = 0;
+        req.stwPrivate.stwR = req.stwPrivate.stwR || 0;
     }
 
     if (!layout.tokens.length)
-        Object.keys(req.dataset[0]).forEach(i => {
+        Object.keys(req.stwPrivate.stwData[0]).forEach(i => {
             layout.tokens.push({ symbol: 'l', args: [] });
             layout.tokens.push({ symbol: 'f', args: [] });
             if ((flags & 0b0110) != 0b0110) layout.tokens.push({ symbol: '\\r', args: [] });
@@ -162,10 +164,10 @@ export function renderer(req, contentId, layout, flags = 0b0000) {
         try {
             switch (token.symbol) {
                 case '<':
-                    req.col -= req.col ? 1 : 0;
+                    req.stwPrivate.stwC -= req.stwPrivate.stwC ? 1 : 0;
                     break;
                 case '>':
-                    req.col++;
+                    req.stwPrivate.stwC++;
                     break;
                 case 'a':
                     str = token.args ? token.args[0] : '@@';
