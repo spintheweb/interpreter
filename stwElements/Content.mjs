@@ -170,7 +170,7 @@ export default class Content extends Base {
             if (this._layout.settings.collapsible == 'true')
                 cssClass += ' stwToggleParent';
 
-            res.send({ id: this._id, section: this.section, sequence: this.sequence, body: `<article id="${this._id}" ${req.stwPublic.stwIsDeveloper == 'true' ? this.CSSClass(cssClass) + ' title="Inspect content (CTRL+click)"' : this.CSSClass(cssClass)} data-ms="${Date.now() - timestamp}ms" data-seq="${this.sequence}" onclick="stwToggleContent(event)">${fragment}</article>` });
+            res.send({ id: this._id, section: this.section, sequence: this.sequence, body: `<article id="${this._id}" ${req.stwPublic.stwIsDeveloper == 'true' ? this.CSSClass(cssClass) + ` title="Inspect content (CTRL+click)" data-inspect="§${this.subtype} ${this.section}:${this.sequence}" data-ms="${Date.now() - timestamp}ms"` : this.CSSClass(cssClass)} data-seq="${this.sequence}" onclick="stwToggleContent(event)">${fragment}</article>` });
 
         } else
             res.sendStatus(204); // 204 No content

@@ -58,14 +58,16 @@ export function lexer(req, wbll = '') {
                 for (let arg of (expression[1] + ';').matchAll(/(?:(=?(["']?)[^]*?\2));/gmu))
                     args.push(arg[1]);
             }
-            if (expression[2] && expression[2].startsWith('p')) {
-                params = {};
+            if (expression[2] && expression[2].match('^[<>p]')) {
+                params = [];
                 let i = 0;
-                for (let param of expression[2].matchAll(/(<|>|p(?:\('([^]*?)'\))?)/gmu))
-                    for (let pair of (param[1] || '').matchAll(/(([a-zA-Z0-9-_]*)(?:;((?:["']?)(?:[^])*\1))?)/gmu)) {
-                        params[pair[2] || '§' + i++] = pair[3] || '@@';
-                        break;
-                    }
+                for (let symbol of expression[2].matchAll(/(<|>|p(?:\('([^]*?)'\)?)?)/gmu)) {
+                    if (symbol[2]) {
+                        let pair = [...symbol[2].matchAll(/([a-zA-Z0-9-_]*)(?:;([^]*))?/gmu)][0];
+                        params.push({ symbol: 'p', name: pair[1], value: pair[2] || '@@' });
+                    } else
+                        params.push({ symbol: symbol[0][0], value: '@@' });
+                }
             }
             if (symbol == '\\a' && (token.symbol == '\\t' || token.symbol != '\\')) {
                 token = layout.tokens.pop();
@@ -135,9 +137,14 @@ function renderParameters(req, uri, params) {
         return url.href;
     } catch {
         url = new URL('https://stw.local/' + uri);
-        if (params)
-            for (let param in params)
-                url.searchParams.set(param[0] === '§' ? Object.keys(req.stwPrivate.stwData[req.stwPrivate.stwR])[req.stwPrivate.stwC] : param, getValue(req, params[param]));
+        for (let param of params) {
+            if (param.symbol === 'p')
+                url.searchParams.set(param.name || Object.keys(req.stwPrivate.stwData[0])[req.stwPrivate.stwC], getValue(req, param.value));
+            else if (param.symbol === '>')
+                ++req.stwPrivate.stwC;
+            else
+                --req.stwPrivate.stwC;
+        }
         return url.href.replace('https://stw.local/', '');
     }
 }
@@ -164,16 +171,16 @@ export function renderer(req, contentId, layout, flags = 0b0000) {
         try {
             switch (token.symbol) {
                 case '<':
-                    req.stwPrivate.stwC -= req.stwPrivate.stwC ? 1 : 0;
-                    break;
+                    --req.stwPrivate.stwC;
+                    continue;
                 case '>':
                     req.stwPrivate.stwC++;
-                    break;
+                    continue;
                 case 'a':
                     str = token.args ? token.args[0] : '@@';
                     html += `<a href="${renderParameters(req, str, token.params)}" ${renderAttributes(req, token.attrs)}>
                         ${renderer(req, contentId, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [str] }] }, 0b0001)}</a>`;
-                    break;
+                    continue;
                 case 'b':
                     // TODO: Table buttons?
                     if (token.args)
@@ -183,7 +190,7 @@ export function renderer(req, contentId, layout, flags = 0b0000) {
                     token.params.stwHandler = contentId;
                     html += `<button formaction="${renderParameters(req, str, token.params)}" ${renderAttributes(req, token.attrs)}>
                         ${renderer(req, contentId, { settings: layout.settings, tokens: [token.content || { symbol: 't', args: [''] }] } || str, 0b0001)}</button>`;
-                    break;
+                    continue;
                 case 'c':
                     token.attrs = token.attrs || {};
                     token.attrs.type = 'checkbox'
@@ -192,13 +199,13 @@ export function renderer(req, contentId, layout, flags = 0b0000) {
                     for (let i = 3; i < token.args.length; i += (token.args[2] == 2 ? 2 : 1)) {
                         html += `<label><input${renderAttributes(req, token.attrs)}>`;
                     }
-                    break;
+                    continue;
                 case 'd':
                     token.attrs = token.attrs || {};
                     token.attrs.name = getName(req, token.args[0]);
                     token.attrs.value = token.args[0] || '@@';
                     html += `<select${renderAttributes(req, token.attrs)}><option></option></select>`;
-                    break;
+                    continue;
                 case 'h':
                     token.attrs = token.attrs || {};
                     token.attrs.type = 'hidden';
@@ -207,22 +214,22 @@ export function renderer(req, contentId, layout, flags = 0b0000) {
                     token.attrs.name = getName(req, token.args[1]);
                     token.attrs.value = token.args[1] || '@@';
                     html += `<input${renderAttributes(req, token.attrs)}>`;
-                    break;
+                    continue;
                 case 'f':
                     str = getValue(req, '@@');
                     if (!token.attrs)
                         html += ' ' + str;
                     else
                         html += `<span${renderAttributes(req, token.attrs)}>${str}</span>`;
-                    break;
+                    continue;
                 case 'i':
                     str = getValue(req, token.args[0]);
                     if (str)
                         html += `<img src="${str}"${renderAttributes(req, token.attrs)}>`;
-                    break;
+                    continue;
                 case 'j':
                     html += `<script${renderAttributes(req, token.attrs)}>${token.args[2]}</script>`;
-                    break;
+                    continue;
                 case 'l':
                     str = getName(req, token.args[0]);
                     if ((flags & 0b0010) == 0b0000) // Not table
@@ -232,14 +239,14 @@ export function renderer(req, contentId, layout, flags = 0b0000) {
                     else // cell
                         html += ((flags & 0b1000) == 0b1000 ? '</td>' : '') + `<td${renderAttributes(req, token.attrs)}>`;
                     flags |= 0b1000;
-                    break;
+                    continue;
                 case 'm':
                     token.attrs = token.attrs || {};
                     token.attrs.name = getName(req, token.args[0]);
                     html += `<textarea${renderAttributes(req, token.attrs)}>${encode(getValue(req, token.args[0] || '@@'))}</textarea>`;
-                    break;
+                    continue;
                 case 'n':
-                    break;
+                    continue;
                 case 'o':
                     token.args.forEach(child => {
                         req.target.send(JSON.stringify({
@@ -251,7 +258,7 @@ export function renderer(req, contentId, layout, flags = 0b0000) {
                         }));
                     });
                     html += `<article data-ref="_${contentId}"></article>`;
-                    break;
+                    continue;
                 case 'r':
                     token.attrs = token.attrs || {};
                     token.attrs.type = 'radio'
@@ -260,9 +267,9 @@ export function renderer(req, contentId, layout, flags = 0b0000) {
                     for (let i = 3; i < token.args.length; i += (token.args[2] == 2 ? 2 : 1)) {
                         html += `<label><input${renderAttributes(req, token.attrs)}>`;
                     }
-                    break;
+                    continue;
                 case 's':
-                    break;
+                    continue;
                 case 't':
                 case 'v':
                 case 'T':
@@ -272,21 +279,21 @@ export function renderer(req, contentId, layout, flags = 0b0000) {
                         html += str;
                     else
                         html += `<span${renderAttributes(req, token.attrs)}>${str}</span>`;
-                    break;
+                    continue;
                 case 'u':
-                    break;
+                    continue;
                 case 'x':
                 case 'y':
                 case 'z':
-                    break;
+                    continue;
                 case '\\n': // TODO: Depends on content: tr+td or br
                     html += '<br>';
-                    break;
+                    continue;
                 case '\\r':
                     html += '<br>';
-                    break;
+                    continue;
                 case '\\t': // TODO: Depends on content: td
-                    break;
+                    continue;
             }
         } catch (err) {
             throw err;

@@ -18,8 +18,6 @@ window.onload = () => {
     let stwContents = decodeURIComponent(document.cookie.split('; ').find(row => row.startsWith('stwContents='))?.split('=')[1]);
 
     stwContents.split(',').forEach(_id => {
-        // TODO: Manage sub sequence rendering
-
         fetch(`/${_id}${location.search}`)
             .then(res => {
                 if (res.status == 204)
@@ -28,11 +26,12 @@ window.onload = () => {
                     return res.json();
             })
             .then(content => {
-                let section = document.getElementById(content.section);
-                section.insertAdjacentHTML('beforeend', content.body);
+                let placeAt = document.getElementById(content.section);
+                placeAt = [...placeAt.querySelectorAll('[data-seq]')].find(c => parseFloat(c.dataset.seq) > parseFloat(content.sequence)) || placeAt;
+                placeAt.insertAdjacentHTML(placeAt.tagName === 'SECTION' ? 'beforeend' : 'beforebegin', content.body);
 
                 if (stwIsDeveloper) {
-                    section.querySelectorAll('.stwInspector').forEach(locator => {
+                    placeAt.querySelectorAll('.stwInspector').forEach(locator => {
                         locator.classList.remove('stwInspector');
                         locator.addEventListener('click', event => {
                             if (self != top) {
