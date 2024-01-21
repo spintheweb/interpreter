@@ -1,6 +1,6 @@
 {
     "protocol": "http",
-    "hostname": "spintheweb.org",
+    "hostname": "portal.spintheweb.org",
     "port": 8080,
     "secret": "Spin the Web",
     "webbase": ".data/webbase.json",
