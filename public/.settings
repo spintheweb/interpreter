@@ -1,10 +1,10 @@
 {
     "protocol": "http",
-    "hostname": "portal.spintheweb.org",
+    "hostname": "studio.spintheweb.org",
     "port": 8080,
     "secret": "Spin the Web",
     "webbase": ".data/webbase.json",
-    "users": ".data/users.json",
+    "users": ".data/basicAuth.json",
     "options": {
         "key": "cert/key.pem",
         "cert": "cert/cert.pem"
