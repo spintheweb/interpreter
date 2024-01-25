@@ -1,0 +1,6 @@
+[submodule "public"]
+	path = public
+	url = https://github.com/spintheweb/public.git
+[submodule "studio"]
+	path = studio
+	url = https://github.com/spintheweb/studio.git
